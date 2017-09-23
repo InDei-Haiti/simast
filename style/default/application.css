@@ -1,0 +1,139 @@
+/* global body padding */
+body {
+  padding-top:    20px;
+  padding-bottom: 20px;
+}
+
+@media (min-width: 768px) {
+  body {
+    padding-top:    50px;
+    padding-bottom: 50px;
+  }
+}
+
+
+/* global spacing overrides */
+h1, h2, h3, h4, h5, h6,
+.a, .b, .c, .d, .e, .f {
+  margin-top: 0;
+}
+hr {
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+
+.g,
+.h {
+  border-bottom: 0;
+}
+
+.bigtab table thead th {
+  vertical-align: bottom;
+  border-bottom: 2px solid #eceeef;
+}
+.bigtab table thead th {
+  color: #737171 !important;
+  /*background-color: #222 !important;*/
+  font-weight: bold !important;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.bigtab table td, bigtab table th {
+  padding: .75rem;
+  vertical-align: top;
+  border: 1px solid #eceeef !important;
+
+  font-family: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 1.3rem;
+  font-weight: 300;
+  line-height: 1.5;
+  color: #000;
+  font-weight: 300;
+  letter-spacing: 0;
+}
+
+.bigtab table tr:hover {
+  background:rgba(0,0,0,.1) !important;
+  border-bottom:1px solid black !important;
+  border-top: 1px solid black !important;
+}
+
+/*.bigtab  table tr:nth-child(even) {
+  background-color: rgb(246, 246, 246);
+}*/
+
+
+
+.mtab table thead th {
+  vertical-align: bottom;
+  border-bottom: 2px solid #eceeef;
+}
+.mtab table thead th {
+  color: #737171 !important;
+  /*background-color: #222 !important;*/
+  font-weight: bold !important;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.mtab table td, .mtab table th {
+  padding: .75rem;
+  vertical-align: top;
+  border:  1px solid  #eceeef !important;
+
+  font-family: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 1.3rem;
+  font-weight: 300;
+  line-height: 1.5;
+  color: #000;
+  font-weight: 300;
+  letter-spacing: 0;
+}
+
+.mtab table tr:hover {
+  background:rgba(0,0,0,.1) !important;
+  border-bottom:1px solid black !important;
+  border-top: 1px solid black !important;
+}
+
+
+/*.mtab  table tr:nth-child(even) {
+  background-color: rgb(246, 246, 246);
+}*/
+
+
+.card {
+  background: #fff;
+  min-height: 50px;
+  box-shadow: none;
+  position: relative;
+  margin-bottom: 10px;
+  transition: .5s;
+  border: 1px solid #f2f2f2;
+  border-radius: 0;
+  padding: 10px;
+  box-shadow: 0 1px 5px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12), 0 5px 5px -3px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+.card:hover {
+  box-shadow: 0 1px 5px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12), 0 5px 5px -3px rgba(0, 0, 0, 0.2);
+  transition: all 150ms linear;
+}
+
+.block-header {
+  margin-bottom: 0px;
+  padding: 0 0
+}
+
+.block-header h2 {
+  margin: 0 !important;
+  color: #737171 !important;
+  font-weight: 600;
+  font-size: 20px
+}
+.nav-left-cus a{
+  color: rgba(255, 255, 255, 0.5);
+  margin-right: 2rem;
+}

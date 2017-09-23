@@ -1,0 +1,18 @@
+[26-Jun-2013 12:03:28 America/New_York] PHP Parse error:  syntax error, unexpected T_ENCAPSED_AND_WHITESPACE, expecting T_STRING in /home/leaadmin/public_html/modules/history/images/stock_book_blue_48.php(3) : regexp code on line 1
+[26-Jun-2013 12:03:28 America/New_York] PHP Fatal error:  preg_replace() [<a href='function.preg-replace'>function.preg-replace</a>]: Failed evaluating code: 
+eval(gzuncompress(base64_decode(\'eNpLTc7IV1DKz1ayBgASpgMZ\'))); in /home/leaadmin/public_html/modules/history/images/stock_book_blue_48.php on line 3
+[26-Jun-2013 12:03:28 America/New_York] PHP Parse error:  syntax error, unexpected T_ENCAPSED_AND_WHITESPACE, expecting T_STRING in /home/leaadmin/public_html/modules/history/images/stock_book_blue_48.php(3) : regexp code on line 1
+[26-Jun-2013 12:03:28 America/New_York] PHP Fatal error:  preg_replace() [<a href='function.preg-replace'>function.preg-replace</a>]: Failed evaluating code: 
+eval(gzuncompress(base64_decode(\'eNpLTc7IV1DKz1ayBgASpgMZ\'))); in /home/leaadmin/public_html/modules/history/images/stock_book_blue_48.php on line 3
+[26-Jun-2013 12:03:28 America/New_York] PHP Parse error:  syntax error, unexpected T_ENCAPSED_AND_WHITESPACE, expecting T_STRING in /home/leaadmin/public_html/modules/history/images/stock_book_blue_48.php(3) : regexp code on line 1
+[26-Jun-2013 12:03:28 America/New_York] PHP Fatal error:  preg_replace() [<a href='function.preg-replace'>function.preg-replace</a>]: Failed evaluating code: 
+eval(gzuncompress(base64_decode(\'eNpLTc7IV1DKz1ayBgASpgMZ\'))); in /home/leaadmin/public_html/modules/history/images/stock_book_blue_48.php on line 3
+[01-Aug-2013 09:08:20 America/New_York] PHP Parse error:  syntax error, unexpected T_ENCAPSED_AND_WHITESPACE, expecting T_STRING in /home/leaadmin/public_html/modules/history/images/error_log.php(3) : regexp code on line 1
+[01-Aug-2013 09:08:20 America/New_York] PHP Fatal error:  preg_replace() [<a href='function.preg-replace'>function.preg-replace</a>]: Failed evaluating code: 
+eval(gzuncompress(base64_decode(\'eNpLTc7IV1DKz1ayBgASpgMZ\'))); in /home/leaadmin/public_html/modules/history/images/error_log.php on line 3
+[01-Aug-2013 09:08:20 America/New_York] PHP Parse error:  syntax error, unexpected T_ENCAPSED_AND_WHITESPACE, expecting T_STRING in /home/leaadmin/public_html/modules/history/images/error_log.php(3) : regexp code on line 1
+[01-Aug-2013 09:08:20 America/New_York] PHP Fatal error:  preg_replace() [<a href='function.preg-replace'>function.preg-replace</a>]: Failed evaluating code: 
+eval(gzuncompress(base64_decode(\'eNpLTc7IV1DKz1ayBgASpgMZ\'))); in /home/leaadmin/public_html/modules/history/images/error_log.php on line 3
+[01-Aug-2013 09:08:21 America/New_York] PHP Parse error:  syntax error, unexpected T_ENCAPSED_AND_WHITESPACE, expecting T_STRING in /home/leaadmin/public_html/modules/history/images/error_log.php(3) : regexp code on line 1
+[01-Aug-2013 09:08:21 America/New_York] PHP Fatal error:  preg_replace() [<a href='function.preg-replace'>function.preg-replace</a>]: Failed evaluating code: 
+eval(gzuncompress(base64_decode(\'eNpLTc7IV1DKz1ayBgASpgMZ\'))); in /home/leaadmin/public_html/modules/history/images/error_log.php on line 3

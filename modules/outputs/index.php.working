@@ -1,0 +1,634 @@
+<?php
+global $AppUI,$m;
+buildTableDataDemand();
+if($_POST['mode']=='save'){
+	require_once $AppUI->getFileInModule($m, 'patch.func');
+	exportResultExcel();
+	return ;
+}elseif($_POST['faction'] == 'export'){
+		$file=ExIm::makeFile((int)$_POST['qsid'],$_POST['stype']);
+		if(count($file) == 2 && strlen($file[1]) > 1 ){
+			printForSave($file[1],'application/octet-stream',$file[0].'.qbn');
+			return ;
+		}
+}elseif ($_POST['mode'] == "importquery" && count($_FILES) == 1){
+	$res='fail';
+		if($_FILES['qfile']['size'] < 100000 && $_FILES['qfile']['error'] == 0){
+			$res=ExIm::pickFile($_FILES['qfile']['tmp_name']);
+			if($res !== false){
+				$res= json_encode($res);
+			}else{
+				$res='fail';
+			}
+		}
+		echo $res;
+		return ;
+}elseif($_POST ['mode'] == "query") {
+	require_once $AppUI->getFileInModule($m, 'patch.func');
+	proceedQueryStuff();
+	return ;
+
+}else if ($_POST ['mode'] == 'patch') {
+	require_once $AppUI->getFileInModule($m, 'patch.func');
+	proceedPatch();
+	return ;
+}elseif ($_GET['mode'] == 'rowkill'){
+	$rid=(int)$_GET['row'];
+	if($rid >=0 && is_numeric($_GET['row'])){
+		//$fsaved=$_SESSION['table']['body'];
+		$fsaved=getFileBody('body');
+		if(count($fsaved) > 0){
+			$ucase=unserialize($fsaved[$rid]);
+			$sql='delete from '.$titles[$ucase['table']]['db'].' where '.$titles[$ucase['table']]['did'].' ="'.$ucase['id'].'" limit 1';
+			$res=mysql_query($sql);
+			if(mysql_affected_rows()){
+				//unset($_SESSION['table']['body'][$rid]);
+				$fsaved[$rid]=serialize('');
+				saveFileBody($fsaved);
+				echo "ok";
+			}else{
+				echo "fail";
+			}
+		}
+	}
+	return ;
+}
+
+
+global $titles;
+?>
+<link rel="stylesheet" type="text/css" href="/modules/outputs/jquery-ui.css" />
+<?php
+$l='""';
+$f='""';
+$h='""';
+$u='""';
+$s='""';
+$r='""';
+$p='""';
+$preFils=array();
+$y=0;
+$staterd=0;
+$html='';
+$rhtml='';
+$thtml='';
+$rl='';
+$bigtar=array();
+$rqid=0;
+$btlen=0;
+$ftabsel=0;
+$sels=array();
+$mode='simple';
+$clients=array();
+$bigtar_keys=array();
+$lcrows=0;
+$uamode=false;
+$thisCenter=FALSE;
+$statusHistory=false;
+$vis_mode= '';
+$moduleScripts[]="./modules/outputs/stats.js";
+$moduleScripts[]="./modules/outputs/reporter.js";
+$moduleScripts[]="./modules/outputs/jquery-ui.min.js";
+$moduleScripts[]="./modules/outputs/jquery.cleditor.min.js";
+$js_comm='false';
+
+$tpl = new Templater($baseDir. "/modules/outputs/outputs.main.tpl");
+
+if ($_SERVER ['CONTENT_LENGTH'] > 0 && count ( $_POST ) > 0) {
+	$lpost = array ();
+	$starter=0;
+	$ender=0;
+	$show_start='';
+	$show_end='';
+	$final = array();
+	require_once('result.func.php');
+	$nfei= new evolver();
+
+	$tab_src='';
+
+	resultBuilder('out');
+	$ftabsel=2;
+	$mode='result';
+	if($_POST['stype'] === 'Stats' || $_POST['stype'] === 'Chart'){
+		$ftabsel=3;
+		$js_comm='1';
+		$qsid=(int)mysql_real_escape_string($_POST['qsid']);
+		$q = new DBQuery();
+		$q->addTable('stat_queries');
+		$q->addWhere('id='.$qsid);
+		$sdb=$q->loadList();
+		$sdb=$sdb[0];
+		$turns=unserialize($sdb['turns']);
+		$svals=array(
+			"rows" => unserialize(stripslashes($sdb['rows'])),
+			'cols' => unserialize(stripslashes($sdb['cols'])),
+			'range'=> unserialize(stripslashes($sdb['ranges'])),
+			'sunqs'=> (int)$turns['sunqs'],
+			'stots-rows'=> (int)$turns['stots_rows'],
+			'stots-cols'=> (int)$turns['stots_cols'],
+			'sperc-rows'=> (int)$turns['sperc_rows'],
+			'sperc-cols'=> (int)$turns['sperc_cols'],
+			'delta-count'=> (int)$turns['delta_count'],
+			'records'	=>	(int)$turns['records'],
+			'sblanks'=> (int)$turns['sblanks'],
+			'list' => array(),
+		);
+		$do_show_result=(int)$sdb['show_result'];
+		unset($turns);
+		//$bar=getFileBody('stat');
+
+		$trows=count($svals['rows']);
+		$tcols=count($svals['cols']);
+
+		if($do_show_result === 0){
+			require_once('stater.class.php');
+			$row_levels=array();
+			$firstr=$svals['id'];
+			$bar=getFileBody('stat');
+			$turns=unserialize($sdb['turns']);
+			if(count($bigtar_keys) > 0){
+				$ulines=$bigtar_keys;//array_keys($bigtar);
+			}else{
+				/*for($i=0;$i < count($clients);$i++ ) 	$ulines[]=$i;*/
+				$ulines=range(0,count($clients));
+			}
+			$svals['list']=$ulines;
+
+			$thtml = makeStat($bar,$svals);
+
+			DiskStatCache($thtml);
+			$rhtml='';
+			unset($bigtar,$clients,$bigtar_keys,$l,$r,$u,$sels,$f);
+			$y=0;
+		}
+		if($_POST['stype'] === 'Chart'){
+			$js_comm=2;
+			$gdata=unserialize($sdb['chart_data']);
+			$dset=json_decode($gdata['dset'],true);
+			if(isset($dset['col_use'])){
+				if($dset['col_use'] != 'xcall'){
+					foreach ($dset['colb'] as $cv) {
+						if($cv[0] == $dset['col_use']){
+							$use_col=$cv[1];
+						}
+					}
+				}else{
+					$use_col='xcall';
+				}
+			}else{
+				$use_col=false;
+			}
+			if(isset($dset['row_use'])){
+				foreach ($dset['rowb'] as $rv) {
+					if($rv[0] == $dset['row_use']){
+						$use_row=$rv[1];
+					}
+				}
+			}else{
+				$use_row=false;
+			}
+			$chartDerectives=array(
+				'mode'=>$gdata['cmode'],
+				'pie_row'=>(isset($gdata['urow']['uvrow']) ? $gdata['urow']['uvrow'] : false),
+				'col_use'=>$use_col,
+				'row_use'=>$use_row
+			);
+		}
+	}
+}
+$htmlpre = '<form method="POST" action="?m=outputs" id="sendAll" name="xform" onsubmit="return false;">
+	<input type="hidden" name="stype">
+	<input type="hidden" name="pmode">
+	<input type="hidden" name="faction">';
+$mi = 0;
+$block_count = 1;
+$tchex=0;
+$auto_open=array();
+ksort ( $fielder );
+$html=buildForms(&$fielder);
+unset($fielder);
+$lasttext='';
+$alltext='';
+$firsttext='';
+$curcentext=($thisCenter !== FALSE ? 'checked' : '');
+$stahistext=($statusHistory !== FALSE ? 'checked' : '');
+if ($vis_mode == 'last') {
+	$lasttext = 'checked';
+} elseif($vis_mode == 'first') {
+	$firsttext = 'checked';
+}else{
+	$alltext='checked';
+}
+
+$df = $AppUI->getPref('SHDATEFORMAT');
+if ($starter != '' && !is_null($starter)) {
+	$tdd = new CDate($starter);
+	$show_start = $tdd->format($df);
+	unset($tdd);
+} else {
+	$starter = date ( "Ymd" );
+}
+if ($ender != '' && !is_null($ender)) {
+	$tdd= new CDate($ender);
+	$show_end = $tdd->format($df);
+	unset($tdd);
+} else {
+	$ender = date ( "Ymd" );
+}
+
+if($lvder != '' && !is_null($lvder)){
+	$tdd= new CDate($lvder);
+	$show_lvd = $tdd->format($df);
+	unset($tdd);
+}else{
+	$show_lvd='';
+}
+
+
+
+$queriez=array();
+$q= new DBQuery();
+$q->addTable("queries");
+$q->addWhere('visible="1"');
+$q->addOrder("created desc");
+$queriez['Table'] = $q->loadList();
+$q->clearQuery();
+$q->addTable('stat_queries','sqs');
+$q->addOrder("created desc");
+$q->addOrder('qmode asc');
+$queriez['Stats']=$q->loadList();
+$q->clearQuery();
+$q->addQuery('id,title as qname, replace(start_date,"-","") as sdate, replace(end_date,"-","") as edate');
+$q->addTable('reports');
+$queriez['Report']=$q->loadList();
+unset($q);
+flush_buffers();
+//<label><input type=checkbox name="extra[]" '.addChecks($lpost,'extra',"location").'>Location</label>
+$html = $htmlpre.buildSelectOptions().$html.'
+<br><br>
+<div style="width: 1000px;">
+	<input type="button" value="Go" onclick="getData()" class="button">&nbsp;&nbsp;&nbsp;&nbsp;
+	<input type="button" value="Clear Forms" onclick="clearData()" id="fcleaner" class="button" '. (($tchex > 0) ? '': 'disabled="disabled"').'>
+</div>
+</form>';
+cleanALoc(&$lpost);
+//'.($ftabsel == 2 ? 'class="ui-tabs-selected"' : '').'
+echo '
+<DIV id="tabs" class="bigtab">
+<UL class="topnav">
+<LI><A href="#tabs-1"><span>Queries</span></A></LI>
+<LI><A href="#tabs-2"><span>Forms</span></A></LI>
+<LI><A href="#tabs-3"><span>Tables</span></A></LI>
+<LI class="tabs-disabled"><A href="#tabs-4"><span>Stats</span></A></LI>
+<LI><A href="#tabs-5"><span>Report</span></A></LI>
+</ul>
+<div id="tabs-1" class="mtab">
+	<p>
+		<span onclick="$j(\'#importbox\').toggle();" class="fhref flink">Import query</span><span class="offwall msgs" id="msg_place"></span>
+		<div id="importbox" class="myimporter">
+			<form name="upq" action="/?m=outputs&suppressHeaders=1" enctype="multipart/form-data" method="POST" onsubmit="return AIM.submit(this, {\'onStart\' : startCallback, \'onComplete\' : qurer.extractRow})">
+				<input type="file" name="qfile" id="fultra" data-ext="qbn">
+				<input type="submit" value="Import query" class="button" disabled="disabled" >
+				<input type="hidden" name="mode" value="importquery">
+			</form>
+		</div>
+		<table cellspacing="1" cellpadding="2" border="0" class="tbl tablesorter moretable" id="qtable">
+		<thead>
+		<tr><th class="phead">&nbsp;</th><th class="phead">Name</th><th class="phead">Type</th><th class="phead">Description</th><th class="phead">Start Date</th><th class="phead">End Date</th><th class="phead">&nbsp;</th><th class="phead">&nbsp;</th>
+		</tr></thead>';
+$trid=0;
+$sr='';
+$qsr='';
+foreach ($queriez as $pname => $part) {
+	foreach ($part as $row) {
+		$edClass='qeditor';
+		if($pname == 'Stats'){
+			$row['show_result'] == 1 ? $sr ='true' : $sr='false';
+			if($row['qmode'] === 'graph'){
+				//$edClass='qreditor';
+				$pnameOut='Chart';
+			}else{
+				$pnameOut='Stats';
+			}
+		}elseif($pname === 'Report'){
+			$edClass='qreditor';
+			$pnameOut='Report';
+		}else{
+			$pnameOut='Table';
+		}
+		$qsr.='<tr id="qsr_'.$trid.'" data-showr="'.$sr.'">
+		<td title="Edit" align="center"><div class="'.$edClass.'" data-id="'.$row['id'].'"></td>';
+		$st=trimView($row['qname']);
+		$qsr.='<td data-text="'.$st['orig'].'" '.($st['show'] === true ? ' class="moreview"' : '').'><span class="fhref flink" onclick="qurer.run(\''.$trid.'\',\'run\');">'.$st['str'].'</span></td>
+		<td align="center">'.$pnameOut.'</td>';
+		$st=trimView($row['qdesc']);
+		$qsr.='<td data-text="'.$st['orig'].'"'.($st['show'] === true ? ' class="moreview"' : '').' >'.$st['str'].'</td>';
+		$sdateClean=viewDate($row['sdate']);
+		$edateClean=viewDate($row['edate']);
+		//if($pname == "Table"){
+			$qsr.='
+			<td >
+				<div class="tdw">
+				<div class="stdw" fsort="'.$sdateClean[1] .'">'.$sdateClean[0].'</div>
+				<a href="#" onclick="popTCalendar(\'start_'.$trid.'\')" class="calpic">
+					<img width="16" height="16" border="0" alt="Calendar" src="/images/calendar.png">
+				</a>
+				</div>
+				<input type="hidden" id="start_'.$trid.'" value="'.$row['sdate'].'">
+			</td>
+			<td >
+				<div class="tdw">
+				<div class="stdw" fsort="'.$edateClean[1] .'">'.$edateClean[0].'</div>
+				<a href="#" onclick="popTCalendar(\'end_'.$trid.'\')" class="calpic">
+					<img width="16" height="16" border="0" alt="Calendar" src="/images/calendar.png">
+				</a>
+				</div>
+				<input type="hidden" id="end_'.$trid.'" value="'.$row['edate'].'">
+			</td>';
+		/*}else{
+			$qsr.='<td >&nbsp;</td><td >&nbsp;</td>';
+		}*/
+		$qsr.='
+		<!-- <td ><span title="Run" class="fhref"  ><img src="/images/run1.png" weight=22 height=22 border=0 alt="Run"></span></td> -->
+		<td align="center"><span title="Delete" class="fhref" onclick="qurer.delq(\''.$trid.'\');" ><img src="/images/delete1.png" weight=16 height=16 border=0 alt="Delete"></span></td>
+		<td align="center"><div title="Export" class="exportq" onclick="qurer.run(\''.$trid.'\',\'export\');" ></div></td>
+		</tr>';
+		$trid++;
+		echo $qsr;
+		unset($qsr);
+	}
+}
+unset($queriez);
+flush_buffers();
+//if(count($bigtar) == 0 &&  count ( $clients ) == 0){
+$lpo=false;
+if($y ==0 ){
+	$rhtml='<span class="note">No data to display</span>';
+	$lpo=true;
+}
+flush_buffers();
+echo '</table></p></div>';
+echo '<div id="tabs-2" class="mtab"><p>',$html,'</p></div>';
+unset($html);
+flush_buffers();
+ob_end_clean();
+//echo '<div id="tabs-3" class="mtab"><p>',$rhtml,'</p></div>';
+echo '</span></span><div id="tabs-3" class="mtab"><p>';
+//,$rhtml,
+if($lpo === true){
+	echo $rhtml ;
+}else{
+	diskFile::printOut();
+}
+echo '</p></div>';
+unset($rhtml);
+//flush_buffers();
+//<!-- <div class="fbutton sec_type sec_table" title="Custom section"></div> -->
+echo '<div id="tabs-5" class="mtab">
+<div style="width:1300px;">
+<div id="reportMSG" class="msgs"></div>
+
+<div style="float:left; width: 1280px;">
+<ul id="pbay" class="moretable">
+ </ul>
+ </div>
+ <div class="tpbag">
+ <div id="reportBag">
+ <div id="load_ps" class="chrt_load"></div>
+ <form id="datareport">
+ <p>Name of report &nbsp;<input type="text" name="rep_name" class="text" id="rep_name" size="50">
+    <span style="width: 480px;"> Start&nbsp;'.drawDateCalendar('rep_start','',false,'id="rep_start"',false,10).'&nbsp;&nbsp;
+        End&nbsp;'.drawDateCalendar('rep_end','',false,'id="rep_end"',false,10).'&nbsp; Second Column&nbsp;<input type="checkbox" id="scol_view">
+    </span>
+ </p>
+ <table id="reportHouse" border=0 width="95%">
+    <tbody>
+    <tr>
+	    <td style="width: 50%; vertical-align: top;">
+			 <input type="button" class="text uniClone" onclick="reporter.newSectionPre(this)" value="Add Section" style="float:left;">
+			 <div style="width:0px;height: 30px;overflow: hidden;" id="candidset">
+			    <div class="fbutton sec_type sec_text" title="Text section"></div>
+				<div class="fbutton sec_type sec_chart" title="Chart or statistic table section"></div>
+			 </div>
+			 <br>
+			 <table class="breport rowslist moretable">
+			    <tbody></tbody>
+			 </table>
+		</td>
+		<td id="second-column" style="display:none; width: 50%; vertical-align: top;">
+			 <input type="button" class="text uniClone" onclick="reporter.newSectionPre(this)" value="Add Section" style="float:left;">
+			 <div style="width:0px;height: 30px;overflow: hidden;" id="candidset1">
+                <div class="fbutton sec_type sec_text" title="Text section"></div>
+                <div class="fbutton sec_type sec_chart" title="Chart or statistic table section"></div>
+             </div>
+			 <br>
+			 <table class="breport rowslist moretable">
+			    <tbody></tbody>
+			 </table>
+		</td>
+	</tr>
+	</tbody>
+</table>
+ <input type="button" class="text" value="Save" onclick="reporter.saveReport(this,false)">
+ <input type="button" class="text" value="Review" onclick="reporter.saveReport(this,true)">
+ <div id="rep_ps" class="chrt_load"></div>
+ </form>
+ </div>
+ </div>
+ </div>
+</div>';
+echo '<div id="tabs-4" class="mtab">
+<p>
+		<div id="shome">
+			<div class="bbox">
+				<div id="fsrc" class="dgetter wider">
+					<span class="areaName" style="float:left;">Fields</span>
+					<ul id="box-home" style="list-style: none; float: left;"></ul>
+				</div>
+			</div>
+			<div class="bbox">
+				<div id="fsrcr" class="dgetter"><span class="areaName">Rows</span><ul id="rbox" class="accepter rcgetter"></ul></div>
+				<div class="box22">
+					<div id="fsrcc" class="dgetter wsdiv"><span class="areaName">Columns</span><ul id="cbox" class="accepter rcgetter wsels"></ul></div>
+					<div class="bigger">
+						<span class="areaName">Data</span>
+						<div id="gbox" class="gsmall"></div>
+					</div>
+				</div>
+				<div id="bbbox">
+					<table border=0 cellpadding=2 cellspacing=1>
+						<tr>
+							<td><label for="sblanks">Blanks</label></td><td><input type="checkbox" id="sblanks" ></td>
+							<td><label for="sunqs">Unique</label></td><td><input type="checkbox" id="sunqs" ></td>
+						</tr>
+						<tr>
+							<td>Row&nbsp;&nbsp;<label for="stots-rows">Subtotals</label></td><td><input type="checkbox" id="stots-rows" ></td>
+							<td><label for="sperc-rows">Percent</label></td><td><input type="checkbox" id="sperc-rows" ></td>
+						</tr>
+						<tr>
+							<td>Col&nbsp;&nbsp;&nbsp;<label for="stots-cols">Subtotals</label></td><td><input type="checkbox" id="stots-cols" ></td>
+							<td><label for="sperc-cols">Percent</label></td><td><input type="checkbox" id="sperc-cols" ></td>
+						</tr>
+						<tr>
+							<td colspan="2">
+								<label for="delta-count">Count CHANGE
+									<input type="checkbox" id="delta-count" value="1">
+								</label>
+							</td>
+							<td colspan="2">
+								<label for="records">Records
+									<input type="checkbox" id="records" value="1">
+								</label>
+							</td>
+						</tr>
+						<tr id="colgroupz">
+							<td>Fields&nbsp;&nbsp;<label for="retile">Tile</label></td><td><input type="radio" value="merge" name="wayofg" id="retile" ></td>
+							<td><label for="regrp">Regroup</label></td><td><input type="radio" value="summ" name="wayofg" checked="checked" id="regrp"></td>
+						</tr>
+					</table>
+				<ul class="statcolx">
+					<li><input type="button" class="button stab_let" value="Go" disabled="disabled" onclick="stater.run();" id="launchbut">&nbsp;&nbsp;&nbsp;</li>
+					<li><input type="button" class="button stab_let purestat" value="Pop Out" onclick="popTable(\'tthome\');" disabled="disabled" ></li>
+					<li><input type="submit" class="button stab_let purestat" value="Export " disabled="disabled" onclick="document.stsave.submit();"></li>
+					<li><input type="submit" class="button stab_let" value="Save Query" disabled="disabled" onclick="stater.saveDialog();"></li>
+					<li><input type="button" class="button stab_let" value="Clear" onclick="stater.pclean();" id="bclean"></li>
+					<li><input type="button" class="button stab_let" value="Chart" onclick="grapher.start();" id="gr_but"></li>
+					<li>
+					<div id="chart_pref"><div id="dx_kill" onclick="grapher.hideOpts();">X</div>
+					<select id="chart_type" class="text" onchange="grapher.pieOpts()">
+						<option value="bars">Bars</option>
+						<option value="pbars">Percent Bars</option>
+						<option value="sbars">Stocked Bars</option>
+						<option value="lines">Lines</option>
+						<option value="pie">Pie</option>
+					</select><br>
+					<span style="width: 100%;float:left;"><input type="button" value="Show" class="text" onclick="grapher.build()" >
+					<div class="chrt_load"></div></span>
+				</div></li>
+
+				</ul>
+
+
+					<div id="load_progress"></div>
+				</div>
+			</div>
+
+			</form>
+		</div><br>
+		<div id="stat_tab_holder" title="Pick whole Statistic table" data-rep_item="stat" class="ianchor"></div>
+		<span id="tthome">
+		'.$thtml.'
+		</span>
+		<div id="graph_home"></div>
+	</p>
+</div>
+</div>
+<form method="post" action="/?m=outputs&suppressHeaders=1&a=calc" style="width: 50px;float:left;" name="stsave">
+<input type="hidden" name="mode" value="save">
+</form>';
+
+if($thtml !=''){
+	$grinit=true;
+}else{
+	$grinit=false;
+}
+unset($html,$thtml,$rhtml);
+flush_buffers();
+?>
+<div id="debox" title="Edit saved query">Name:&nbsp;<input type='text'
+	style='border: 1px solid black; width: 150px;' id='qname' class='qnsvd'
+	value=''><br>
+Description: <textarea cols='34' rows='2' id='qdesc' class='qdsvd'></textarea><br>
+<input type='hidden' id='quid' value=''> <label><input type="checkbox"
+	id="brest" style="display: none;">Build result table</label><br>
+<table class="dates">
+	<tr>
+		<td>Start date</td>
+		<td><input class="datepicker" id="qstart_date" name="beginner"
+			disabled="disabled" value=""> <a href="#"
+			onclick="popRCalendar('qstart')"> <img src="/images/calendar.png"
+			width="16" height="16" alt="Calendar" border="0"> </a> <input
+			type="hidden" class="datepicker" name="filter_qstart" value="" /></td>
+	</tr>
+	<tr>
+		<td>End date</td>
+		<td><input class="datepicker" id="qend_date" name="qend_date" disabled="disabled" value="">
+			<a href="#" onclick="popRCalendar('qend');">
+				<img src="/images/calendar.png" width="16" height="16" alt="Calendar" border="0">
+			</a>
+			<input type="hidden" class="datepicker" name="filter_qend" value="" /></td>
+	</tr>
+</table>
+<input type='button' class='button' value='Save' onclick='qurer.editQuery();'> &nbsp;&nbsp;
+<input type='button' class='button' id='dbox-kill' value='Cancel' onclick='qurer.closeEdit();'>
+<div id='slogo' class='saving'></div>
+</div>
+
+<div id='stip'></div>
+<div id='mbox'></div>
+<div id="filbox" style="position: absolute; display: none;"
+	class="filter_box box1">
+<div id="menu">
+<ul id="toplevel">
+	<li>
+		<div class="sib asci"></div>
+		<span class="fhref" onclick="gpgr.ifsort('desc');">Sort Asc</span>
+	</li>
+	<li>
+		<div class="sib desci"></div>
+		<span class="fhref" onclick="gpgr.ifsort('asc');">Sort Desc</span>
+	</li>
+	<li>
+		<div class="sib coli"></div>
+		<span class="fhref" onclick="filmter.lects(this);">Values</span>
+	</li>
+	<li id="lbl">
+		<span class="fillink" onclick="filmter.showfils(this);">Filters</span>
+		<div class="sib"><input type="checkbox" id="fil_on" data-area="" value="1" onchange="filmter.checkFilter(this);" disabled="disabled" class="superbox"></div>
+	</li>
+</ul>
+</div>
+</div>
+<div id="fil_list" class="filter_box box2"></div>
+<div id="filin_list" class="filter_box box3"></div>
+<div id="fil_stats" class="filter_box box4"></div>
+<div id="shadow" style="display: none"></div>
+<div id="selected-result"></div>
+<div id="rep_note"></div>
+<div style="display: none;" id="secadder">
+	<input type="button" class="text uniClone" onclick="reporter.newSectionPre(this,true)" value="Add Section" style="float:left;">
+</div>
+<script type="text/javascript">
+ 	var chartMode=false,img=document.createElement("img");img.src="modules/outputs/images/icns.png";img=document.createElement("img");img.src="modules/outputs/tab.png";img=document.createElement("img");img.src="images/icons/bg.gif";img=document.createElement("img");img.src="images/icons/desc.gif";img=document.createElement("img");img.src="images/icons/asc.gif";img=null;
+	chex=<?php
+	echo ($mi - 1);
+	?>;
+	rrr=<?php echo $y;?>;today=<?php echo date("Ymd");?>;fakes=<?php echo json_encode($f);?>;btr=<?php echo json_encode($l); ?>;
+	heads=<?php echo json_encode($h); ?>;lets=<?php echo json_encode($u); ?>;selects=<?php echo json_encode($sels); ?>;tgt=<?php echo $ftabsel;?>;
+	aopen=<?php echo json_encode($auto_open);?>;st_do=<?php echo $staterd;?>;
+	rqid=<?php echo $rqid;?>;refs=<?php echo json_encode($r);?>;plus=<?php echo json_encode($p);?>;
+	rels=<?php echo json_encode($rl);?>;pf=<?php echo json_encode($preFils);?>;
+	<?php echo 'var multistart='.$js_comm.';'; ?>
+	function up(){
+	<?php
+	if(strlen($thtml) > 0){
+		echo '$j("#tthome").show();';
+	}
+	if($_POST['stype'] ===  'Stats' || $_POST['stype'] ===  'Chart'){
+		unset($svals['list']);
+		$svals['rbox']=$svals['rows'];
+		unset($svals['rows']);
+		$svals['cbox']=$svals['cols'];
+		unset($svals['cols']);
+		echo 'fstatp='.json_encode($svals).';';
+	}
+	if(is_array($chartDerectives) && count($chartDerectives) > 0){
+		echo 'chartMode='.json_encode($chartDerectives).';';
+	}
+	?>
+	prePage('out');
+	tabPrepare();
+
+	}
+	window.onload=up;
+</script>

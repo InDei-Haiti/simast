@@ -1,0 +1,85 @@
+	 <style>
+<!--
+		
+-->
+		#loader{
+			 position: fixed;
+			  left: 0px;
+			  top: 0px;
+			  width: 100%;
+			  height: 100%;
+			  z-index: 9999;
+			  opacity: 0.4;
+			  display:none;
+			  background: url('/modules/outputs/images/loader.gif') 50% 50% no-repeat rgb(0,0,0);
+			}
+	</style>
+	 <script>
+	 	var choosingsheet = [];
+	 	choosingsheet.push(0);
+	 </script>
+	 <form action="/?m=wizard&a=form_import&mode=write&ucs=@@usagecase@@&idfw=@@IDFW@@" method="post" name="finishim">
+            <input type="hidden" name="dataset" value="@@dataset@@">
+            <input type="hidden" name="instance" value="@@instance@@">
+            <input type="hidden" name="form" value="@@form@@">
+            <input type="hidden" name="vindent" value="@@vindent@@">
+        
+    <table border="0" class="std" cellpadding="6">
+        <tr>
+            <td style="text-align: left;">
+                <b>Form:</b> @@FORM_NAME@@
+            </td>
+            <td style="text-align: left;">
+                <b>Data File:</b> @@FILENAME@@
+            </td>
+        </tr>
+        <tr>
+            <td>Vertical indent for column names</td>
+            <td>
+                <input type="text" class="text" value="@@vindent@@" id="vinter">
+                <button class="button_link" id="bcolup">Update columns</button>
+            </td>
+        </tr>
+        <tr>
+       	@@nonOTMS@@
+        @@OTMS@@
+        @@CHILDFORM@@
+        <tr>
+            <td style="text-align: left;"><input type="button" class="button_link" value="Cancel" onclick="document.location.href='/?m=data'"></td>
+            <td style="text-align: right;"><input type="button" class="button_link" value="Import" onclick="valid8Import()"></td>
+        </tr>
+        
+    </table>
+    <div id="loader"></div>
+    </form>
+    <script type="text/javascript">
+		var rows = @@ROWS@@;
+		
+		function populateSelect(select1,select2,val){
+			if(val!='-1'){
+				$first = $("#"+select1+" option:first");
+				$('#'+select1).empty().append($first);
+				$.each(rows[val],function(key, value) {
+					$('#'+select1).append('<option value=' + key + '>' + value + '</option>');
+				});
+				$first = $("."+select2+" option:first");
+				$('.'+select2).empty().append($first);
+				console.log(select2);
+				//.hasClass( "foo" )if()
+				
+				$.each($('.'+select2),function() {
+					$me = $(this);
+					/*if($me.hasClass("child")){
+						$me.append('<option value=' + key + '>' + value + '</option>');
+					}*/
+					$.each(rows[val],function(key, value) {
+						$me.append('<option value=' + key + '>' + value + '</option>');
+					});
+				});
+				
+				
+			}
+			$(".chosen").trigger("liszt:updated");
+		}
+		
+	</script>

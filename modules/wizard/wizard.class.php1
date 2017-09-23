@@ -1,0 +1,1253 @@
+<?php
+require_once($AppUI->getSystemClass("genericTable"));
+class Wizard {
+
+	private $mandatoryCode = '<div class="fcontrol"></div>';
+
+	private $rowDataPrefix = '<li>';
+	private $rowDataAppix = '</li>';
+	private $rowDataComma = '';
+
+	private $mode;
+	public $formName;
+	public $fields;
+	private $digest;
+	public $form_prefix = "wform_";
+	public $formSubs;
+	private $tableName;
+	private $refTableName;
+	private $tableID;
+
+	private $rowRef = array();
+	private $icount = 0;
+	private $jsActions = array();
+	private $client_id;
+	private $task_id;
+	private $project_id;
+	private $alltask;
+	private $multiplicity;
+	private $entryId;
+	private $radioID = 0;
+	private $textRowId = 0;
+	private $valid;
+	private $vrow = 0;
+	private $forregistration;
+	public $parent;
+	
+
+	private $rels = array();
+	public $registry;
+	public $title;
+
+	private $texts = array('numeric' => array(), 'positive' => array(), 'email' => array(), 'range' => array());
+
+	/**
+	 * Class construction for view/edit constructed form
+	 * @param string $mode
+	 * @param int $client_id
+	 * @param int $rid
+	 */
+	function __construct($mode = 'edit', $task_id = 0, $client_id = 0, $rid = 0) {
+		$this->mode = $mode;
+		$this->task_id = $task_id;
+		$this->client_id = $client_id;
+		$this->entryId = (int)$rid;
+	}
+
+	function loadFormInfo($id) {
+
+		$sql = 'select title,fields,parent_id,digest,valid,subs,registry,task_id,multiplicity,forregistration from form_master where id="' . $id . '" limit 1';
+		$res = mysql_query($sql);
+		if ($res) {
+			$fdata = mysql_fetch_object($res);
+			$this->formName = $fdata->title;
+			$this->digest = explode(',', $fdata->digest);
+			$this->parent = $fdata->parent_id;
+			$this->fields = unserialize(stripslashes(gzuncompress($fdata->fields)));
+			$this->valid = $fdata->valid;
+			$this->formSubs = $fdata->subs;
+			$this->registry = (int)$fdata->registry;
+			$this->multiplicity = (int)$fdata->multiplicity;
+			$this->forregistration = $fdata->forregistration;
+			$this->title = $fdata->title;
+			if($fdata->task_id)
+				$this->task_id = (int)$fdata->task_id;
+		}
+		$this->tableName = $this->form_prefix . $id;
+		$this->refTableName = $this->form_prefix.$this->parent;
+		$this->tableID = $id;
+	}
+	
+	function getDigest(){
+		return $this->digest;
+	}
+		
+	
+	function getTableName(){
+		return $this->tableName;
+	}
+
+	function getDefaultFields($client_id = 0, $dvals = array()) {
+		if ($this->mode !== 'view') {
+			/*$code = $this->rowDataPrefix.' Visit Date '.$this->rowDataComma
+			//.drawDateCalendar('entry_date',printDate($dvals['entry_date']),false,'class="mandat"',false,10,false,'$j(this).trigger("focusout");')
+			.'<input type="hidden" name="client_id" value="'.$this->client_id.'">'
+			.'<input type="hidden" name="id" value="'.$this->entryId.'">'
+			.$this->mandatoryCode
+			.$this->rowDataAppix;
+}else*/
+			$code = '';
+		}
+		return $code;
+	}
+
+	function tableWrap() {
+		$this->rowDataPrefix = '<tr><td align="left">';
+		$this->rowDataComma = '</td><td ' . ($this->mode === 'view' ? " class='hilite' " : '') . ' align="left">';
+		$this->rowDataAppix = '</td></tr>';
+	}
+
+	function outputField($fld_id, $fld, $dvalue, $otm = false, $tabout = false, $prevCols = 1) {
+		$blist = '';
+		if (isset($fld['otm']) && count($fld['subs']) > 0) {
+			$blist = str_replace('<td ', '<td colspan="2"', $this->rowDataPrefix) .
+				'<strong>' . $fld['name'] . '</strong><br>' .
+				'<hr width="500" size="1" align="left">' .
+				$this->rowDataAppix;
+			return $blist;
+		} elseif ($otm === false) {
+			//$blist=$this->rowDataPrefix.++$this->icount.'.'.$fld['name'].$this->rowDataComma;
+			$blist = $this->rowDataPrefix . $fld['vname'] . $fld['name'] . ($tabout === false ? $this->rowDataComma : '</td>');
+		} else {
+			$blist = '<td>';
+		}
+		$this->rowRef[$fld['vid']] = array($fld_id, $dvalue, $fld['type'], $this->vrow);
+
+		if ($fld['type'] === 'note') {
+			$blist = str_replace('<td ', '<td colspan="2"', $this->rowDataPrefix) .
+				'<p>' . $fld['name'] . '</p><br>' .
+				$this->rowDataAppix;
+			return $blist;
+		}
+		$fldClass = 'fcl_' . $this->vrow;
+		$alist = $this->getValues($fld['type'], $fld['sysv'], false, false, $fld['other']);
+		unset($alist['rels']);
+		$code = '';
+		$ftype = $fld['type'];
+		if ($this->mode === 'edit' || $this->mode === 'add') {
+			if (preg_match('/^select/', $ftype)) {
+				$idel = null;
+				//communalSection SysCommunes "name":"Communes" 
+				if($fld['sysv']==='SysCommunalSection'){
+					$idel = 'communalSection';
+				}
+				if($fld['sysv']==='SysCommunes' && $fld['name']==="Communes"){
+					$idel = 'commune';
+				}
+				if($fld['sysv']==='SysDepartment' && $fld['name']==="Departments"){
+					$idel = 'department';
+				}
+				$code = $this->buildSelectList($idel,$alist, $fld, $fld_id, $dvalue, $fldClass);
+				
+				
+			} else {
+				if ($ftype === 'time' || $ftype === 'datetime' ) {
+					$pftype = 'times';
+				} else {
+					$pftype = $ftype;
+				}
+				$obligate = $fld['mand'] === true ? 'mandat' : '';
+				switch ($pftype) {
+					case 'date':
+						//$name,$value,$hidden=false,$tags='',$yearCase = false,$length=20,$hvalue=false,$extraEvent=''
+						$code = drawDateCalendar('fld_' . $fld_id, printDate($dvalue), false, 'class=" ' . $fldClass . ' ' . $obligate . '"', false, 10, false,
+							($obligate != '' ? '$j(this).trigger("focusout");' : ''), $fld['range']['start'], $fld['range']['end']);
+						break;
+					case 'entry_date':
+						//$name,$value,$hidden=false,$tags='',$yearCase = false,$length=20,$hvalue=false,$extraEvent=''
+						$code = drawDateCalendar('entry_date', printDate($dvalue), false, 'class=" ' . $fldClass . ' ' . $obligate . '"', false, 10, false,
+							($obligate != '' ? '$j(this).trigger("focusout");' : ''), $fld['range']['start'], $fld['range']['end'])
+							. '<input type="hidden" name="client_id" value="' . $this->client_id . '">'
+							. '<input type="hidden" name="id" value="' . $this->entryId . '">';
+							
+						break;
+					case 'times':
+						$code = drawTimePicker('fld_' . $fld_id, $dvalue, ($ftype === 'datetime' ? true : false), $obligate);
+						break;
+					case 'radio':
+						if ($tabout === false) {
+							$code = arraySelectRadio($alist, 'fld_' . $fld_id, 'class="' . $fldClass . ' ' . $obligate . '" ', $dvalue);
+						} else {
+							$code = arraySelectRadioMultiCol($alist, 'fld_' . $fld_id, 'class="' . $fldClass . ' ' . $obligate . '" ', $dvalue, false, 1, false);
+						}
+						if ($obligate !== '')
+							$blist = str_replace('</td><td', '</td><td class="radioMandat" ', $blist);
+						++$this->radioID;
+						break;
+					case 'checkbox':
+						if ($tabout === false) {
+							$code = arraySelectCheckbox($alist, 'fld_' . $fld_id . '[]', 'class="' . $fldClass . ' ' . $obligate . '" ', $dvalue);
+						} else {
+							$code = arraySelectCheckboxMultiCol($alist, 'fld_' . $fld_id . '[]', 'class="' . $fldClass . ' ' . $obligate . '" ', $dvalue, false, 1, false);
+						}
+						break;
+					case 'bigText':
+						$code = '<textarea name="fld_' . $fld_id . '" cols=40 rows=5 class="text ' . $fldClass . ' ' . $obligate . '">' . nl2br(stripslashes($dvalue)) . '</textarea>';
+						break;
+					default:
+						if ($pftype != 'plain') {
+							if (is_array($fld['range'])) {
+								$obligate .= "numeric inrange\" data-rng='" . ($fld['range']['start'] . '|' . $fld['range']['end']) . "' ";
+							} else {
+								$obligate .= ' strictz numeric';
+							}
+						}
+						$code = '<input class="text ' . $obligate . ' ' . $fldClass . ' " name="fld_' . $fld_id . '" id="trow_' . $this->textRowId++ . '" size="30" value="' . $dvalue . '" >';
+						break;
+				}
+			}
+		} elseif ($this->mode === 'view') {
+			$code = $this->printFieldValue($fld, $dvalue, $tabout);
+		} elseif ($this->mode === 'print') {
+			$ft = $fld['type'];
+			$code = '<tr><td>' . $fld['vname'] . '&nbsp;</td><td>' . $fld['name'] . '&nbsp;&nbsp;';
+			if (in_array($ft, array('SysCenters', 'SysStaff', 'SysClients', 'plain', 'numeric'))) {
+				$code .= '...............................................';
+			} else {
+				if ($ft === 'date') {
+					$code .= '. . . /. . . /. . . . . .';
+				} elseif ($ft === 'bigText') {
+					$code .= '<br><br><br>';
+				} else {
+					if ($tabout === false) {
+						$arr = $this->getValues($ft, $fld['sysv'], false, true);
+						$code .= join(" - ", $arr);
+					} else {
+						$pres = $this->getValues($ft, $fld['sysv'], false, true);
+						$code = '<tr><td>' . $fld['vname'] . $fld['name'] . '</td><td>' . showValuesMultiCol(array(), count($pres) - 1, array_keys($pres));
+						$code = preg_replace("/<td>$/", "", $code);
+					}
+				}
+			}
+			return $code . '</td></tr>';
+		}
+
+		if ($this->mode !== 'view') {
+			$code .= ($fld['mand'] === true ? $this->mandatoryCode : '');
+
+			if (is_array($fld['child']) && count($fld['child']) > 0) {
+				$tableParentRow = $this->rowRef[$fld['child']['parent']];
+				if ($this->mode === 'add' || ($this->mode === 'edit' && $tableParentRow[1] != $fld['child']['trigger'])) {
+					if ($otm === false) {
+						$this->jsActions[] = 'var tv = $j("#row_' . $fld_id . '").val(); if(tv === undefined ||  tv == "-1" || tv === ""){$j("#row_' . $fld_id . '").hide();}';
+
+						$this->appendTag("#row_" . $tableParentRow[0] . ' :input', '#row_' . $fld_id, $fld['child']['trigger'], ($fld['chain'] === true ? $fld['sysv'] : false));
+					} else { //if($this->registry === 1){
+						$this->jsActions[] = '$j(".fcl_' . ($this->vrow) . '").attr("disabled",true);';
+
+						$this->appendTag(".fcl_" . $tableParentRow[3], '.' . $fldClass, $fld['child']['trigger'], ($fld['chain'] === true ? $fld['sysv'] : false));
+					}
+				}
+			}
+		}
+		++$this->vrow;
+		if ($otm === false) {
+			$blist .= $code . $this->rowDataAppix;
+			$blist = str_replace("<tr>", "<tr id='row_" . $fld_id . "'>", $blist);
+		} else {
+			$blist .= $code . '</td>';
+		}
+		return $blist;
+	}
+
+	function appendTag($tRow, $selector, $tval, $dig) {
+		$found = false;
+		if (!isset($this->rels[$tRow])) {
+			$this->rels[$tRow] = array();
+		}
+		foreach ($this->rels[$tRow] as &$tpart) {
+			if ($tpart[1] == $tval) {
+				$tpart[0] .= ', ' . $selector;
+				$found = true;
+			}
+		}
+		if ($found === false) {
+			$this->rels[$tRow][] = array($selector, $tval, $dig);
+		}
+	}
+
+	function preIndex() {
+		return $this->vrow;
+	}
+
+	function postIndex($i) {
+		$this->vrow = $i;
+	}
+
+	function formJSsupport() {
+		if ($this->mode !== 'view') {
+			if ($this->radioID > 0) {
+				$this->jsActions[] = '$j(".radioMandat").find("input").click(function(e){$j(this).parent().find(".fcontrol").addClass("rowDone");})';
+			}
+			foreach ($this->texts as $type => $fields) {
+				//if(count($fields) > 0){
+				//$pre='$j("'.join(',',$fields).'").';
+				$pre = '$j(".' . $type . '").live("mouseover",function(){$j(this).';
+				switch ($type) {
+					case 'numeric':
+						$this->jsActions[] = $pre . 'liveStrict("format({autofix:true})");});';
+						break;
+					/*case 'range':
+					$this->jsActions[]=$pre.'liveStrict("numeric()");});';
+					break;
+					case 'email':
+					$this->jsActions[]=$pre.'liveStrict("format({type:\"email\"},function(){alert(\"Wrong Email format!\")})")});';
+					break;
+					case 'positive':
+					$this->jsActions[]=$pre.'liveStrict("format({precision: 0,allow_negative:false,autofix:true})");});';
+					break;*/
+				}
+
+				//}
+			}
+			$this->jsActions[] = 'frm.brels(' . json_encode($this->rels) . ');';
+		}
+		return join("\n", $this->jsActions);
+	}
+
+	function buildSelectList($idelement,$arr, $fld, $fld_id, $value, $xtraClass = '') {
+		if ($fld['ftype'] === 'select-multi') {
+			$vals = explode(',', $value);
+			$addName = array('[]', 'multiple="multiple" size="3"');
+		} else {
+			$vals = array($value);
+			//var_dump($vals);
+			$addName = array('', '');
+		}
+		if ($fld['mand'] === true) {
+			$addClass = ' mandat ';
+		} else {
+			$addClass = '';
+		}
+		$change = '';
+		$section = false;
+		if($idelement){
+			if($idelement==='communalSection'){
+				$idelement = ' id="'.$idelement.'"';
+				$section = true;
+			}else if($idelement==='commune'){
+				$idelement = ' id="'.$idelement.'"';
+				$change = ' onChange="loadSection(this.value)"';
+			}else{
+			
+				$idelement = '';
+			}
+		}else{
+				$idelement = '';
+		}
+		//if($fld['sysv']==='SysCommunalSection'){
+		
+		$psel = '<select name="fld_' . $fld_id . $addName[0] . '" class="text ' . $addClass . ' ' . $xtraClass . '" ' . ($addName[1]) .$idelement.$change. '>';
+		foreach ($arr as $id => $ci) {
+			$psel .= "<option value='" . $id . "' " . (in_array($id, $vals) ? 'selected="selected" ' : '') . ">" . $ci . "</option>\n";
+		}
+		$psel .= '</select>';
+		if($section){
+			$psel .= '<input type="hidden" id="hiddensec" value="'.$value.'">';
+		}
+		
+		return $psel;
+	}
+	
+	public static function COUNT($query){
+		$result = db_exec($query);
+		return $result;
+	}
+	
+	public function getValues($type, $psv = false, $pvalue = false, $nosubz = false, $withOther = false, $parentValue = false) {
+		$result = false;
+		switch ($psv) {
+			case 'SysClients':
+				$q = new DBQuery();
+				$q->addTable('clients');
+				$q->addQuery('client_id as id, concat(client_first_name," ",client_last_name) as client_name');
+				$result = arrayMerge(array(-1 => '- Select Client -'), $q->loadHashList());
+				break;
+
+			case 'SysCenters':
+				$q = new DBQuery();
+				$q->addTable('clinics', 'c');
+				$q->addQuery('c.clinic_id as id, c.clinic_name as name');
+				$q->addOrder('c.clinic_name');
+				$result = arrayMerge(array(-1 => '- Select Center -'), $q->loadHashList());
+				break;
+
+			case 'SysStaff':
+				$q = new DBQuery;
+				$q->addTable('contacts', 'con');
+				$q->leftJoin('users', 'u', 'u.user_contact = con.contact_id');
+				$q->addQuery('con.contact_id as id');
+				$q->addQuery('CONCAT_WS(" ",contact_first_name,contact_last_name) as name');
+				$q->addOrder('contact_last_name');
+				$q->addWhere('contact_active="1"');
+				if ($parentValue !== false && (int)$parentValue > 0) {
+					$q->addTable('staff_position', 'sf');
+					$q->addWhere('position_id="' . $parentValue . '"');
+					$q->addWhere("sf.contact_id = con.contact_id");
+				}
+				$result = arrayMerge(array(-1 => '- Select Person -'), $q->loadHashList());
+				
+				break;
+			case 'SysDepartment':
+				$q = new DBQuery();
+				
+				
+				$q->addTable("administration_dep");
+				/*if ($parentValue !== false && (int)$parentValue > 0) {
+					$q->addWhere('clinic_location_clinic_id = "' . (int)$parentValue . '"');
+				}*/
+				$q->addQuery("administration_dep_code, administration_dep_name");
+				$q->order_by = 'administration_dep_name';
+				$result = arrayMerge(array(-1 => '- Select Department -'), $q->loadHashList());
+				if($this->mode==='view'){
+			
+					$q = new DBQuery();
+					$q->addTable("administration_dep");
+					$q->addQuery("administration_dep_code,administration_dep_name");
+					$q->addWhere('administration_dep_code = "' . $pvalue . '"');
+					$result =  $q->loadHashList();
+				}
+				break;
+			case 'SysCommunes':
+				$q = new DBQuery();
+				
+				
+				$q->addTable("administration_com");
+				/*if ($parentValue !== false && (int)$parentValue > 0) {
+					$q->addWhere('clinic_location_clinic_id = "' . (int)$parentValue . '"');
+				}*/
+				$q->addQuery("administration_com_code, administration_com_name");
+				$q->order_by = 'administration_com_name';
+				$result = arrayMerge(array(-1 => '- Select Commun -'), $q->loadHashList());
+				if($this->mode==='view'){
+					$q = new DBQuery();
+					$q->addTable("administration_com");
+					$q->addQuery("administration_com_code,administration_com_name");
+					$q->addWhere('administration_com_code = "' . $pvalue . '"');
+					$result =  $q->loadHashList();
+				}
+				break;
+			
+			case 'SysCommunalSection':
+				/* $q = new DBQuery();
+				$q->addTable("administration_section");
+				/*if ($parentValue !== false && (int)$parentValue > 0) {
+					$q->addWhere('clinic_location_clinic_id = "' . (int)$parentValue . '"');
+				}//
+				$q->addQuery("administration_section_code"); */
+				$q = new DBQuery();
+				$result = arrayMerge(array(-1 => '- Select Communal Section -'), array());
+				if($this->mode==='view'){
+					
+					$q = new DBQuery();
+					$q->addTable("administration_section");
+					$q->addQuery("administration_section_code,administration_section_name");
+					$q->addWhere('administration_section_code = "' . $pvalue . '"');
+					$result =  $q->loadHashList();
+				}
+				break;
+			
+			
+
+			case 'SysPositions':
+				$q = new DBQuery();
+				$q->addTable('positions', 'c');
+				$q->addQuery('id, title');
+				$q->addOrder('title');
+				$result = arrayMerge(array(-1 => '- Select Position -'), $q->loadHashList());
+				break;
+
+			default:
+				if (in_array($type, array('select', 'radio', 'checkbox')) && $psv != '') {
+					$result = dPgetSysValSet($psv);
+					if ($type === 'select') {
+						$result = arrayMerge(array(-1 => '-- Select --'), $result);
+					}
+
+				}
+				break;
+		}
+		
+		if ($pvalue !== false) {
+			$str = array();
+			if (is_array($pvalue) && count($pvalue) > 0) {
+				foreach ($pvalue as $pv) {
+					$str[] = $result[$pv];
+				}
+			} else {
+				$str[] = $result[$pvalue];
+			}
+			$result = join(",", $str);
+		}
+		if ($nosubz === true) {
+			unset($result[-1]);
+		}
+		if ($withOther === true) {
+			$result['other'] = "Other";
+		}
+		
+		return $result;
+	}
+
+	function inFieldValueParse($key, $tf, $value) {
+		if ($key === 'entry_date' || $tf['type'] === 'date') {
+			$value = storeDate($value);
+		} elseif ($tf['type'] === 'select-multi' || $tf['type'] === 'checkbox') {
+			if (is_array($value)) {
+				$value = join(',', $value);
+			}
+		}
+		return mysql_real_escape_string($value);
+	}
+
+	function saveFormData($post_array,$ref,$id = 0) {
+		$q = new DBQuery();
+		$q->addTable($this->tableName);
+		$action = '';
+		//$pclient_id = (int)$_POST['client_id'];
+		if ($id > 0) {
+			$q->addWhere('id="' . (int)$id . '"');
+			$action = 'Update';
+		} else {
+			//$q->addInsert('client_id', $pclient_id);
+			$action = 'Insert';
+			if($ref)
+			$q->{"add" . $action}('ref', $ref);
+		}
+		$afterSave = array();
+		$lsubs = explode(',', $this->formSubs);
+		if(!isset($post_array['entry_date']))
+			$post_array['entry_date'] = "";
+		foreach ($post_array as $key => $value) {
+			if (preg_match("/_subs$/", $key) || preg_match('/^fld_$/', $key)) {
+				$is_otm = 1;
+			} else {
+				$is_otm = 0;
+			}
+			if ((strstr($key, 'fld_') && $is_otm === 0) || $key === 'entry_date') {
+				$tf = $this->findFieldName($key);
+				//if((strstr($key, 'fld_') && $is_otm === 0))
+				$value = trim($value);
+				if($key==='entry_date'){
+					if(!$value)
+						$value = date("Y-m-d");
+				}
+				$value = $this->inFieldValueParse($key, $tf, $value);
+				$q->{"add" . $action}($key, $value);
+				
+			} elseif ($is_otm === 1) {
+				$onetype = array();
+				$values = array();
+				$tf = $this->findFieldName($key, 1);
+				if ($this->registry === 0) {
+					if ($id > 0) {
+						$sql = 'delete from ' . $lsubs[$tf['dbsub']] . ' where wf_id="' . $id . '"';
+						$rdel = mysql_query($sql);
+					}
+
+					foreach ($value as $rid => $mrow) {
+						foreach ($mrow as $field => $svalue) {
+							if (!array_key_exists($field, $onetype)) {
+								$stf = $this->findFieldName($field, $tf);
+								$onetype[$field] = $stf;
+							} else {
+								$stf = $onetype[$field];
+							}
+							$values[$rid][] = $this->inFieldValueParse($field, $stf, $svalue);
+						}
+						$values[$rid][] = '#@WFID@#';
+						$values[$rid][] = $pclient_id;
+						$values[$rid] = '("' . join('","', $values[$rid]) . '")';
+					}
+					$onetype['wf_id'] = '';
+					$onetype['client_id'] = '';
+
+					$sql = 'insert into ' . $lsubs[$tf['dbsub']] . '(' . join(",", array_keys($onetype)) . ') VALUES ' .
+						join(',', $values);
+					unset($values);
+					$afterSave[] = $sql;
+				} elseif ($this->registry === 1) {
+					foreach ($value as $rid => $mrow) {
+						foreach ($mrow as $field => $svalue) {
+							if (!array_key_exists($field, $onetype)) {
+								$stf = $this->findFieldName($field, $tf);
+								$onetype[$field] = $stf;
+							} else {
+								$stf = $onetype[$field];
+							}
+							if (!is_array($values[$rid])) {
+								$value[$rid] = array();
+							}
+							$values[$rid][$field] = $this->inFieldValueParse($field, $stf, $svalue);
+						}
+					}
+				}
+			}
+		}
+		
+		if (is_array($values) && count($values) > 0) {
+			
+			foreach ($values as $kv) {
+				$q2 = clone $q;
+				foreach ($kv as $key => $cval) {
+					$q2->addInsert($key, $cval);
+				}
+				$sql = $q2->prepare();
+				$res = mysql_query($sql);
+			}
+		} else {
+			$sql = $q->prepare();
+			$res = mysql_query($sql);
+		}
+		
+		if (count($afterSave) > 0) {
+			if ($id === 0) {
+				$id = mysql_insert_id();
+			}
+			foreach ($afterSave as &$sob) {
+				$sql = str_replace('#@WFID@#', $id, $sob);
+				$ires = mysql_query($sql);
+			}
+		}
+		return $res;
+	}
+
+	function findFieldName($dfld, $forceSub = false) {
+		if ($forceSub !== false && $forceSub !== 1) {
+			$useit =& $forceSub['subs'];
+		} else {
+			$useit = $this->fields;
+		}
+		foreach ($useit as &$sfl) {
+			if (!isset($sfl['otm']) || $forceSub === 1) {
+				if ($sfl['dbfld'] === $dfld) {
+					return $sfl;
+				}
+			} elseif (isset($sfl['subs'])) {
+				if (isset($sfl['otm']) && preg_match("/_subs$/", $dfld)) {
+					if ($sfl['dbfld'] === $sfl['dbfld']) {
+						return $sfl;
+					}
+				}
+				foreach ($sfl['subs'] as &$subfl) {
+					if ($subfl['dbfld'] === $dfld) {
+						return $subfl;
+					}
+				}
+			}
+		}
+		return false;
+	}
+
+	function printFieldValue($fld, $val, $tabout = false) {
+		$res = '';
+		if ($fld['type'] === 'date' || $fld['type'] === 'entry_date') {
+			$res = printDate($val);
+		} elseif (in_array($fld['type'], array('select', 'radio', 'checkbox', 'centers', 'clients', 'staff'))) {
+			//echo $val.' ';
+			if ($fld['smult'] === true || $fld['type'] === 'checkbox') {
+				$val = explode(',', $val);
+			}
+			if ($val >= 0) {
+				
+				if ($tabout === false) {
+					$res = $this->getValues($fld['type'], $fld['sysv'], $val);
+				} else {
+					$pres = $val;//$this->getValues($fld['type'], $fld['sysv']);
+					unset($pres['rels']);
+					$res = showValuesMultiCol($val, count($pres), array_keys($pres));
+				}
+			} else {
+				$res = '&nbsp;';
+			}
+		} else {
+			$res = nl2br(stripslashes($val));
+		}
+		return $res;
+	}
+	
+	function getMultiplicity($id){
+		$q = new DBQuery();
+		$q->addTable('form_master');
+		$q->addQuery("multiplicity");
+		$q->addWhere("id=".$id);
+		return $q->loadResult();
+	}
+	
+	function countByClientId($formtable,$client_id2){
+		$q = new DBQuery();
+		$q->addTable($formtable);
+		$q->addQuery("COUNT(id)");
+		$q->addWhere("client_id=".$client_id2);
+		return $q->loadResult();
+	}
+	
+	function isRegisterForm($idfw){
+		$q = new DBQuery();
+		$q->addTable("form_master");
+		$q->addQuery("forregistration");
+		$q->addWhere("id=".$idfw);
+		return $q->loadResult();
+	}
+	
+	function drawDigest($idfw,$ref,$view_table=true) {
+		global $m;
+		
+		
+		$gt = new genericTable();
+		$code = '';
+		if (!$this->digest) {
+			$this->digest = array();
+		}
+		$headers = array();
+		//if(!$this->client_id)
+		//$code .='<th>Beneficiery name</th><th>Identification</th>';
+		$i = 0;
+		$headers['*'] = 'string';
+		$i = 1;
+		if($this->isRegisterForm($this->parent)){
+			/* $code .='<th>LastName</th>';
+			 $code .='<th>FirstName</th>'; */
+			$headers['LastName'] = 'string';
+			$headers['FirstName'] = 'string';
+			$i += 2;
+		}
+		$headers['Date'] = 'date';
+		$i += 1;
+		//$code .='<th>Visit Date</th>';
+		
+		$localflds = array();
+		foreach ($this->digest as $dfld) {
+			if ($dfld != '') {
+				$tname = $this->findFieldName($dfld);
+				//$code .= '<th>' . $tname['name'] . '</th>';
+				$localflds[$dfld] = $tname;
+				$headers[$tname['name']] = 'string';
+				$i += 1;
+			}
+		}
+		//$code .= '<th></th>';
+		//$code .= '</tr></thead><tbody>';
+		//$gt->addTableHtmlRow($rh);
+		$gt->makeHeader($headers);
+		$dpicks = join(',', array_merge(array('id', 'entry_date', 'client_id'), $this->digest));
+		$dpicks = preg_replace("/\,$/", "", $dpicks);
+		//if($task)
+		//$sql = 'SELECT * FROM ' . $this->tableName . ' WHERE task_id="' . $this->task_id . ' INNER JOIN clients c ON c.client_id='.$this->tableName.'.client_id  order by entry_date ASC';
+		
+		//$sql = 'SELECT ' . $this->tableName . '.*,CONCAT_WS(" ", c.client_last_name, c.client_first_name) AS client_name, c.client_cin AS identify,c.client_id FROM  ' . $this->tableName . ' LEFT JOIN `clients` AS c ON c.client_id=' . $this->tableName . '.client_id';
+		if($this->client_id){
+			//$sql = 'SELECT ' . $this->tableName . '.* FROM  ' . $this->tableName ." WHERE " . $this->tableName . ".client_id=".$this->client_id;
+			//$sql .= " WHERE " . $this->tableName . ".client_id=".$this->client_id;
+		}
+			//else
+			//$sql = 'select ' . $dpicks . ' from ' . $this->tableName . ' where client_id="' . $this->client_id . '" order by entry_date ASC limit 1';
+		$isRegister = false;
+		if($this->isRegisterForm($this->parent))
+			$isRegister = true;
+		$rh = '<div align="right" style="background:white;margin-top:2px;padding: 10px">';
+		$multiplicity = $this->getMultiplicity($idfw);
+		//$countdata = $this->countByClientId($this->tableName,$this->client_id);
+		//if($multiplicity=="One" && (int)$countdata==0)
+			
+		if($this->forregistration){
+			$rh .= '<input type="button" class="button" value="Import" onClick="dialogNewClient('.$idfw.');">&emsp;&emsp;';
+			$rh .= '<input type="button" class="button" value="Add New" onClick="window.location=\'./index.php?m=wizard&a=form_use&fid=' . $this->tableID . '&todo=addedit\'">';
+		}else if($m!='tasks'){
+			$rh .= '<input type="button" class="button" value="add new visit" onClick="window.location=\'./index.php?m=wizard&a=form_use&fid=' . $this->tableID . '&todo=addedit'.$parent_id.$idIns.'\'">';
+		}else if(!$this->parent){
+			$rh .= '<input type="button" class="button" value="Add New Entry" onClick="window.location=\'./index.php?m=wizard&a=form_use&fid=' . $this->tableID . '&todo=addedit\'">';
+		}
+			
+		$rh .= '</div>';
+		echo $rh;
+		//'<a href="?m=wizard&a=form_use&fid='.$idfw.'&idIns='.$drow["id"].'&todo=view&teaser=1&rtable=1&tab=0">View</a>
+		//echo ($i + 1);
+		$decs = array(//0=>'<a href="/index.php?m=clients&a=view&client_id=##4##">##0##</a>'//,1=>'date',2=>'date'
+				0 => '<a href="?m=wizard&a=form_use&fid='.$idfw.'&idIns=##'.($i).'##&todo=view&teaser=1&rtable=1&tab=0">View</a>'
+		);
+		/* var_dump($headers);
+		 echo '<br/><br/><br/><br/><br/>'; */
+		$gt->setDecorators($decs);
+		
+		$start = 0;
+		$end = 1000;
+		$epp = 1000;
+		$count = mysql_query('SELECT count(*) as count FROM  ' . $this->tableName);
+		$count = mysql_fetch_assoc($count);
+		$count = $count['count'];
+		$nbPages = ceil($count/$epp);
+		//echo $nbPages;
+		//exit;
+		//for ($index = 0;$index<$nbPages;$index++){
+			
+			$sql = 'SELECT ' . $this->tableName . '.* FROM  ' . $this->tableName.' limit '.$start.','.$end;
+			if($ref){
+				//$join = " LEFT JOIN ".$this->refTableName." ON ".$this->refTableName.".id=".$ref;
+				//$sql = 'SELECT ' . $this->tableName . '.*, '.$this->refTableName.'.*  AS REF FROM  ' . $this->tableName.$join.' WHERE ref='.$ref;
+				$sql = 'SELECT ' . $this->tableName . '.* FROM  ' . $this->tableName.' WHERE ref='.$ref;
+			}
+			$res = mysql_query($sql);
+			$first = false;
+			
+			$parent_id = "";
+			$idIns = "";
+			if($this->parent)
+				$parent_id = '&parent_id='.$this->parent;
+			if($ref)
+				$idIns = '&idIns='.$ref;
+			if ($res && mysql_num_rows($res) > 0) {
+				$nrows = mysql_num_rows($res);
+				if($view_table===true){
+					//$code = '<table width="100%" cellspacing="1" cellpadding="2" border="0" class="tbl">';
+			
+					//$code .= '<thead>';
+					if($this->isRegisterForm($this->parent)){
+						$count = count($this->digest)+4;
+					}else{
+						$count = count($this->digest)+2;
+					}
+					//if ($this->valid == 1) {
+					//if($this->client_id){
+			
+					//$rh .= '<tr><td colspan="'.$count.'" align="right" valign="top" style="background-color:#ffffff">';
+					
+					//$code .= $hr;
+					/* if($m!='tasks')
+					 $code .= '<input type="button" class="button" value="Add New" onClick="window.location=\'./index.php?m=wizard&a=form_use&fid=' . $this->tableID . '&todo=addedit'.$parent_id.$idIns.'\'">';
+					 else echo  */
+					//$code .= '<input type="button" class="button" value="add new visit" onClick="window.location=\'./index.php?m=wizard&a=form_use&fid=' . $this->tableID . '&todo=addedit&client_id=' . $this->client_id . '\'">';
+					//elseif($multiplicity=="Many")
+					//$code .= '<input type="button" class="button" value="add new visit" onClick="window.location=\'./index.php?m=wizard&a=form_use&fid=' . $this->tableID . '&todo=addedit\'">';
+					//$code .= '<input type="button" class="button" value="add new visit" onClick="window.location=\'./index.php?m=wizard&a=form_use&fid=' . $this->tableID . '&todo=addedit&client_id=' . $this->client_id . '\'">';
+						
+					//$rh .= '</td></tr>';
+					//}
+					//}
+					//$code .= '<tr>';
+			
+			
+			
+			
+			
+					
+					while ($drow = mysql_fetch_assoc($res)) {
+						$row_data = array();
+						//$code .= '<tr>';
+						/*if(!$this->client_id)
+						 $code .= '<td><a href="?m=clients&a=view&client_id=' . $drow['client_id'] . '">' . $drow['client_name'] . '</a></td>
+						<td>' . $drow['identify'] . '</td>';*/
+						$row_data[] = '';
+						if($this->isRegisterForm($this->parent)){
+							$sql = 'SELECT fld_0,fld_1 FROM  ' .  $this->refTableName.' WHERE id='.$drow['ref'];
+							$res1 = mysql_query($sql);
+							while ($drow1 = mysql_fetch_assoc($res1)) {
+								$row_data[] = $drow1['fld_0'];
+								$row_data[] = $drow1['fld_1'];
+								//$code .= '<td>' . $drow1['fld_0']  .'</td>';
+								//$code .= '<td>' . $drow1['fld_1']  .'</td>';
+							}
+						}
+						//$code .= '<td>' . printDate($drow['entry_date']) . '</td>';
+						$row_data[] = printDate($drow['entry_date']);
+							
+						foreach ($this->digest as $dfld) {
+							if ($dfld != '') {
+								//if(strlen($pvalue)<6)
+								//echo $this->tableName;
+								//var_dump($localflds[$dfld]);
+								//echo $localflds[$dfld]["sysv"];
+								if(isset($localflds[$dfld]["sysv"]) && $localflds[$dfld]["sysv"]==="SysDepartment"){
+									if(strlen($drow[$dfld])<2){
+										$drow[$dfld] = '0'.$drow[$dfld];
+										$sqlup = 'UPDATE `'.$this->tableName.'` SET `'.$dfld.'`="'.$drow[$dfld].'" WHERE id='.$drow['id'];
+										db_exec($sqlup);
+									}
+								}
+								
+								if(isset($localflds[$dfld]["sysv"]) && $localflds[$dfld]["sysv"]==="SysCommunes"){
+									if(strlen($drow[$dfld])<6){
+										$drow[$dfld] = '0'.$drow[$dfld];
+										$sqlup = 'UPDATE `'.$this->tableName.'` SET `'.$dfld.'`="'.$drow[$dfld].'" WHERE id='.$drow['id'];
+										db_exec($sqlup);
+									}
+								}
+									
+								if(isset($localflds[$dfld]["sysv"]) && $localflds[$dfld]["sysv"]==="SysCommunalSection"){
+									if(strlen($drow[$dfld])<8){
+										$drow[$dfld] = '0'.$drow[$dfld];
+										$sqlup = 'UPDATE `'.$this->tableName.'` SET `'.$dfld.'`="'.$drow[$dfld].'" WHERE id='.$drow['id'];
+										db_exec($sqlup);
+									}
+								}
+								
+								
+								//echo $localflds[$dfld]["sysv"];
+								$row_data[] = $this->printFieldValue($localflds[$dfld], $drow[$dfld]);
+								//$code .= '<td>' . $this->printFieldValue($localflds[$dfld], $drow[$dfld]) . '</td>';
+							}
+						}
+						$row_data[] = $drow['id'];
+						//var_dump($row_data);echo '<br/>';
+						/* $code .= '<td class="alt" style="width: 200px"><a href="?m=wizard&a=form_use&fid='.$idfw.'&idIns='.$drow["id"].'&todo=view&teaser=1&rtable=1&tab=0">View</a>
+						 </td>';
+						$code .= '</tr>'; */
+						if ($first === false) {
+							$first = $drow['id'];
+						}
+						/* var_dump($row_data);
+						 echo '<br/><br/><br/>'; */
+						$gt->fillBody($row_data);
+					}
+					//$code .= '</tbody></table>';
+					
+				}else{
+					$first = true;
+				}
+			} else {
+				/* $code = 'No data available';
+				 $nrows = 0;
+				 if($this->forregistration){
+				 $code .= '<tr><td colspan="4" align="right" valign="top" style="background-color:#ffffff">';
+				 $code .= '<input type="button" class="button" value="Import" onClick="dialogNewClient('.$idfw.');">&emsp;&emsp;';
+				 $code .= '<input type="button" class="button" value="Add New" onClick="window.location=\'./index.php?m=wizard&a=form_use&fid=' . $this->tableID . '&todo=addedit'.$parent_id.$idIns.'\'">';
+				 $code .= '</td></tr>';
+				 }else if($m!='tasks'){
+				 $code .= '<tr><td colspan="4" align="right" valign="top" style="background-color:#ffffff">';
+				 $code .= '<input type="button" class="button" value="add new visit" onClick="window.location=\'./index.php?m=wizard&a=form_use&fid=' . $this->tableID . '&todo=addedit'.$parent_id.$idIns.'\'">';
+				 $code .= '</td></tr>';
+				 }else if(!$this->parent){
+				 $code .= '<tr><td colspan="4" align="right" valign="top" style="background-color:#ffffff">';
+				 $code .= '<input type="button" class="button" value="Add New Entry" onClick="window.location=\'./index.php?m=wizard&a=form_use&fid=' . $this->tableID . '&todo=addedit\'">';
+				 $code .= '</td></tr>';
+				 } */
+				/* if (!$isRegister) {
+				 //if($this->client_id){
+				 $code .= '<tr><td colspan="4" align="right" valign="top" style="background-color:#ffffff">';
+				 $code .= '<input type="button" class="button" value="add new visit" onClick="window.location=\'./index.php?m=wizard&task_id='.$this->task_id.'&a=form_use&fid=' . $this->tableID . '&todo=addedit\'">';
+				 $code .= '</td></tr>';
+				 //}
+				 } */
+			}
+			//$start = $end + 1;
+			//$end = $start + 1000;
+		//}
+		$code .= $gt->compile(true);
+		
+
+		return array($code, $nrows, $first);
+	}
+	
+	
+	public function showFieldsImport() {
+		$result = array('otms' => array(), 'notms' => array());
+		foreach ($this->fields as $fi) {
+			if (is_array($fi['subs']) && count($fi['subs']) > 0) {
+				if ($fi['otm'] === true){
+					foreach ($fi['subs'] as $fisub) {
+						$result['otms'][] = array('title' => $fisub['name'], 'fld' => $fisub['dbfld']);
+					}
+				}else{
+					foreach ($fi['subs'] as $fisub) {
+						$result['notms'][] = array('title' => $fisub['name'], 'fld' => $fisub['dbfld'], 'raw' => $fisub);
+					}
+				}
+			} else {
+				$result['notms'][] = array('title' => $fi['name'], 'fld' => $fi['dbfld'], 'raw' => $fi);
+			}
+		}
+		return $result;
+	}
+	
+
+}
+
+function importForm() {
+	global $wres, $newd;
+	$fpath = $_FILES['frfile']['tmp_name'];
+	$res = 'fail';
+	if (is_uploaded_file($fpath)) {
+		$newQuery = file_get_contents($fpath);
+		if (strlen($newQuery) > 0) {
+			$newin = @unserialize(@gzuncompress(@stripslashes(@base64_decode($newQuery))));
+			$newsets = $newin['sets'];
+			$newForm = $newin['form'];
+		}
+	}
+	/*elseif(isset($_SESSION['form_delay_store']) && $_SESSION['form_delay_store'] != ''){
+		$tform = $_SESSION['form_delay_store'];
+		$newForm = unserialize(tmpFileRead($tform),true);
+		unset($_SESSION['form_delay_store']);
+		}*/
+	if (isset($newsets) && count($newsets) > 0) {
+		$sres = importSets($newsets);
+		if ($sres['result'] === 'partial') {
+			if (count($sres['multi']) > 0) {
+				$_SESSION['form_delay_store'] = tmpFileStore(serialize($newForm));
+				//$_SESSION['sets_details'] = serialize($sres);
+				$sres['form_case'] = true;
+				$res = json_encode(array("withsets" => true, "sinfo" => $sres));
+			}
+		} elseif ($sres['result'] === true) {
+			// Update sysvals' ID so they have to be valid in new place
+			$fds = & $newForm['fileds'];
+			if (count($fds) > 0 && count($sres['multi']) > 0) {
+				foreach ($fds as &$fi) {
+					if (is_numeric($fi['sysv']) && array_key_exists($fi['sysv'], $sres['multi'])) {
+						$fi['sysv'] = $sres['multi'][$fi['sysv']];
+					}
+				}
+			}
+			$res = formInject($newForm);
+		}
+		if ($sres['result'] == 'ok' || !isset($sres)) {
+			$res = formInject($newForm);
+		}
+	}
+	return $res;
+}
+
+function wrapT($a) {
+	return '"' . $a . '"';
+}
+
+function formInject($newForm) {
+	global $wres, $newd;
+	if (is_array($newForm) && count($newForm) > 2) {
+		$_POST['formName'] = $newForm['title'];
+		$_POST['formsum'] = json_encode(unserialize(gzuncompress($newForm['fields'])));
+		$_POST['regForm'] = $newForm['registry'];
+		$_POST['fakereturn'] = true;
+		require_once('saveform.php');
+		if ($wres) {
+			$pdata = $newForm['rowData'];
+			$subPrefix = 'wf_' . $newd;
+			$plain = 0;
+			$sqlInsert = 'insert into wform_' . $newd;
+			$once = false;
+			if (count($pdata) > 0) {
+				$tvals = array();
+				foreach ($pdata as $pid => &$prow) {
+					if (is_numeric($pid)) {
+						if ($once === false) {
+							$akeys = array_keys($prow);
+							$once = true;
+							$tinsert = $sqlInsert . ' (' . join(",", $akeys) . ') VALUES ';
+						}
+						$tvals[] = '(' . join(",", array_map("wrapT", array_values($prow))) . ')';
+
+						++$plain;
+					} else {
+						$subinsert = 'insert into wf_' . $newd . '_' . $pid . ' ';
+						$sonce = false;
+						$subvals = array();
+						foreach ($prow as $sid => &$sprow) {
+							if ($sonce === false) {
+								$subkeys = array_keys($sprow);
+								$subinsert .= '(' . join(",", $subkeys) . ') VALUES ';
+							}
+							$subvals[] = '(' . join(",", array_map("wrapT", array_values($sprow))) . ')';
+						}
+						if (count($subvals) > 0) {
+							$subinsert .= join(",", $subvals);
+							$sires = mysql_query($subinsert);
+						}
+					}
+				}
+				if (count($tvals) > 0) {
+					$sql = $tinsert . join(",", $tvals);
+					$din = mysql_query($sql);
+				}
+			}
+			$res = json_encode(
+				array(
+					0 => array(
+						'title'        => $newForm['title'],
+						'registry'     => $newForm['registry'],
+						'valid'        => $newForm['valid'],
+						'valid_change' => '&nbsp;',
+						'id'           => $newd,
+						'rows'         => $plain
+					)
+				)
+			);
+		}
+		return $res;
+	}
+}
+
+function importSets($upset) {
+	global $dpConfig, $baseDir;
+	$resume = array("result"   => false, "multi" => array(), 'passed' => 0, 'form_case' => false, 'done' => array(),
+	                'children' => array()
+	);
+	$delay = array();
+	$happen = 0;
+	$children = array();
+	$stats = array();
+	if (count($upset) > 0) {
+		foreach ($upset as $upid => $ndset) {
+			$sql = 'select title,touch,id from svsets where title="' . $ndset['title'] . '" limit 1';
+			$res = mysql_query($sql);
+			if ($ndset['id'] != $ndset['parent']) {
+				$resume['children'][$ndset['id']] = $ndset['parent'];
+			}
+			if (!$res || mysql_num_rows($res) == 0) {
+				$sql = 'insert into svsets (title,touch,vtype,level,status,options)
+					values("' . $ndset['title'] . '",
+					"' . $ndset['touch'] . '",
+					"' . $ndset['vtype'] . '",
+					"' . $ndset['level'] . '",
+					"' . $ndset['status'] . '",
+					"' . $ndset['options'] . '"
+					)';
+				$ires = mysql_query($sql);
+				if ($ires) {
+					$parid = mysql_insert_id();
+					if ($ndset['id'] == $ndset['parent']) {
+						$sql = 'update svsets set parent="' . $parid . '" where id="' . $parid . '" limit 1';
+						$nres = mysql_query($sql);
+					}
+					/*else{
+										// newID => oldParentID
+										$children[$parid] = $ndset['parent'];
+										}*/
+					$resume['done'][$ndset[id]] = $parid;
+					++$happen;
+				}
+			} else {
+				//set with such name is found, now will have to compare
+				$prev = mysql_fetch_assoc($res);
+				$resume['multi'][] = array(
+					"title"     => $ndset['title'],
+					'in_touch'  => $ndset['touch'],
+					'now_touch' => $prev['touch'],
+					'in_id'     => $ndset['id'],
+					'now_id'    => $prev['id']
+				);
+				$delay[$ndset['id']] = $ndset;
+			}
+		}
+	}
+	$resume['happen'] = $happen;
+	if (count($delay) > 0) {
+		$fpath = tmpFileStore(serialize($delay));
+		$_SESSION['set_delay_store'] = $fpath;
+		$resume['result'] = 'partial';
+	}
+	if ($happen > 0 && count($delay) === 0) {
+		$resume['result'] = true;
+		fixParent($resume);
+	}
+	return $resume;
+}
+
+function fixParent($clist) {
+	foreach ($clist['children'] as $old_id => $oldParentId) {
+		if (array_key_exists($oldParentId, $clist['done'])) {
+			$sql = 'update svsets set parent="' . $clist['done'][$oldParentId] . '" where id="' . $clist['done'][$old_id] . '"';
+			$ires = mysql_query($sql);
+		}
+	}
+}
+
+function swapKV($a) {
+	$b = array();
+	if (count($a) > 0) {
+		foreach ($a as $k => $v) {
+			$b[$v] = $k;
+		}
+	}
+	return $b;
+}
+
+function importDelayed($solution, $conserv) {
+	if (!is_array($solution)) {
+		$solution = array();
+	}
+
+	if (!is_array($conserv)) {
+		$conserv = array();
+	}
+	$children = array();
+	$complete = array();
+	if ($_POST['relvs'] != '') {
+		$children = json_decode(stripslashes($_POST['relvs']), true);
+		if (!is_array($children)) {
+			$children = array();
+		}
+	}
+	$res = 'ok';
+	$ncom = array();
+	if ($_SESSION['set_delay_store'] != '' && file_exists($_SESSION['set_delay_store']) && (count($solution) > 0 || count($conserv) > 0)) {
+		$desd = unserialize(tmpFileRead($_SESSION['set_delay_store'], true));
+		$cnt = 0;
+		$setsDone = json_decode(stripslashes($_POST['wdone']), true);
+		// current -> incoming IDs
+		foreach ($solution as $spart => $svalue) {
+			$set = $desd[$svalue];
+
+			$sql = 'update svsets set vtype="' . $set['vtype'] . '",
+						level="' . $set['level'] . '",
+						options="' . $set['options'] . '",
+						touch="' . $set['touch'] . '",
+						status="' . $set['status'] . '"
+					where id="' . (int)$spart . '"';
+			$res = mysql_query($sql);
+			if ($res)
+				++$cnt;
+			if ($set['id'] != $set['parent']) {
+				$children[$svalue] = $spart;
+			}
+			$setsDone[$svalue] = $spart;
+		}
+		$complete = swapKV($conserv);
+		unset($_SESSION['set_delay_store']);
+		if (count($setsDone) > 0) {
+			$complete = $complete + $setsDone;
+		}
+		fixParent(array("done" => $complete, "children" => $children));
+
+		if ($cnt === count($solution)) {
+			if ((int)$_GET['isform'] === 1) {
+				if (isset($_SESSION['form_delay_store']) && $_SESSION['form_delay_store'] != '') {
+					$tform = $_SESSION['form_delay_store'];
+					$newForm = unserialize(tmpFileRead($tform, true));
+					unset($_SESSION['form_delay_store']);
+					//Update fields in form with new Ids
+					$fds = unserialize(gzuncompress($newForm['fields']));
+					$ncom = swapKV($complete);
+					if (count($fds) > 0 && count($complete) > 0) {
+						foreach ($fds as &$fi) {
+							if (is_numeric($fi['sysv']) && array_key_exists($fi['sysv'], $complete)) {
+								$fi['sysv'] = $complete[$fi['sysv']];
+							}
+						}
+						$newForm['fields'] = gzcompress(serialize($fds));
+					}
+					$fres = formInject($newForm);
+					if ($res) {
+						$res .= '#@#' . $fres;
+					}
+				}
+			}
+
+		} else {
+			$res = "fail";
+		}
+	}
+	return $res;
+}
+
+
+?>

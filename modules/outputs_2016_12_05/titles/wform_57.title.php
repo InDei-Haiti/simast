@@ -1,0 +1,26 @@
+<?php
+$titles["wform_57"]=
+		array(
+			"title" => "Formulaire inscription",
+			"db"=>"wform_57",
+			"uid"=>"tbw57",
+			"date"=>"entry_date",
+			"did"=>"id",
+			"defered"=>array(),
+			"abbr"=>"WF57",
+			"plurals"=>array('wform_sub_16'=>array(
+			'table'=>'wf_57_sub_16',
+			'index'=>'wf_id',
+			'fields'=>array("fld_0","fld_1","fld_2","fld_3","fld_4","fld_5","fld_6"),
+			'eparser'=>false
+				),'wform_sub_31'=>array(
+			'table'=>'wf_57_sub_31',
+			'index'=>'wf_id',
+			'fields'=>array("fld_0","fld_1","fld_2","fld_3","fld_4","fld_5","fld_6"),
+			'eparser'=>array("fld_2"=>"$resex=turnDateSQL(\"#XYZ#\");")
+				)),
+			"referral"=>"",
+			"next_visit"=>"",
+			"form_type"=>"contus"
+		);
+?>

@@ -1,0 +1,668 @@
+@CHARSET "UTF-8";
+.initlist,.qlist{
+    padding-left: 22px;
+    padding-bottom: 20px;
+    width: 1050px;
+    border: 1px solid #b3b3b3;
+    min-height: 70px;
+    background-color: #ececec;
+    list-style: none;
+	border-radius: 3px;
+}
+
+#mainList{
+    width: 1100px;
+}
+
+.qlist:hover{
+    border: 1px solid rgb(149, 149, 149);
+    background-color:#F0F0F0;
+    color: #000;
+}
+
+.mctrl{
+    position: relative;
+    width:70px;
+    height: 20px;
+    padding:2px;
+    cursor:pointer;
+    right: 0;
+    float: right;
+}
+
+.abox{
+    color: #fa1515;
+    font-weight: 800;
+}
+
+.listWrap{
+    width:1025px;
+}
+.subStore{
+    margin-left:0;
+    width: 1000px !important;
+    margin-top: 15px;
+	padding-top: 5px;
+}
+
+.myType{
+    text-decoration:underline;
+    cursor: pointer;
+}
+
+.fbutton,.zbutton{
+    width: 20px;
+    height: 20px;
+    padding:1px;
+    cursor:pointer;
+    font-weight:800;
+    float: left;
+    background-color: #B0B0B0;
+    margin: 2px;
+    text-align: center;
+}
+
+.subPart{
+    margin: 5px 1px;
+}
+
+.mholder,.delRow,.BDdelRow,.fcontrol,.newsval,.clone,.wordico,.expire,.export,.delform,.rowDone,.active,.delsv,.info,.cleartxt,.bbut,.mandatq,.mandatq_active,.bheader,.bheader_active,.fbutton,.jbut,.zbutton,.opmove,.note_msg,.trash{
+    background: url("images/icns.png") no-repeat;
+}
+
+.mholder{
+    width: 20px;
+    height: 20px;
+    cursor: move;
+    float: left;
+}
+
+.del,.inc{
+    border: 1px solid #ececec;
+    font-size: 10pt;
+    background-position: 1000px 1000px;
+}
+.del:hover,.inc:hover{
+    border: 1px solid #bbbbbb;
+    background-color: #fafafa;
+}
+
+.delRow, .BDdelRow{
+    background-position: -18px 2px;
+}
+
+.delform{
+    background-position: -18px 1px;
+}
+
+.delsv{
+    background-position: -18px -1px;
+}
+
+.addRow{
+    background-position: -34px 2px;
+}
+
+.rangeBlock{
+    white-space: nowrap;
+    float: right;
+}
+
+label{
+    margin: 1px 5px;
+}
+
+.fixwidth{
+    display: inline-table;
+    width: 55px;
+}
+
+.newsv_row{
+    float: left;
+    margin: 2px;
+}
+
+.newsv_row > span{
+	float: right;
+	display: inline-block;
+}
+
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+    ul > li{
+        /*padding-left: 40px;*/
+    }
+    li.subPart{
+        padding-left: 0 !important;
+        margin-left: 40px !important;
+    }
+	.fixwidth{
+		position: relative;
+		top: 4px;
+	}
+
+    .newsv_row{
+        margin: 2px 1px 1px -30px !important;
+        padding-left: 33px !important;
+    }
+
+    .newsv_row > .childblk{
+        /*padding-left: 10px;
+        margin-left: 10px;*/
+        -webkit-padding-start: 10px;
+    }
+}
+
+@media all and (-webkit-min-device-pixel-ratio:10000), not all and (-webkit-min-device-pixel-ratio:0){
+    ul > li{
+        padding-left: 40px;
+    }
+    li.subPart{
+        padding-left: 20px !important;
+        margin-left: 20px !important;
+    }
+}
+
+.fcontrol{
+    width: 21px;
+    height: 23px;
+    background-position: -19px -18px;
+    float: right;
+}
+
+.hereBug{
+    background-position: 2px -18px !important;
+}
+
+.expired{
+    background-position: 0 -22px !important;
+    width: 20px !important;
+    margin: 5px 2px !important;
+}
+
+.active{
+    background-position: -2px -62px !important;
+}
+
+.bedit{
+	background-position: -43px -61px;
+	margin-top: 3px;
+}
+
+.rowDone{
+    background-position: -39px -18px !important;
+}
+
+.clone{
+    background-position: -23px -42px;
+    margin-top: 3px;
+}
+
+.eye{
+	background-position: -20px -122px;
+}
+
+.wordico{
+    background-position: -42px -41px;
+}
+
+.expire{
+    background-position: -41px -21px;
+}
+
+.fedit{
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.export{
+    background-position: -22px -63px;
+}
+
+.info{
+    background-position: -2px -83px;
+}
+
+.cleartxt{
+    background-position: -21px -83px;
+    float: none;
+}
+
+.mandatq{
+    background-position: -62px -19px;
+}
+
+.mandatq_active{
+    background-position: -85px -19px;
+}
+
+.bheader{
+    background-position: -85px 2px;
+}
+
+.bheader_active{
+    background-position: -61px 2px;
+}
+
+.brange_active{
+    background-position: -44px -97px;
+}
+
+.brange{
+    background-position: -63px -43px;
+}
+
+.bother{
+    background-position: -85px -43px;
+}
+
+.bother_active{
+    background-position: -63px -64px;
+}
+
+.chain{
+    background-position: -65px -84px;
+}
+
+.chain_active{
+    background-position: -86px -85px;
+}
+
+.trash{
+    background-position: 0 -121px;
+}
+
+.bbut,.jbut{
+    padding: 1px;
+    cursor: pointer;
+    margin: 2px;
+    border: 1px solid #dcdcdc;
+    width: 25px;
+    height: 25px;
+    /*display: inline-block;*/
+    float: right;
+}
+
+.bbut:hover{
+    border: 1px solid #c5c5c5;
+}
+
+.ar_up {
+    background-position: -43px -80px;
+}
+.ar_down {
+    background-position: 2px -100px;
+}
+.ar_left {
+    background-position: -29px -102px;
+}
+.ar_right {
+    background-position: -14px -102px;
+}
+
+.newsval{
+	background-position: 2px -43px;
+	float: none !important;
+	display: inline-block;
+	width: 20px !important;
+	height: 17px !important;
+}
+
+.fhref:hover{
+	text-decoration: underline;
+	cursor: pointer;
+}
+
+/* Skin */
+.tabs-nav {
+    list-style: none;
+    margin: 0;
+    padding: 0 0 0 4px;
+}
+
+.tabs-nav:after { /* clearing without presentational markup, IE gets extra treatment */
+    display: block;
+    clear: both;
+    content: " ";
+}
+
+.tabs-nav li {
+    float: left;
+    margin: 0 3px 0 1px;
+    min-width: 84px; /* be nice to Opera */
+}
+
+.tabs-nav a, .tabs-nav a span {
+    display: block;
+    padding: 0 10px;
+    background: url(/modules/outputs/tab.png) no-repeat;
+}
+
+.tabs-nav a {
+    position: relative;
+    top: 1px;
+    z-index: 2;
+    padding-left: 0;
+    color: #27537a;
+    font-size: 10px;
+    /*font-weight: bold;*/
+    line-height: 1.2;
+    text-align: center;
+    text-decoration: none;
+    white-space: nowrap; /* required in IE 6 */
+}
+
+.tabs-nav .tabs-selected a ,.ui-tabs-selected{
+    color: #000;
+}
+
+.tabs-nav .tabs-selected a, .tabs-nav a:hover, .tabs-nav a:focus, .tabs-nav a:active {
+    background-position: 100% -200px;
+    outline: 0; /* prevent dotted border in Firefox */
+}
+
+.tabs-nav a {
+    background-position: 100% -150px;
+}
+
+.tabs-nav .tabs-disabled a { /*:hover, .tabs-nav .tabs-disabled a:focus, .tabs-nav .tabs-disabled a:active*/
+    background-position: 100% -251px;
+}
+
+.tabs-nav a span {
+    width: 64px; /* IE 6 treats width as min-width */
+    min-width: 64px;
+    height: 18px; /* IE 6 treats height as min-height */
+    min-height: 18px;
+    padding-top: 6px;
+    padding-right: 0;
+}
+* >.tabs-nav a span { /* hide from IE 6 */
+    width: auto;
+    height: auto;
+}
+
+.tabs-nav .tabs-selected a span {
+    padding-top: 7px;
+}
+
+.tabs-nav .tabs-selected a span, .tabs-nav a:hover span, .tabs-nav a:focus span, .tabs-nav a:active span {
+    background-position: 0 -50px;
+}
+
+.tabs-nav a span { /*, .tabs-nav .tabs-disabled a:hover span, .tabs-nav .tabs-disabled a:focus span, .tabs-nav .tabs-disabled a:active span*/
+    background-position: 0 0;
+}
+
+.tabs-nav .tabs-selected a:link, .tabs-nav .tabs-selected a:visited, .tabs-nav .tabs-disabled a:link, .tabs-nav .tabs-disabled a:visited { /* @ Opera, use pseudo classes otherwise it confuses cursor... */
+    cursor: text;
+}
+
+.tabs-nav a:hover, .tabs-nav a:focus, .tabs-nav a:active, #dx_kill { /* @ Opera, we need to be explicit again here now... */
+    cursor: pointer;
+}
+
+.tabs-nav .tabs-disabled a span {
+    /*opacity: .4;*/
+    background-position: 0 -100px !important;
+    color: #989898;
+}
+
+.tabs-container {
+    border-top: 1px solid #97a5b0;
+    padding: 1em 8px;
+    /*    background: #fff;  declare background color for container to avoid distorted fonts in IE while fading */
+}
+
+.tabs-loading em {
+    padding: 0 0 0 20px;
+    background: url(/modules/outputs/images/load-big.gif) no-repeat 0 50%;
+}
+
+.ui-state-active a {
+    background: url(/modules/outputs/images/tabSelectedBg.png) repeat-x;
+}
+
+div#tabs .ui-state-hover, div#tabs .ui-state-default, div#tabs .ui-state-active {
+    border: 1px solid #fff;
+    color: #666666;
+}
+
+div#tabs .ui-state-default a {
+    background: url(/modules/outputs/images/tabBg.png);
+}
+
+div#tabs .ui-widget-header {
+    background: transparent;
+    border: none;
+}
+
+div#tabs .ui-widget-content {
+    border: 1px solid #c8c8c8;
+    overflow: auto;
+}
+
+div.bigtab {
+    vertical-align: top;
+    float: left;
+    min-width: 1200px;
+}
+
+.tabs-hide {
+    display:none;
+}
+
+.topnav > li{
+    padding-left: 0 !important;
+}
+
+#qtable td {
+	text-align: center;
+}
+
+#qtable td.alt{
+	text-align: left;
+}
+
+#importbox,#tinbox{
+	border: 2px solid #c8c8c8;
+	padding: 5px;
+	width: 300px;
+	margin: 10px;
+    display: none;
+}
+
+#importbox > input {
+	width: 250px;
+}
+
+.lapaper{
+    background-color: #ffffff;
+    border: 1px solid #000000;
+    margin:3px;
+    padding:3px;
+}
+
+.outspace{
+    visibility: hidden;
+}
+
+.prow{
+    display: table-row;
+    padding: 4px;
+    width: 1000px;
+	margin: 8px 0;
+    height: 50px;
+    /*float: left;*/
+}
+
+.prow:hover{
+	background-color: rgba(222, 215, 218, 0.81);
+}
+
+.prow > *{
+    float: left;
+}
+
+.child_indent{
+    width: 25px;
+    float: left;
+}
+
+.blind{
+    display: none;
+}
+
+.slaveCase,.svbox,.multBlock,.rangeBlock,.strictPart{
+    margin: 0 10px;
+}
+
+#stip{
+	position:absolute;
+	border: 2px solid #a7ecfe;
+	background-color: #f0ebdb;;
+	padding: 2px;
+	font-size: 7pt;
+	min-width: 150px;
+	max-width: 250px;
+	overflow: hidden;
+	z-index: 100;
+}
+
+#stable td{
+    text-align: center;
+}
+
+.ledit{
+    cursor: pointer;
+}
+
+#dbnewsv p,.wrap{
+    border: 1px solid #e2e2e2;
+    padding: 3px;
+	border-radius: 4px;
+}
+
+#dbnewsv p:hover,.wrap:hover{
+    border: 1px solid #c8c6c6;
+    background-color: #e6e6e6;
+}
+
+.pwrite{
+    font-style: italic;
+}
+
+.toright{
+	float: right !important;
+	margin: 5px 1px 1px;
+}
+
+.wrmoves{
+    width: 14px !important;
+    margin: 1px !important;
+}
+
+.opmove{
+    height: 17px;
+    width: 16px;
+    margin: 2px;
+    float: left;
+    cursor: pointer;
+}
+
+.optbox{
+    float: left;
+}
+
+button{
+	margin:  0 5px;
+}
+.sbutton{
+    border: 2px solid #aba6a6;
+    color: #969696;
+}
+
+.sbutton:hover{
+	border: 2px solid #969494;
+	color: #656464;
+}
+
+.sbutton_active{
+    border: 2px solid #000;
+    background-color: #f9f4f4;
+}
+
+.sbutton_off{
+    border: 2px solid #c6c5c5;
+    color: #dddbdb !important;
+    background-color:  #efefef;
+}
+
+.bware{
+    float: right;
+    width: 220px;
+    z-index: 1;
+}
+
+.bware > div{
+    float: right !important;
+}
+
+.btype{
+    width: 505px;
+}
+
+.btype > *{
+    float: left;
+}
+
+.rowhead{
+    float: left;
+}
+
+#hugeStore{
+    margin-bottom: 30px;
+}
+
+.vstat{
+    cursor: pointer;
+}
+
+.vstat:hover{
+    text-decoration: underline;
+}
+
+.childblk{
+	list-style: lower-alpha !important;
+}
+
+.dubdent{
+}
+
+.clone_on{
+	background-position: -89px -66px !important;
+}
+
+#stable td{
+    white-space: nowrap;
+}
+
+#tinbox{
+    display: none;
+    border: 2px solid #c8c8c8;
+    padding: 5px;
+    width: 300px;
+    margin: 10px;
+}
+
+.vcentr{
+    text-align: center;
+}
+
+.tdialog{
+	border-collapse: collapse;
+}
+
+.tdialog th,.tdialog td{
+	border: 1px solid #c6c6c6;
+	padding: 2px;
+}

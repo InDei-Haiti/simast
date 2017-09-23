@@ -1,0 +1,362 @@
+<?php
+gc_enable();
+gc_collect_cycles();
+require_once($baseDir . '/modules/manager/hdvi/household.class.php');
+$member_fld =  file_get_contents($baseDir . '/modules/manager/hdvi/members_'.$_POST['householdid'].'.json');//$_POST['member'];
+$fld = file_get_contents($baseDir . '/modules/manager/hdvi/household_'.$_POST['householdid'].'.json');//$_POST['household']; 
+//echo json_encode($fld).'<br/><br/>';
+//echo json_encode($member_fld).'<br/><br/>';
+$fld = json_decode($fld,true);
+$member_fld = json_decode($member_fld,true);
+$q = new DBQuery();
+//$q->addTable('wform_'.$_POST['householdid']);
+$q->addTable('wf_'.$_POST['householdid'].'_sub_'.$_POST['section'],'mem');
+$q->addJoin('wform_'.$_POST['householdid'],'men','mem.wf_id=men.id');
+$q->addQuery('mem.id as mem_id');
+$q->addQuery('mem.wf_id as mem_wf_id');
+foreach($member_fld as $f){
+    $q->addQuery('mem.'.$f.' as mem_'.$f);
+}
+$q->addQuery('men.id as men_id');
+$q->addQuery('men.fld_5 as men_fld_5');
+foreach($fld as $f){
+    $q->addQuery('men.'.$f.' as men_'.$f);
+}
+$q->addOrder('wf_id');
+//$q->addQuery('id');
+//$q->addOrder("id");
+//$q->offset = 0;//$_POST['from'];
+//$q->limit = 1000;//$_POST['to'];
+
+
+if(isset($_POST['commun']) && !empty($_POST['commun']))
+	$q->addWhere('men.fld_1="'.$_POST['commun'].'"');
+
+if(isset($_POST['beginner']) && !empty($_POST['beginner'])){
+	$q->addWhere('men.entry_date="'.$_POST['beginner'].'"');
+}
+$sql = $q->prepare();
+//$sql = $sql.' limit '.$_POST['from'].','.$_POST['to'];
+//exit;
+//$resultat = $q->loadColumn();
+//$START = time();
+//echo $sql;
+//exit;
+$resultat = mysql_query($sql);
+//$END = time() - $START;
+//echo $END.'s requete\n';
+Household::$COUNTER = 0;
+$table = array();
+$i = 0;
+$START = time();
+$hd = new Household();
+$hd->fld = $fld;
+$hd->member_fld = $member_fld;
+$hd->table = 'wform_'.$_POST['householdid'];
+$hd->member_table = 'wf_'.$_POST['householdid'].'_sub_'.$_POST['section'];
+
+$tempId = null;
+$famille = 0;
+$familleA = array();
+while ($row=mysql_fetch_assoc($resultat)){
+    //var_dump($row['men_'.$fld ['milieu']]);
+    //exit;
+    //if($famille==1)
+      //  break;
+	$member = new Member ();
+	//echo $row['mem_id'];
+	$member->member_id = $row['mem_id'];
+	$member->member_fld_linkparent = $row ['mem_'.$member_fld ['member_fld_linkparent']];
+    if (!($member->member_fld_linkparent>=1 && $member->member_fld_linkparent<=16))
+        $member->member_fld_linkparent = null;
+    //echo $member_fld ['member_fld_linkparent'].': '.$member->member_fld_linkparent.'<br/>';
+
+	$member->member_fld_sex = $row ['mem_'.$member_fld ['member_fld_sex']];
+    if (!$member->member_fld_sex || $member->member_fld_sex == 99 || $member->member_fld_sex == 999 || $member->member_fld_sex == 9999 || $member->member_fld_sex == 99999)
+        $member->member_fld_sex = null;
+
+	$member->member_fld_status_mat = $row ['mem_'.$member_fld ['member_fld_status_mat']];
+    if (!$member->member_fld_status_mat || $member->member_fld_status_mat == 99 || $member->member_fld_status_mat == 999 || $member->member_fld_status_mat == 9999 || $member->member_fld_status_mat == 99999)
+        $member->member_fld_status_mat = null;
+
+	$member->member_fld_age = $row ['mem_'.$member_fld ['member_fld_age']];
+    if ($member->member_fld_age===0 || $member->member_fld_age==='0'){
+        $member->member_fld_age = 10000;
+    }
+	if (!$member->member_fld_age || $member->member_fld_age == 99 || $member->member_fld_age == 999 || $member->member_fld_age == 9999 || $member->member_fld_age == 99999) {
+        $member->member_fld_age = null;
+    }
+    if($member->member_fld_age==10000){
+        $member->member_fld_age = 0;
+    }
+    //echo $member_fld ['member_fld_age'].': '.$member->member_fld_age.'<br/>';
+
+	$member->member_fld_write = $row ['mem_'.$member_fld ['member_fld_write']];
+    if (!($member->member_fld_write>=1 && $member->member_fld_write<=2))
+        $member->member_fld_write = null;
+    //echo $member_fld ['member_fld_write'].': '.$member->member_fld_write.'<br/>';
+
+	$member->member_fld_read = $row ['mem_'.$member_fld ['member_fld_read']];
+    if (!($member->member_fld_read>=1 && $member->member_fld_read<=2))
+        $member->member_fld_read = null;
+    //echo $member_fld ['member_fld_read'].': '.$member->member_fld_read.'<br/>';
+
+	$member->member_fld_level_edu = $row ['mem_'.$member_fld ['member_fld_level_edu']];
+    if (!($member->member_fld_level_edu>=1 && $member->member_fld_level_edu<=16))
+        $member->member_fld_level_edu = null;
+    //echo $member_fld ['member_fld_level_edu'].': '.$member->member_fld_level_edu.'<br/>';
+
+	$member->member_fld_act_edu = $row ['mem_'.$member_fld ['member_fld_act_edu']];
+    if (!($member->member_fld_act_edu>=1 && $member->member_fld_act_edu<=16))
+        $member->member_fld_act_edu = null;
+    //echo $member_fld ['member_fld_act_edu'].': '.$member->member_fld_act_edu.'<br/>';
+
+	$member->member_fld_lst_scho_12 = $row ['mem_'.$member_fld ['member_fld_lst_scho_12']];
+    if (!($member->member_fld_lst_scho_12>=1 && $member->member_fld_lst_scho_12<=2))
+        $member->member_fld_lst_scho_12 = null;
+    //echo $member_fld ['member_fld_lst_scho_12'].': '.$member->member_fld_lst_scho_12.'<br/>';
+
+	$member->member_fld_lsickness = explode ( ',', $row ['mem_'.$member_fld ['member_fld_lsickness']] );
+    //$result = !empty(array_intersect($member->member_fld_lsickness, array("0","1","2","3","4","5","6","7","8","9")));
+    //echo $row ['mem_'.$member_fld ['member_fld_lsickness']].' ';
+    //var_dump($member->member_fld_lsickness);echo ' '.$result;
+    $intersect = array_intersect($member->member_fld_lsickness, array("0","1","2","3","4","5","6","7","8","9"));
+    if(empty($intersect)){
+        $member->member_fld_lsickness = array();
+    }
+    //var_dump($member->member_fld_lsickness);echo '<br/>';
+
+    //if (!$member->member_fld_lsickness || $member->member_fld_lsickness == 99 || $member->member_fld_lsickness == 999 || $member->member_fld_lsickness == 9999 || $member->member_fld_lsickness == 99999)
+      //  $member->member_fld_lsickness = null;
+    //echo $member_fld ['member_fld_lsickness'].': '.implode(", ",$member->member_fld_lsickness).'<br/>';
+
+	$member->member_fld_chron = $row ['mem_'.$member_fld ['member_fld_chron']];
+    if (!$member->member_fld_chron || $member->member_fld_chron == 99 || $member->member_fld_chron == 999 || $member->member_fld_chron == 9999 || $member->member_fld_chron == 99999)
+        $member->member_fld_chron = null;
+
+	$member->member_fld_eco_active = $row ['mem_'.$member_fld ['member_fld_eco_active']];
+    if (!($member->member_fld_eco_active>=1 && $member->member_fld_eco_active<=12))
+        $member->member_fld_eco_active = null;
+    //echo $member_fld ['member_fld_eco_active'].': '.$member->member_fld_eco_active.'<br/>';
+
+	$member->member_prob_eye = $row ['mem_'.$member_fld ['member_prob_eye']];
+    if (!($member->member_prob_eye>=1 && $member->member_prob_eye<=4))
+        $member->member_prob_eye = null;
+    //echo $member_fld ['member_prob_eye'].': '.$member->member_prob_eye.'<br/>';
+
+	$member->member_prob_speak = $row ['mem_'.$member_fld ['member_prob_speak']];
+    if (!($member->member_prob_speak>=1 && $member->member_prob_speak<=4))
+        $member->member_prob_speak = null;
+    //echo $member_fld ['member_prob_speak'].': '.$member->member_prob_speak.'<br/>';
+
+	$member->member_prob_hear = $row ['mem_'.$member_fld ['member_prob_hear']];
+    if (!($member->member_prob_hear>=1 && $member->member_prob_hear<=4))
+        $member->member_prob_hear = null;
+    //echo $member_fld ['member_prob_hear'].': '.$member->member_prob_hear.'<br/>';
+
+	$member->member_prob_autooins = $row ['mem_'.$member_fld ['member_prob_autooins']];
+    if (!($member->member_prob_autooins>=1 && $member->member_prob_autooins<=4))
+        $member->member_prob_autooins = null;
+    //echo $member_fld ['member_prob_autooins'].': '.$member->member_prob_autooins.'<br/>';
+
+	$member->member_transf = $row ['mem_'.$member_fld ['member_transf']];
+    if (!$member->member_transf || $member->member_transf == 99 || $member->member_transf == 999 || $member->member_transf == 9999 || $member->member_transf == 99999)
+        $member->member_transf = null;
+    //echo $member_fld ['member_transf'].': '.$member->member_transf.'<br/>';
+
+	$member->member_supp = $row ['mem_'.$member_fld ['member_supp']];
+    if (!$member->member_supp || $member->member_supp == 99 || $member->member_supp == 999 || $member->member_supp == 9999 || $member->member_supp == 99999)
+        $member->member_supp = null;
+    //echo $member_fld ['member_supp'].': '.$member->member_supp.'<br/><br/>';
+
+    /*echo 'information';
+    echo '<pre>';
+    var_dump(get_object_vars($member));
+    echo '</pre>';
+    exit;*/
+
+	if(!$tempId){
+		$hd->setId($row ['men_id']);
+		$hd->key = $row['men_fld_5'];
+		//echo 'Famille: '.$row ['men_id'];
+		$hd->milieu = $row ['men_'.$fld ['milieu']];
+        if (!$hd->milieu || $hd->milieu == 99 || $hd->milieu == 999 || $hd->milieu == 9999 || $hd->milieu == 99999)
+            $hd->milieu = null;
+		$hd->absence_of_food = $row ['men_'.$fld ['absence_of_food']];
+        if (!$hd->absence_of_food || $hd->absence_of_food == 99 || $hd->absence_of_food == 999 || $hd->absence_of_food == 9999 || $hd->absence_of_food == 99999)
+            $hd->absence_of_food = null;
+
+		$hd->hunger = $row ['men_'.$fld ['hunger']];
+        if (!$hd->hunger || $hd->hunger == 99 || $hd->hunger == 999 || $hd->hunger == 9999 || $hd->hunger == 99999)
+            $hd->hunger = null;
+
+		$hd->restricted_consumption = $row ['men_'.$fld ['restricted_consumption']];
+        if (!$hd->restricted_consumption || $hd->restricted_consumption == 99 || $hd->restricted_consumption == 999 || $hd->restricted_consumption == 9999 || $hd->restricted_consumption == 99999)
+            $hd->restricted_consumption = null;
+
+		$hd->materiau_wall = $row ['men_'.$fld ['materiau_wall']];
+        if (!$hd->materiau_wall || $hd->materiau_wall == 99 || $hd->materiau_wall == 999 || $hd->materiau_wall == 9999 || $hd->materiau_wall == 99999)
+            $hd->materiau_wall = null;
+
+		$hd->materiau_floor = $row ['men_'.$fld ['materiau_floor']];
+        if (!$hd->materiau_floor || $hd->materiau_floor == 99 || $hd->materiau_floor == 999 || $hd->materiau_floor == 9999 || $hd->materiau_floor == 99999)
+            $hd->materiau_floor = null;
+
+		$hd->materiau_roof = $row ['men_'.$fld ['materiau_roof']];
+        if (!$hd->materiau_roof || $hd->materiau_roof == 99 || $hd->materiau_roof == 999 || $hd->materiau_roof == 9999 || $hd->materiau_roof == 99999)
+            $hd->materiau_roof = null;
+
+		$hd->number_of_romm = $row ['men_'.$fld ['number_of_romm']];
+		if (!$hd->number_of_romm || $hd->number_of_romm == 99 || $hd->number_of_romm == 999 || $hd->number_of_romm == 9999 || $hd->number_of_romm == 99999)
+			$hd->number_of_romm = null;
+
+		$hd->lighting_access = $row ['men_'.$fld ['lighting_access']];
+        if (!$hd->lighting_access || $hd->lighting_access == 99 || $hd->lighting_access == 999 || $hd->lighting_access == 9999 || $hd->lighting_access == 99999)
+            $hd->lighting_access = null;
+
+		$hd->energy_access = $row ['men_'.$fld ['energy_access']];
+        if (!$hd->energy_access || $hd->energy_access == 99 || $hd->energy_access == 999 || $hd->energy_access == 9999 || $hd->energy_access == 99999)
+            $hd->energy_access = null;
+
+		$hd->potable_water = $row ['men_'.$fld ['potable_water']];
+        if (!$hd->potable_water || $hd->potable_water == 99 || $hd->potable_water == 999 || $hd->potable_water == 9999 || $hd->potable_water == 99999)
+            $hd->potable_water = null;
+
+		$hd->cleaning_water = $row ['men_'.$fld ['cleaning_water']];
+        if (!$hd->cleaning_water || $hd->cleaning_water == 99 || $hd->cleaning_water == 999 || $hd->cleaning_water == 9999 || $hd->cleaning_water == 99999)
+            $hd->cleaning_water = null;
+
+		$hd->waste_evacuation = $row ['men_'.$fld ['waste_evacuation']];
+        if (!$hd->waste_evacuation || $hd->waste_evacuation == 99 || $hd->waste_evacuation == 999 || $hd->waste_evacuation == 9999 || $hd->waste_evacuation == 99999)
+            $hd->waste_evacuation = null;
+
+		$hd->toilet_acces = $row ['men_'.$fld ['toilet_acces']];
+        if (!$hd->toilet_acces || $hd->toilet_acces == 99 || $hd->toilet_acces == 999 || $hd->toilet_acces == 9999 || $hd->toilet_acces == 99999)
+            $hd->toilet_acces = null;
+		$hd->addMember($member);
+        $familleA[$famille] +=1;
+	}
+	if($tempId && $tempId==$row ['men_id']){
+		$hd->addMember($member);
+        $familleA[$famille] +=1;
+	}elseif($tempId && $tempId!=$row ['men_id']){
+		$hd->processingHdvi();
+		$famille += 1;
+		$hd = new Household();
+        $hd->fld = $fld;
+        $hd->member_fld = $member_fld;
+        $hd->table = 'wform_'.$_POST['householdid'];
+        $hd->member_table = 'wf_'.$_POST['householdid'];
+		$hd->setId($row ['men_id']);
+        $hd->key = $row['men_fld_5'];
+        $hd->milieu = $row ['men_'.$fld ['milieu']];
+        if (!$hd->milieu || $hd->milieu == 99 || $hd->milieu == 999 || $hd->milieu == 9999 || $hd->milieu == 99999)
+            $hd->milieu = null;
+
+        $hd->absence_of_food = $row ['men_'.$fld ['absence_of_food']];
+        if (!$hd->absence_of_food || $hd->absence_of_food == 99 || $hd->absence_of_food == 999 || $hd->absence_of_food == 9999 || $hd->absence_of_food == 99999)
+            $hd->absence_of_food = null;
+
+        $hd->hunger = $row ['men_'.$fld ['hunger']];
+        if (!$hd->hunger || $hd->hunger == 99 || $hd->hunger == 999 || $hd->hunger == 9999 || $hd->hunger == 99999)
+            $hd->hunger = null;
+
+        $hd->restricted_consumption = $row ['men_'.$fld ['restricted_consumption']];
+        if (!$hd->restricted_consumption || $hd->restricted_consumption == 99 || $hd->restricted_consumption == 999 || $hd->restricted_consumption == 9999 || $hd->restricted_consumption == 99999)
+            $hd->restricted_consumption = null;
+
+        $hd->materiau_wall = $row ['men_'.$fld ['materiau_wall']];
+        if (!$hd->materiau_wall || $hd->materiau_wall == 99 || $hd->materiau_wall == 999 || $hd->materiau_wall == 9999 || $hd->materiau_wall == 99999)
+            $hd->materiau_wall = null;
+
+        $hd->materiau_floor = $row ['men_'.$fld ['materiau_floor']];
+        if (!$hd->materiau_floor || $hd->materiau_floor == 99 || $hd->materiau_floor == 999 || $hd->materiau_floor == 9999 || $hd->materiau_floor == 99999)
+            $hd->materiau_floor = null;
+
+        $hd->materiau_roof = $row ['men_'.$fld ['materiau_roof']];
+        if (!$hd->materiau_roof || $hd->materiau_roof == 99 || $hd->materiau_roof == 999 || $hd->materiau_roof == 9999 || $hd->materiau_roof == 99999)
+            $hd->materiau_roof = null;
+
+        $hd->number_of_romm = $row ['men_'.$fld ['number_of_romm']];
+        if (!$hd->number_of_romm || $hd->number_of_romm == 99 || $hd->number_of_romm == 999 || $hd->number_of_romm == 9999 || $hd->number_of_romm == 99999)
+            $hd->number_of_romm = null;
+
+        $hd->lighting_access = $row ['men_'.$fld ['lighting_access']];
+        if (!$hd->lighting_access || $hd->lighting_access == 99 || $hd->lighting_access == 999 || $hd->lighting_access == 9999 || $hd->lighting_access == 99999)
+            $hd->lighting_access = null;
+
+        $hd->energy_access = $row ['men_'.$fld ['energy_access']];
+        if (!$hd->energy_access || $hd->energy_access == 99 || $hd->energy_access == 999 || $hd->energy_access == 9999 || $hd->energy_access == 99999)
+            $hd->energy_access = null;
+
+        $hd->potable_water = $row ['men_'.$fld ['potable_water']];
+        if (!$hd->potable_water || $hd->potable_water == 99 || $hd->potable_water == 999 || $hd->potable_water == 9999 || $hd->potable_water == 99999)
+            $hd->potable_water = null;
+
+        $hd->cleaning_water = $row ['men_'.$fld ['cleaning_water']];
+        if (!$hd->cleaning_water || $hd->cleaning_water == 99 || $hd->cleaning_water == 999 || $hd->cleaning_water == 9999 || $hd->cleaning_water == 99999)
+            $hd->cleaning_water = null;
+
+        $hd->waste_evacuation = $row ['men_'.$fld ['waste_evacuation']];
+        if (!$hd->waste_evacuation || $hd->waste_evacuation == 99 || $hd->waste_evacuation == 999 || $hd->waste_evacuation == 9999 || $hd->waste_evacuation == 99999)
+            $hd->waste_evacuation = null;
+
+        $hd->toilet_acces = $row ['men_'.$fld ['toilet_acces']];
+        if (!$hd->toilet_acces || $hd->toilet_acces == 99 || $hd->toilet_acces == 999 || $hd->toilet_acces == 9999 || $hd->toilet_acces == 99999)
+            $hd->toilet_acces = null;
+
+		$hd->addMember($member);
+        $familleA[$famille] +=1;
+	}
+	$tempId = $row ['men_id'];
+}
+//exit;
+$famille += 1;
+$hd->processingHdvi();
+/*$sqlrank = 'SET @r=0; UPDATE wform_'.$_POST['householdid'].' SET rank= @r:= (@r+1) Where '.$fld['depr_sali'].'=1 AND
+ '.$fld['vulnerability'].'<4
+ ORDER BY hdvi*(1/vul) WHERE '.$fld['depr_sali'].'=1 AND '.$fld['vulnerability'].'<4 AND '.$fld['complete'].'=1';
+mysqli_query($sqlrank);*/
+//$END = time() - $START;
+//echo "finish ".$famille.' in '.$END.'s';echo '<br/>';
+//var_dump($familleA);
+
+unset($resultat);
+header("Content-Disposition: attachment; filename=\"list_".time().".xls\"");
+header("Content-Type: application/vnd.ms-excel;");
+header("Pragma: no-cache");
+header("Expires: 0");
+$out = fopen("php://output", 'w');
+foreach ($table as $data)
+{
+    fputcsv($out, $data,"\t");
+}
+
+
+
+
+//fclose($out);
+/*$fp = fopen('results.json', 'w');
+fwrite($fp, json_encode($table));
+fclose($fp);*/
+
+//$json_string = json_encode($table);
+//$file = 'file_'.$_POST['from'].'_'.$_POST['to'].'.json';
+//file_put_contents($file, $json_string);
+//unset($table);
+//gc_collect_cycles();
+//echo Household::$COUNTER." run sucessfully";
+//echo '</table>';
+/* $dates = file_get_contents($baseDir . '/modules/manager/hdvi/date.json');
+$dates = json_decode($dates,true);
+for ($i=0;$i<count($dates);$i++){
+	if(($i+1)!= 2453){
+		$q = new DBQuery();
+		$q->addTable('wf_81_sub_249');
+		$q->addUpdate('fld_4', $dates[$i]['date']);
+		$q->addWhere('id='.($i+1));
+		$q->exec();
+	}
+} */
+
+?>

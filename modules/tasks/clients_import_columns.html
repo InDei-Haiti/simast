@@ -1,0 +1,28 @@
+	<script type="text/javascript" src="/modules/tasks/view.js"></script>
+    <table border="0" class="std" cellpadding="6">
+    <h1>@@TITLEFORM@@</h1>
+        <tr>
+            <td style="text-align: left;">
+                <!-- <b>Form:</b> @@FORM_NAME@@ -->
+            </td>
+            <td style="text-align: left;">
+                <b>Data File:</b> @@FILENAME@@
+            </td>
+        </tr>
+        <tr>
+            <td><!-- Vertical indent for column names --></td>
+            <td>
+                <!-- <input type="text" class="text" value="@@vindent@@" id="vinter">
+                <button class="button_link" id="bcolup">Update columns</button> -->
+            </td>
+        </tr>
+        <form action="/?m=tasks&a=clients_import&mode=write&ucs=@@usagecase@@" method="post" name="finishim">
+            <input type="hidden" name="task_id" value="@@TASK@@">
+            <input type="hidden" name="duplicate" value="@@DUPLICATE@@">
+            @@ROWSTR@@
+        <tr>
+            <td style="text-align: left;"><input type="button" class="button_link" value="Cancel" onclick="document.location.href='/?m=data'"></td>
+            <td style="text-align: right;"><input type="button" class="button_link" value="Import" onclick="valid8Import()"></td>
+        </tr>
+        </form>
+    </table>

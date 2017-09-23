@@ -1,0 +1,35 @@
+#top_head{
+	float: left;
+	width: 100%;
+	margin: 2px;
+	padding: 2px;
+}
+
+.top_list{
+	list-style: none;
+	padding: 2px;
+	margin: 3px;
+
+}
+
+.top_list li{
+	font-size: 12pt;
+	color: #A0A0A2;
+	border: 1px solid #cecece;
+	background-color: #ececec;
+	padding: 5px 10px;
+	float: left;
+	margin: 1px;
+}
+
+.top_list li:hover{
+	border: 1px solid #acacac;
+	background-color: #ededed;
+	color: #164a4f;
+	cursor: pointer;
+}
+.ctxt{
+	width: 100%;
+	overflow: auto;
+	float: left;
+}

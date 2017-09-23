@@ -1,0 +1,738 @@
+<?php /* TASKS $Id: addedit.php 5773 2008-07-21 15:04:07Z merlinyoda $ */
+if (!(defined('DP_BASE_DIR'))){
+	die('You should not access this file directly.');
+}
+
+/*
+ * Tasks :: Add/Edit Form
+ */
+
+$task_id = intval(dPgetParam($_REQUEST, 'task_id', 0));
+$perms =& $AppUI->acl();
+
+//load the record data
+$obj = new CTask();
+$q = new DBQuery();
+$projTasks = array();
+
+//check if we are in a subform
+if ($task_id > 0 && !$obj->load($task_id)) {
+	$AppUI->setMsg('Activity');
+	$AppUI->setMsg('invalidID', UI_MSG_ERROR, true);
+	$AppUI->redirect();
+}
+
+$task_parent = isset($_REQUEST['task_parent'])? $_REQUEST['task_parent'] : $obj->task_parent;
+
+//check for a valid project parent
+$task_project = intval($obj->task_project);
+if (!$task_project) {
+	$task_project = dPgetParam($_REQUEST, 'task_project', 0);
+	if (!$task_project) {
+		$AppUI->setMsg('badTaskProject', UI_MSG_ERROR);
+		$AppUI->redirect();
+	}
+}
+
+//check permissions
+if ($task_id) {
+	//we are editing an existing task
+	$canEdit = $perms->checkModuleItem($m, 'edit', $task_id);
+} else {
+	//do we have access on this project?
+	$canEdit = $perms->checkModuleItem('projects', 'view', $task_project);
+	//And do we have add permission to tasks?
+	if ($canEdit) {
+		$canEdit = $perms->checkModule('tasks', 'add');
+	}
+}
+
+if (!$canEdit) {
+	$AppUI->redirect('m=public&a=access_denied&err=noedit');
+}
+
+//check permissions for the associated project
+$canReadProject = $perms->checkModuleItem('projects', 'view', $obj->task_project);
+
+$durnTypes = dPgetSysVal('TaskDurationType');
+$sector_list = arrayMerge(array(-1=>'all sectors'), dPgetSysVal('SectorType'));
+//fetch list of countries
+$q = new DBQuery();
+$q->addTable('administrative_regions');
+$q->addQuery('region_id, region_name');
+$q->addWhere('region_parent = 0');
+$country_list = arrayMerge(array(-1 => 'all countries'), $q->loadHashList());
+
+//var_dump($country_list);
+
+//fetch admin level 1
+$q = new DBQuery();
+$q->addTable('administrative_regions');
+$q->addQuery('region_id, region_name');
+$q->addWhere('region_parent in (' . implode(",", array_keys($country_list) ) . ')');
+$q->addOrder('region_parent, region_name');
+$admin2_list = arrayMerge(array(-1 => 'all'), $q->loadHashList());
+
+//fetch admin level 2
+$q = new DBQuery();
+$q->addTable('administrative_regions');
+$q->addQuery('region_id, region_name');
+$q->addWhere('region_parent in (' . implode(",", array_keys($admin2_list) ) . ')');
+$q->addOrder('region_parent, region_name');
+$admin3_list = arrayMerge(array(-1 => 'all'), $q->loadHashList());
+
+//fetch admin level 2
+$q = new DBQuery();
+$q->addTable('administrative_regions');
+$q->addQuery('region_id, region_name');
+$q->addWhere('region_parent in (' . implode(",", array_keys($admin3_list) ) . ')');
+$q->addOrder('region_parent, region_name');
+$admin4_list = arrayMerge(array(-1 => 'all'), $q->loadHashList());
+
+
+//check the document access (public, participant, private)
+if (!$obj->canAccess($AppUI->user_id)) {
+	$AppUI->redirect('m=public&a=access_denied&err=noaccess');
+}
+
+
+// get a list of permitted companies
+require_once( $AppUI->getModuleClass ('companies' ) );
+
+$row = new CCompany();
+$companies = $row->getAllowedRecords( $AppUI->user_id, 'company_id,company_name', 'company_name' );
+$companies = arrayMerge( array( '0'=>'all' ), $companies );
+
+// get internal companies
+$companies_internal = $row->listCompaniesByType( array('6')); // 6 is standard value for internal companies
+$companies_internal = arrayMerge( array( '0'=>'all' ), $companies_internal );
+//pull the related project
+$project = new CProject();
+$project->load($task_project);
+
+//Pull all users
+$users = $perms->getPermittedUsers('tasks');
+
+function getSpaces($amount){
+	return (($amount == 0) ? '' : str_repeat('&nbsp;', $amount));
+}
+
+function constructTaskTree($task_data, $depth = 0){
+	global $projTasks, $all_tasks, $parents, $task_parent_options, $task_parent, $task_id;
+
+	$projTasks[$task_data['task_id']] = $task_data['task_name'];
+
+	$selected = (($task_data['task_id'] == $task_parent) ? ' selected="selected"' : '');
+	$task_data['task_name'] = ((strlen($task_data[1]) > 45) 
+	                           ? (substr($task_data['task_name'],0, 45) . '...') 
+	                           : $task_data['task_name']);
+	
+	$task_parent_options .= ('<option value="' . $task_data['task_id'] . '"' . $selected . '>' 
+	                         . getSpaces($depth * 3) . dPFormSafe($task_data['task_name']) 
+							 . '</option>');
+	
+	if (isset($parents[$task_data['task_id']])) {
+		foreach ($parents[$task_data['task_id']] as $child_task) {
+			if ($child_task != $task_id)
+				constructTaskTree($all_tasks[$child_task], ($depth+1));
+		}
+	}
+}
+
+function build_date_list(&$date_array, $row) {
+	global $tracked_dynamics, $project;
+	//if this task_dynamic is not tracked, set end date to proj start date
+	if (!in_array($row['task_dynamic'], $tracked_dynamics))
+		$date = new CDate($project->project_start_date);
+	else if ($row['task_milestone'] == 0) {
+		$date = new CDate($row['task_end_date']);
+	} else {
+		$date = new CDate($row['task_start_date']);
+	}
+	$sdate = $date->format('%d/%m/%Y');
+	$shour = $date->format('%H');
+	$smin = $date->format('%M');
+
+	$date_array[$row['task_id']] = array($row['task_name'], $sdate, $shour, $smin);
+}
+
+//let's get root tasks
+$q->addTable('tasks');
+$q->addQuery('task_id, task_name, task_end_date, task_start_date, task_milestone, task_parent' 
+             . ', task_dynamic');
+$q->addWhere('task_id = task_parent AND task_project = ' . $task_project);
+$q->addOrder('task_start_date');
+$sql = $q->prepare();
+$root_tasks = db_loadHashList($sql, 'task_id');
+$q->clear();
+
+$task_parent_options = '';
+//Now lets get non-root tasks, grouped by the task parent
+$q->addTable('tasks');
+$q->addQuery('task_id, task_name, task_end_date, task_start_date, task_milestone, task_parent' 
+             . ', task_dynamic');
+$q->addWhere('task_id != task_parent AND task_project = ' . $task_project);
+$q->addOrder('task_start_date');
+$sql = $q->prepare();
+$sub_tasks = db_exec($sql);
+$q->clear();
+
+$projTasksWithEndDates = array($obj->task_id => $AppUI->_('None'));//arrays contains task end date info for setting new task start date as maximum end date of dependenced tasks
+$all_tasks = array();
+$parents = array();
+if ($sub_tasks) {
+	while ($sub_task = db_fetch_assoc($sub_tasks)) {
+		//Build parent/child task list
+		$parents[$sub_task['task_parent']][] = $sub_task['task_id'];
+		$all_tasks[$sub_task['task_id']] = $sub_task;
+		build_date_list($projTasksWithEndDates, $sub_task);
+	}
+}
+
+//let's iterate root tasks
+foreach ($root_tasks as $root_task) {
+	build_date_list($projTasksWithEndDates, $root_task);
+	if ($root_task['task_id'] != $task_id) {
+		constructTaskTree($root_task);
+	}
+}
+
+//setup the title block
+$ttl = (($task_id > 0) ? 'Edit Activity' : 'Add Activity');
+$titleBlock = new CTitleBlock($ttl, '', $m, "$m.$a");
+//$titleBlock = new CTitleBlock($ttl, 'applet-48.png', $m, "$m.$a");
+$titleBlock->addCrumb('?m=tasks', 'activity listing');
+if ($canReadProject) {
+	$titleBlock->addCrumb(('?m=projects&a=view&project_id=' . $task_project), 'view this project');
+}
+if ($task_id > 0) {
+	$titleBlock->addCrumb(('?m=tasks&a=view&task_id=' . $obj->task_id), 'view this activity');
+}
+$titleBlock->show();
+
+//Let's gather all the necessary information from the department table
+//collect all the departments in the company
+$depts = array(0 => '');
+
+//ALTER TABLE `tasks` ADD `task_departments` CHAR(100) ;
+$company_id = $project->project_company;
+$selected_departments = (($obj->task_departments != '') ? explode(',', $obj->task_departments) 
+                         : array());
+$departments_count = 0;
+$department_selection_list = getDepartmentSelectionList($company_id, $selected_departments);
+if($department_selection_list != ''){
+	$department_selection_list = ('<select name="dept_ids[]" class="text">' . "\n" 
+	                              . '<option value="0"></option>' . "\n" 
+	                              . $department_selection_list . "\n" . '</select>');
+}
+
+
+function getDepartmentSelectionList($company_id, $checked_array = array(), 
+                                    $dept_parent=0, $spaces=0) {
+	global $departments_count;
+	$q = new DBQuery();
+	$parsed = '';
+
+	if ($departments_count < 10) { 
+		$departments_count++;
+	}
+	$q->addTable('departments');
+	$q->addQuery('dept_id, dept_name');
+	$q->addWhere('dept_parent = ' . $dept_parent);
+	$q->addWhere('dept_company = ' . $company_id);
+	$sql = $q->prepare();
+	$depts_list = db_loadHashList($sql, 'dept_id');
+	$q->clear();
+	
+	foreach($depts_list as $dept_id => $dept_info){
+		if (strlen($dept_info['dept_name']) > 30) {
+			$dept_info['dept_name'] = (substr($dept_info['dept_name'], 0, 28) . '...');
+		}
+		$selected = (in_array($dept_id, $checked_array) ? ' selected="selected"' : '');
+		$parsed .= ('<option value="' . $dept_id . '"' . $selected . '>' 
+		            . str_repeat('&nbsp;', $spaces) . $dept_info['dept_name'] . '</option>');
+		$parsed .= getDepartmentSelectionList($company_id, $checked_array, $dept_id, $spaces+5);
+	}
+	
+	return $parsed;
+}
+
+//Dynamic tasks are by default now off because of dangerous behavior if incorrectly used
+if (is_null($obj->task_dynamic)) {
+	$obj->task_dynamic = 0;
+}
+
+$can_edit_time_information = $obj->canUserEditTimeInformation();
+
+//Time arrays for selects
+$start = intval(dPgetConfig('cal_day_start'));
+$end   = intval(dPgetConfig('cal_day_end'));
+$inc   = intval(dPgetConfig('cal_day_increment'));
+if ($start === null ) $start = 8;
+if ($end   === null ) $end = 17;
+if ($inc   === null)  $inc = 15;
+$hours = array();
+for ( $current = $start; $current <= $end; $current++ ) {
+	if ( $current < 10 ) { 
+		$current_key = "0" . $current;
+	} else {
+		$current_key = $current;
+	}
+	
+	if ( stristr($AppUI->getPref('TIMEFORMAT'), "%p") ){
+		//User time format in 12hr
+		$hours[$current_key] = ( $current > 12 ? $current-12 : $current );
+	} else {
+		//User time format in 24hr
+		$hours[$current_key] = $current;
+	}
+}
+
+$minutes = array();
+$minutes["00"] = "00";
+for ( $current = 0 + $inc; $current < 60; $current += $inc ) {
+	$minutes[$current] = $current;
+}
+
+// format dates
+$df = $AppUI->getPref('SHDATEFORMAT');
+
+if (intval($obj->task_start_date))
+  $start_date = new CDate($obj->task_start_date);
+else if ($task_id != 0)
+  $start_date = null;
+else
+  $start_date = new CDate();
+//$start_date = intval( $obj->task_start_date ) ? new CDate( $obj->task_start_date ) : new CDate();
+$end_date = intval( $obj->task_end_date ) ? new CDate( $obj->task_end_date ) : null;
+
+// convert the numeric calendar_working_days config array value to a human readable output format
+$cwd = explode(',', $dPconfig['cal_working_days']);
+
+$cwd_conv = array_map( 'cal_work_day_conv', $cwd );
+$cwd_hr = implode(', ', $cwd_conv);
+
+function cal_work_day_conv($val) {
+	GLOBAL $locale_char_set;
+	setlocale(LC_TIME, 'en_AU');
+	$wk = Date_Calc::getCalendarWeek( null, null, null, "%a", LOCALE_FIRST_DAY );
+	setlocale(LC_ALL, $AppUI->user_lang);
+	
+	$day_name = $wk[($val - LOCALE_FIRST_DAY)%7];
+	if ($locale_char_set == "utf-8" && function_exists("utf8_encode")) {
+	    $day_name = utf8_encode($day_name);
+	}
+	return htmlentities($day_name, ENT_COMPAT, $locale_char_set);
+}
+$q->addQuery('project_id, project_name');
+$q->addTable('projects');
+$q->addWhere('project_company = ' . $company_id);
+$q->addWhere('(project_status <> 7 OR project_id = '. $task_project . ')');
+$q->addOrder('project_name');
+$project->setAllowedSQL($AppUI->user_id, $q);
+$projects = $q->loadHashList();
+?>
+<script type="text/javascript" language="JavaScript">
+var selected_contacts_id = "<?php echo $obj->task_contacts; ?>";
+var task_id = '<?php echo $obj->task_id; ?>';
+
+var check_task_dates = <?php
+echo ((isset($dPconfig['check_task_dates']) && $dPconfig['check_task_dates']) ? 'true' : 'false');
+?>;
+var can_edit_time_information = <?php echo (($can_edit_time_information) ? 'true' : 'false'); ?>;
+var task_name_msg = "<?php echo $AppUI->_('taskName'); ?>";
+var task_start_msg = "<?php echo $AppUI->_('taskValidStartDate'); ?>";
+var task_end_msg = "<?php echo $AppUI->_('taskValidEndDate'); ?>";
+var workHours = <?php echo dPgetConfig('daily_working_hours'); ?>;
+//working days array from config.php
+var working_days = new Array(<?php echo dPgetConfig('cal_working_days'); ?>);
+var cal_day_start = <?php echo intval(dPgetConfig('cal_day_start')); ?>;
+var cal_day_end = <?php echo intval(dPgetConfig('cal_day_end')); ?>;
+var daily_working_hours = <?php echo intval(dPgetConfig('daily_working_hours')); ?>;
+
+function updateProvinces()
+{
+  if ($F('task_country') == '') return;
+  new Ajax.Request('modules/tasks/getProvinces.php?country_id=' + $F('task_country'),
+  {
+	method: 'get',
+	onSuccess: populateProvinces,
+	onFailure: function (r) {
+		throw new Error('Update province failed: ' + r.statusText);
+	}
+  }
+  )
+}
+
+function populateProvinces(r)
+{
+	//alert(r.responseText);
+	eval ( 'var provList = ' + r.responseText );
+	//alert (provList);
+	var provinceElement = $('task_admin2');
+	while(provinceElement.options.length > 1) provinceElement.remove(1);
+	for (var n = 0; n < provList.length; n++)
+	{
+		provinceElement.add(new Option(provList[n],provList[n]), document.all ? 0 : null );
+	}
+	
+	provinceElement.disabled = false;
+}
+function updateDistricts()
+{
+ 
+  if ($F('task_admin2') == '') return;
+  new Ajax.Request('modules/tasks/getDistricts.php?province_id=' + $F('task_admin2'),
+  {
+	method: 'get',
+	onSuccess: populateDistricts,
+	onFailure: function (r) {
+		throw new Error('Update district failed: ' + r.statusText);
+	}
+  }
+  )
+}
+
+function populateDistricts(r)
+{
+	//alert(r.responseText);
+	eval ( 'var districtList = ' + r.responseText );
+	//alert (districtList);
+	var districtElement = $('task_admin3');
+	while(districtElement.options.length > 1) districtElement.remove(1);
+	for (var n = 0; n < districtList.length; n++)
+	{
+		districtElement.add(new Option(districtList[n],districtList[n]), document.all ? 0 : null );
+	}
+	
+	districtElement.disabled = false;
+}
+
+function updateLocations()
+{
+
+  if ($F('task_admin3') == '') return;
+  new Ajax.Request('modules/tasks/getLocations.php?district_id=' + $F('task_admin3'),
+  {
+	method: 'get',
+	onSuccess: populateLocations,
+	onFailure: function (r) {
+		throw new Error('Update location failed: ' + r.statusText);
+	}
+  }
+  )
+}
+
+function populateLocations(r)
+{
+	//alert(r.responseText);
+	eval ( 'var locationList = ' + r.responseText );
+	//alert (provList);
+	var locationElement = $('task_admin4');
+	while(locationElement.options.length > 1) locationElement.remove(1);
+	for (var n = 0; n < locationList.length; n++)
+	{
+		locationElement.add(new Option(locationList[n],locationList[n]), document.all ? 0 : null );
+	}
+	
+	locationElement.disabled = false;
+}
+</script>
+
+<table border="1" cellpadding="4" cellspacing="0" width="100%" class="std">
+<form name="editFrm" action="?m=tasks&project_id=<?php echo $task_project; ?>" method="post">
+	<input name="dosql" type="hidden" value="do_task_aed" />
+	<input name="task_id" type="hidden" value="<?php echo $task_id; ?>" />
+	<input name="task_project" type="hidden" value="<?php echo $task_project; ?>" />
+	<input name='task_contacts' id='task_contacts' type='hidden' value="<?php 
+echo $obj->task_contacts; ?>" />
+<tr>
+	<td colspan="2" style="border: outset #eeeeee 1px;background-color:#<?php 
+echo $project->project_color_identifier; ?>" >
+		<font color="<?php echo bestColor($project->project_color_identifier); ?>">
+			<strong><?php echo $AppUI->_('Project'); ?>: <?php 
+echo @$project->project_name; ?></strong>
+		</font>
+	</td>
+</tr>
+
+<tr valign="top" width="50%">
+
+	<td>
+		<table cellspacing="0" cellpadding="1" border="0" width="50%">
+		<tr>
+			<td>
+				<?php echo $AppUI->_('Activity Name'); ?> *
+			</td>
+			<td>
+				<input type="text" class="text" name="task_name" value="<?php 
+echo($obj->task_name); ?>" size="40" maxlength="255" />
+			</td>
+		</tr>
+		<tr>
+			<td valign="top">
+				<?php echo $AppUI->_('Activity Type'); ?>
+			</td>
+			<td>
+				<?php $task_types = arrayMerge(array("-1"=>'all types'), dPgetSysVal('TaskType')); echo arraySelect($task_types, "task_type",  "class='text'", $obj->task_type, false); ?>
+			</td>
+
+		</tr>		
+		<tr>
+			<td>
+				<?php echo $AppUI->_('Sector'); ?>
+			</td>
+			<td>
+				<?php echo arraySelect($sector_list, "task_sector",  "class='text'", $obj->task_sector, false); ?>
+			</td>
+		</tr>		
+		<tr>
+			<td>
+				<?php echo $AppUI->_('Sub-Contractor'); ?>
+			</td>
+			<td>
+				<?php echo arraySelect( $companies, 'task_company', 'class="text" size="1"', $obj->task_company ); ?>
+				&nbsp;&nbsp;&nbsp;&nbsp;		
+						<?php
+						if ($AppUI->isActiveModule('contacts') && $perms->checkModule('contacts', 'view')) {
+							echo "<input type='button' class='button' value='".$AppUI->_("Select contacts...")."' onclick='javascript:popContacts();' />";
+						}
+						?>
+
+			</td>
+			<td>
+			</td>
+
+		</tr>		
+
+		<?php
+	if($can_edit_time_information){
+?>
+
+		<tr>
+	<td nowrap="nowrap"><?php echo $AppUI->_( 'Start Date' );?></td>
+	<td nowrap="nowrap">
+		<input type="hidden" name="task_start_date" id="task_start_date" value="<?php echo $start_date ? $start_date->format( FMT_TIMESTAMP_DATE ) : "" ;?>" />
+		<input type="text" name="start_date" id="start_date" value="<?php echo $start_date ? $start_date->format( $df ) : "" ;?>" class="text" disabled="disabled" />
+		<a href="#" onClick="popCalendar(document.editFrm.start_date)">
+						<img src="./images/calendar.gif" width="24" height="12" alt="<?php echo $AppUI->_('Calendar');?>" border="0">
+					</a>
+	</td>
+</tr>
+<tr>
+	<td nowrap="nowrap"><?php echo $AppUI->_( 'End Date' );?></td>
+	<td nowrap="nowrap">
+		<input type="hidden" name="task_end_date" id="task_end_date" value="<?php echo $end_date ? $end_date->format( FMT_TIMESTAMP_DATE ) : '';?>" />
+		<input type="text" name="end_date" id="end_date" value="<?php echo $end_date ? $end_date->format( $df ) : '';?>" class="text" disabled="disabled" />
+		<a href="#" onClick="popCalendar(document.editFrm.end_date)">
+						<img src="./images/calendar.gif" width="24" height="12" alt="<?php echo $AppUI->_('Calendar');?>" border="0">
+					</a>
+	</td>
+</tr>
+<tr>
+	<td nowrap="nowrap"><?php echo $AppUI->_( 'Expected Duration' );?>:</td>
+	<td nowrap="nowrap">
+		<input type="text" class="text" name="task_duration" maxlength="8" size="6" value="<?php echo isset($obj->task_duration) ? $obj->task_duration : 1;?>" />
+	<?php
+		echo arraySelect( $durnTypes, 'task_duration_type', 'class="text"', $obj->task_duration_type, true );
+	?>
+	</td>
+</tr>
+<tr>
+	<td nowrap="nowrap"><?php echo $AppUI->_( 'Calculate' );?>:</td>
+	<td nowrap="nowrap">
+		<input type="button" value="<?php echo $AppUI->_('Duration');?>" onclick="calcDuration(document.editFrm)" class="button" />
+		<input type="button" value="<?php echo $AppUI->_('Finish Date');?>" onclick="calcFinish(document.editFrm)" class="button" />
+	</td>
+</tr>
+        <?php
+        } else {  
+        ?>
+<tr>
+        <td colspan='2'>
+                <?php echo $AppUI->_("Only the task owner, project owner, or system administrator is able to edit time related information."); ?>
+        </td>
+</tr>
+
+        <?php
+        }// end of can_edit_time_information
+        ?>
+		<tr>
+			<td><?php echo $AppUI->_( 'Activity Parent' );?>:</td>
+			<td>
+				<select name='task_parent' class='text'>
+					<option value='<?php echo $obj->task_id; ?>'><?php echo $AppUI->_('None'); ?></option>
+					<?php echo $task_parent_options; ?>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td><?php echo $AppUI->_( 'Target Budget' );?>:</td>
+			<td><input type="text" class="text" name="task_target_budget" value="<?php echo @$obj->task_target_budget;?>" size="10" maxlength="10" /><?php echo $dPconfig['currency_symbol'] ?></td>
+		</tr>
+<?php if ($task_id > 0){ ?>
+		<tr>
+			<td nowrap="nowrap">
+				<?php echo $AppUI->_( 'Move this activity (and its children), to project' );?>:
+			</td>
+			<td>
+				<?php echo arraySelect( $projects, 'new_task_project', 'size="1" class="text" id="medium" onchange="submitIt(document.editFrm)"',$task_project ); ?>
+			</td>
+		</tr>
+	<?php } ?>
+		<tr>
+			<td  nowrap="nowrap"><?php echo $AppUI->_('Status'); ?></td>
+			<td>
+				<?php 
+echo arraySelect($status, 'task_status', 'size="1" class="text"', $obj->task_status, true); ?>
+			</td>
+		</tr>
+		<tr>
+			<td  nowrap="nowrap"><?php echo $AppUI->_('Priority'); ?> *</td>
+			<td nowrap="nowrap">
+				<?php 
+echo arraySelect($priority, 'task_priority', 'size="1" class="text"', $obj->task_priority, true); ?>
+			</td>
+		</tr>
+		<tr>
+			<td  nowrap="nowrap"><?php echo $AppUI->_('Progress'); ?></td>
+			<td>
+				<?php 
+echo arraySelect($percent, 'task_percent_complete', 'size="1" class="text"', 
+                 $obj->task_percent_complete) . '%'; ?>
+			</td>
+		</tr>
+		<tr>
+
+			<td  nowrap="nowrap"><label for="task_milestone"><?php 
+echo $AppUI->_('Milestone'); ?>?</label></td>
+			<td>
+				<input type="checkbox" value="1" name="task_milestone" id="task_milestone"<?php 
+echo (($obj->task_milestone) ? ' checked="checked"' : ''); ?> />
+			</td>
+		</tr>
+		</table>
+	</td>
+	<td>
+	<b><?php echo $AppUI->_('Location information'); ?></b>
+	<table cellspacing="0" cellpadding="2" border="0" width="50%">
+	<tr>
+			<td nowrap="nowrap">
+				<?php echo $AppUI->_('Country'); ?>
+			</td>
+		    <td>
+				<?php echo arraySelect($country_list, "task_country",  "id='task_country' class='text' onChange='updateProvinces();'", $obj->task_country, false); ?>			
+			</td>
+	</tr>
+	<tr>
+			<td nowrap="nowrap">
+				<?php echo $AppUI->_('Admin2'); ?>
+			</td>
+		    <td>
+				<?php echo arraySelect($admin2_list, "task_admin2",  "id='task_admin2' class='text' disabled='disabled' onChange='updateDistricts();'", $obj->task_admin2, false); ?>			
+			</td>
+	</tr>
+	<tr>
+			<td nowrap="nowrap">
+				<?php echo $AppUI->_('Admin3'); ?>
+			</td>
+		    <td>
+				<?php echo arraySelect($admin3_list, "task_admin3",  " id='task_admin3' class='text' disabled='disabled'    onChange='updateLocations();'", $obj->task_admin3, false); ?>			
+			</td>
+	</tr>
+	<tr>
+			<td nowrap="nowrap">
+				<?php echo $AppUI->_('Admin4'); ?>
+			</td>
+		    <td>
+				<?php echo arraySelect($admin4_list, "task_admin4",  " id='task_admin4' disabled='disabled'  class='text'", $obj->task_admin4, false); ?>			
+			</td>
+	</tr>
+	<tr>
+			<td nowrap="nowrap">
+				<?php echo $AppUI->_('Other'); ?>
+			</td>
+		    <td>
+				<input type="text" class="text" name="task_other_location" value="<?php 
+echo($obj->task_other_location); ?>" size="40" maxlength="255" />
+			</td>
+	</tr>
+	<tr>
+			<td nowrap="nowrap">
+				<?php echo $AppUI->_('GPS Co-ordinates X'); ?>
+			</td>
+		    <td>
+				<input type="text" class="text" name="task_gps_x" value="<?php 
+echo($obj->task_gps_x); ?>" size="40" maxlength="255" />
+			</td>
+	</tr>
+	<tr>
+			<td nowrap="nowrap">
+				<?php echo $AppUI->_('GPS Co-ordinates Y'); ?>
+			</td>
+		    <td>
+				<input type="text" class="text" name="task_gps_y" value="<?php 
+echo($obj->task_gps_y); ?>" size="40" maxlength="255" />
+			</td>
+	</tr>
+			<tr>	
+	<td nowrap="nowrap" valign="top">
+		
+		<?php echo $AppUI->_( 'Description' );?>:
+	</td>
+    <td>
+		<textarea name="task_description" class="textarea" cols="60" rows="10" wrap="virtual"><?php echo @$obj->task_description;?></textarea>
+		<br />
+		<?php
+			require_once($AppUI->getSystemClass( 'CustomFields' ));
+			GLOBAL $m;
+			$custom_fields = New CustomFields( $m, 'addedit', $obj->task_id, "edit" );
+			$custom_fields->printHTML();
+		?>
+	</td>
+	</tr>
+	
+	</table>
+	</td>
+</tr>
+</table>
+
+<table border="0" cellspacing="0" cellpadding="3" width="100%">
+<tr>
+	<td height="40" width="35%">
+		* <?php echo $AppUI->_('requiredField'); ?>
+	</td>
+	<td height="40" width="30%">&nbsp;</td>
+	<td  height="40" width="35%" align="right">
+		<table>
+		<tr>
+			<td>
+				<input class="button" type="button" name="cancel" value="<?php 
+echo $AppUI->_('cancel'); ?>" onClick="if(confirm('<?php 
+echo $AppUI->_('taskCancel', UI_OUTPUT_JS); ?>')){location.href = '?<?php 
+echo $AppUI->getPlace(); ?>';}" />
+			</td>
+			<td>
+				<input class="button" type="button" name="btnFuseAction" value="<?php 
+echo $AppUI->_('save'); ?>" onClick="submitIt(document.editFrm);" />
+			</td>
+		</tr>
+		</table>
+	</td>
+</tr>
+</table>
+</form>
+<?php
+//if (isset($_GET['tab'])) {
+	//$AppUI->setState('TaskAeTabIdx', dPgetParam($_GET, 'tab', 0));
+//}
+//$tab = $AppUI->getState('TaskAeTabIdx', 0);
+//$tabBox =& new CTabBox(('m=tasks&a=addedit&task_id=' . $task_id), '', $tab, '');
+//$tabBox->add(DP_BASE_DIR.'/modules/tasks/ae_desc', 'Details');
+//$tabBox->add(DP_BASE_DIR.'/modules/tasks/ae_dates', 'Dates');
+//$tabBox->add(DP_BASE_DIR.'/modules/tasks/ae_depend', 'Dependencies');
+//$tabBox->add(DP_BASE_DIR.'/modules/tasks/ae_resource', 'Human Resources');
+//$tabBox->loadExtras('tasks', 'addedit');
+//$tabBox->show('', true);
+?>
+

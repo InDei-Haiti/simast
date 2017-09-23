@@ -1,0 +1,21 @@
+<?php
+$titles["wform_88"]=
+		array(
+			"title" => "Enquete sud est KL v2",
+			"db"=>"wform_88",
+			"uid"=>"tbw88",
+			"date"=>"entry_date",
+			"did"=>"id",
+			"defered"=>array(),
+			"abbr"=>"WF88",
+			"plurals"=>array('wform_sub_77'=>array(
+			'table'=>'wf_88_sub_77',
+			'index'=>'wf_id',
+			'fields'=>array("fld_0","fld_1","fld_2","fld_3","fld_4","fld_5","fld_6","fld_7","fld_8","fld_9","fld_10","fld_11","fld_12","fld_13","fld_14","fld_15","fld_16","fld_17","fld_18","fld_19","fld_20","fld_21","fld_22","fld_23","fld_24","fld_25","fld_26","fld_27","fld_28"),
+			'eparser'=>array("fld_4"=>"$resex=turnDateSQL(\"#XYZ#\");")
+				)),
+			"referral"=>"",
+			"next_visit"=>"",
+			"form_type"=>"contus"
+		);
+?>

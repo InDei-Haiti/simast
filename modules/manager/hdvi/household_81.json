@@ -1,0 +1,22 @@
+{
+	"commun":"fld_1",
+	"milieu":"fld_3",
+	"absence_of_food":"fld_32",
+	"hunger":"fld_33",
+	"restricted_consumption":"fld_34",
+	"materiau_floor":"fld_20",
+	"materiau_wall":"fld_16",
+	"materiau_roof":"fld_18",
+	"number_of_romm":"fld_22",
+	"lighting_access":"fld_24",
+	"energy_access":"fld_27",
+	"potable_water":"fld_28",
+	"cleaning_water":"fld_29",
+	"toilet_acces":"fld_23",
+	"waste_evacuation":"fld_25",
+	"complete":"fld_73", 
+	"step7":"fld_74",
+	"hdvi":"fld_75",
+	"vulnerability":"fld_72",
+	"depr_sali":"fld_76"
+}

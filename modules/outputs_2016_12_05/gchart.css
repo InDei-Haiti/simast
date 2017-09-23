@@ -1,0 +1,57 @@
+#awrapper{
+	float: left;
+	width: 1080px;
+}
+
+#awrapper > div{
+	padding: 5px;
+	margin: 5px;
+}
+
+#bset{
+	/*width: 800px;
+	float: left;*/
+}
+
+.area_select, .instance{
+	display: none;
+}
+
+#bparts label{
+	float: left;
+}
+
+.instance{
+	margin-top: 5px;
+}
+
+.instance p{
+	font-size: 10px;
+}
+
+#filters{
+	min-height: 70px !important;
+}
+
+#filters_block{
+	min-height: 100px !important;
+	
+}
+
+#fields_block, #filters_block{
+	height: auto !important;
+}
+
+.area_select{
+	max-width: 290px;
+}
+
+#fields{
+	list-style: none;
+	margin-left: -5px;
+}
+
+#fields > li span{
+	white-space: nowrap;
+	vertical-align: text-bottom;
+}

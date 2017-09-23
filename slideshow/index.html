@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Banner Jobpaw.com</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- <link href='http://fonts.googleapis.com/css?family=Open+Sans|Open+Sans+Condensed:700' rel='stylesheet' type='text/css'> -->
+        <!-- <link rel="stylesheet" href="demo/css/demostyles.css"> -->
+        <link rel="stylesheet" href="css/slideshow.css">
+    </head>
+    <body>
+       <table style="width:70%;margin:auto">
+       	<tr>
+       		<td style="height:50px;width:80%;margin:auto;">
+       			<div class="bss-slides num2" tabindex="2">
+			       <figure>
+				      <img src="images/entreprise.png" style="width:100%; height:200px;"  />
+				      <figcaption><!-- <b>Etes-vous une entreprise, une organisation, une ONG, un ministère, un projet?</b> -->
+				      <span id="span0" data="ouvrir" onclick="openClose(this,document.getElementById('div0'));">OUVRIR</span>
+				      <div id="div0">
+				      <table>
+				      		<tr><td><a href="">1 Lien d'info pour une entreprise</a></td></tr>
+				      		<tr><td><a href="">2 Lien d'info pour une entreprise</a></td></tr>
+				      		<tr><td><a href="">3 Lien d'info pour une entreprise</a></td></tr>
+				      </table>
+				      </div>
+				      </figcaption>
+				       
+			       </figure>
+			           <figure>
+			               <img src="images/professionnel.png" style="width:100%; height:200px;" />
+			               <figcaption><!-- <b>Etes-vous un professionnel, un technicien, un consultant, un étudiant?</b> -->
+			               <span id="span1" data="ouvrir" onclick="openClose(this,document.getElementById('div1'));">OUVRIR</span>
+			               		<div id="div1">
+			               		<table>
+				      		<tr><td><a href="">1 Lien d'info pour professionnel</a></td></tr>
+				      		<tr><td><a href="">2 Lien d'info pour professionnel</a></td></tr>
+				      		<tr><td><a href="">3 Lien d'info pour professionnel</a></td></tr>
+				      </table>
+			               		</div>
+			               </figcaption> 
+			       		   
+			       </figure>
+			       <figure>
+				      <img src="images/universite.png" style="width:100%; height:200px;" />
+				      <figcaption><!-- <b>Etes-vous une université, une école technique?</b> -->
+				      <span id="span2" data="ouvrir" onclick="openClose(this,document.getElementById('div2'));">OUVRIR</span>
+				      <div id="div2">
+				      	<table>
+				      		<tr><td><a href="">1 Lien d'info pour une université</a></td></tr>
+				      		<tr><td><a href="">2 Lien d'info pour une université</a></td></tr>
+				      		<tr><td><a href="">3 Lien d'info pour une université</a></td></tr>
+				      </table>
+				      </div>
+				      </figcaption> 
+			       </figure>
+			   </div>
+       		</td>
+       	</tr>
+       </table>
+       
+     
+
+<script src="js/slideshow.js"></script>
+<script>
+var opts2 = {
+    auto : true,
+    fullScreen : true,
+    swipe : true
+};
+makeBSS('.num2', opts2);
+</script>
+</body>
+</html>

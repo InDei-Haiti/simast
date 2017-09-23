@@ -1,0 +1,92 @@
+/*
+*************css elements and classes code format************
+			*-comments on the class or element
+			*-color/background color properties
+			*-font properties
+			*-text properties
+			*-size(height and width) properties
+			*-border/margin properties
+			*-other properties
+*/
+
+.pre_save_numeric_text_box {
+	background-color: #99acc1;
+	font-size: 9px; 
+	font-family: verdana;
+	text-align:right; 
+	border-top: #99acc1 0px solid; 
+	border-bottom: #99acc1 0px solid;
+	border-right: #99acc1 1px solid; 
+	border-left: #99acc1 1px solid; 
+}
+.post_save_numeric_text_box {
+	background-color: #ffdf00;
+	font-family: verdana;
+	font-size: 9px; 
+	text-align:right; 
+	border-top: #99acc1 0px solid; 
+	border-bottom: #99acc1 0px solid;
+	border-right: #99acc1 1px solid; 
+	border-left: #99acc1 1px solid; 
+}
+.post_save_warning_numeric_text_box {
+	background-color: #ffa500; 
+	font-family: verdana;
+	font-size: 9px; 
+	text-align:right; 
+	border-top: #99acc1 0px solid; 
+	border-bottom: #99acc1 0px solid;
+	border-right: #99acc1 1px solid; 
+	border-left: #99acc1 1px solid; 
+}
+
+.post_save_error_numeric_text_box {
+	background-color: red;
+	font-family: verdana;
+	font-size: 9px; 
+	text-align:right; 
+	border-top: #99acc1 0px solid; 
+	border-bottom: #99acc1 0px solid;
+	border-right: #99acc1 1px solid; 
+	border-left: #99acc1 1px solid; 
+}
+.pre_save_string_text_box {
+	background-color: #99acc1;
+	font-family: verdana;
+	font-size: 9px; 	
+	text-align:left; 
+	border-top: #99acc1 0px solid; 
+	border-bottom: #99acc1 0px solid;
+	border-right: #99acc1 1px solid; 
+	border-left: #99acc1 1px solid; 
+}
+.post_save_string_text_box {
+	background-color: #ffdf00;
+	font-size: 9px; 
+	font-family: verdana;
+	text-align:left; 
+	border-top: #99acc1 0px solid; 
+	border-bottom: #99acc1 0px solid;
+	border-right: #99acc1 1px solid; 
+	border-left: #99acc1 1px solid; 
+}
+.post_save_error_string_text_box {
+	background-color: red;
+	font-size: 9px; 
+	font-family: verdana;
+	text-align:left; 
+	border-top: #99acc1 0px solid; 
+	border-bottom: #99acc1 0px solid;
+	border-right: #99acc1 1px solid; 
+	border-left: #99acc1 1px solid; 
+}
+.post_save_warning_string_text_box {
+	background-color: #ffa500;
+	font-size: 9px; 
+	font-family: verdana;
+	text-align:left; 
+	border-top: #99acc1 0px solid; 
+	border-bottom: #99acc1 0px solid;
+	border-right: #99acc1 1px solid; 
+	border-left: #99acc1 1px solid; 
+}

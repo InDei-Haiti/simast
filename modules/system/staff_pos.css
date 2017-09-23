@@ -1,0 +1,43 @@
+@CHARSET "UTF-8";
+#positions{
+    width: 250px;
+}
+
+#positions > li{
+    margin: 3px 1px;
+    cursor: pointer;
+    padding: 2px;
+}
+
+#positions > li:hover{
+    background-color: #cecece;
+}
+
+.loading{
+    float: right;
+}
+
+.msg{
+    color: green;
+    font-weight: 800;
+    font-size: 10pt;
+}
+
+.fhref{
+    cursor: pointer;
+}
+
+.fhref:hover{
+    text-decoration: underline;
+}
+
+#fillstaff{
+    width: 350px;
+    height: 400px;
+    overflow: auto;
+    border: 2px solid #d7d7d7;
+}
+
+.bold{
+    font-weight: 800;
+}

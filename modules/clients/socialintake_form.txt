@@ -1,0 +1,45 @@
+Social Intake form:
+Adm no
+Date
+Firstname
+Other names
+Date of birth
+DOB is Exact/Approx
+Gender
+Is the child a total orphan
+Clinic (Kangemi, Kibera, Kawangware, Kariobangi, Mukuru, Dandora)
+Name of Social Worker
+Name of CHW
+School Education(Class in which currently enrolled or highest class ever attended)
+Current residence (Physical Address (Landmarks))
+Rural Home Particulars
+-Province 	 	
+-Location 			
+-Village/Estate	
+-Further Details
+-District
+-Sub location
+Enrolling Officer / Designation
+
+Details of Parents /Primary caregiver
+First Name
+Other Names
+Status (Alive,Deceased,Unknown)		
+Raising child?(Yes,No)
+Year of Birth
+I.D Number
+Contacts (tel, email, etc)
+What is the highest education level achieved (Current caregiver)?
+Employment Type (Salaried,Self,Casual,N/A)
+Household Composition
+-Name
+-Date of Birth
+-Gender
+-Relationship (to the client)
+-Further Comments (e.g. Orphans )
+Secondary Caregiver (s)
+Name
+Relationship to Child
+Social worker Assessment
+Risk Level	(Low,Medium,High)
+Explanation of risk level assessment

@@ -1,0 +1,317 @@
+<?php /* PROJECTS $Id: vw_idx_proposed.php 5685 2008-04-28 23:14:00Z merlinyoda $ */
+if (!defined('DP_BASE_DIR')) {
+  die('You should not access this file directly.');
+}
+// Checking for old template value
+$oldtemplate = FALSE;
+if (isset($_GET['template']) && ($_GET['template'] == 'old')) {
+	$oldtemplate = TRUE;
+}
+/*
+// Function for array_filter
+function compare_level($var) {
+	return (($var['region_level'] == 1) && ($var['region_parent'] == 1));
+}
+function compare_parent($arr, $parent) {
+	$out = array();
+	foreach($arr as $val) {
+		if ($val['region_parent'] == $parent)
+			$out[] = $val;
+	}
+	return $out;
+}
+*/
+/*
+ * Simple function to replace values in message or Template
+ */
+function TemplateReplace($msg, $patterns, $sp = '{#', $ep = '#}') {
+	$keys	= array();
+	$values	= array();
+	foreach($patterns as $key => $val) {
+		$keys[]		= $sp . $key . $ep;
+		$values[]	= $val;
+	}
+	return str_replace($keys, $values, $msg);
+}
+
+function InputValue($arr = array(), $values) {
+	$values		= explode(',', $values);
+	$options	= array();
+	foreach($arr as $key => $val) {
+		if (in_array($key, $values))
+			$options[] = $val;
+	}
+	return implode(', ', $options);
+}
+
+GLOBAL $AppUI, $projects, $company_id, $pstatus, $project_types, $currentTabId, $currentTabName, $project_id;
+$output_head = '';
+$output_main1 = '';
+//New entry values
+if (!$oldtemplate) {
+	$sProjects			= '';
+	$sActivities		= '';
+	$project_template	= file_get_contents(DP_BASE_DIR . '/templates/project.tpl');
+	$activity_template	= file_get_contents(DP_BASE_DIR . '/templates/activity.tpl');
+	$project_disabled	= file_get_contents(DP_BASE_DIR . '/templates/project_disabled.tpl');
+	$activity_disabled	= file_get_contents(DP_BASE_DIR . '/templates/activity_disabled.tpl');
+	$entry_template		= file_get_contents(DP_BASE_DIR . '/templates/new_entry.tpl');
+	$aProject_Types		= dPgetSysVal('ProjectType');
+	$aTask_Sectors		= dPgetSysVal('SectorType');
+	$aTask_Types		= dPgetSysVal('TaskType');
+	$aTask_Implementers	= dPgetSysVal('TaskImplementers');
+	$aTask_Status		= dPgetSysVal('TaskStatus');
+	$aFile_Type			= dPgetSysVal('FileType');
+
+	$q = new DBQuery();
+	$q->addTable('administrative_regions', 'ar');
+	$q->addQuery('ar.region_id, ar.region_name, ar.region_parent, ar.region_level');
+	$q->addWhere('ar.region_level BETWEEN 1 AND 4');
+	$q->addOrder('ar.region_level ASC, ar.region_name ASC');
+	$admin_regions = $q->loadList();
+
+	/*if (file_exists(DP_BASE_DIR . '/templates/locations.tpl')) {
+		$locations = file_get_contents(DP_BASE_DIR . '/templates/locations.tpl');
+	} else {
+		$locations = '<ul id="locations">';
+		$_1sts = array_filter($admin_regions, 'compare_level');
+		foreach($_1sts as $_1st) {
+			$_2nds = compare_parent($admin_regions, $_1st['region_id']);
+			$locations .= (count($_2nds))
+						? '<li><input type="checkbox"><label>' . $_1st['region_name'] . '</label><ul>'
+						: '<li><input type="checkbox" class="last" id="'.$_1st['region_id'].'"><label>' . $_1st['region_name'] . '</label></li>';
+			foreach($_2nds as $_2nd) {
+				$_3rds = compare_parent($admin_regions, $_2nd['region_id']);
+				$locations .= (count($_3rds))
+							? '<li><input type="checkbox"><label>' . $_2nd['region_name'] . '</label><ul>'
+							: '<li><input type="checkbox" class="last" id="'.$_2nd['region_id'].'"><label>' . $_2nd['region_name'] . '</label></li>';
+				foreach($_3rds as $_3rd) {
+					$_4ths = compare_parent($admin_regions, $_3rd['region_id']);
+					$locations .= (count($_4ths))
+								? '<li><input type="checkbox"><label>' . $_3rd['region_name'] . '</label><ul>'
+								: '<li><input type="checkbox" class="last" id="'.$_3rd['region_id'].'"><label>' . $_3rd['region_name'] . '</label></li>';
+					foreach($_4ths as $_4th) {
+						$locations .= '<li><input type="checkbox" class="last" id="' . $_4th['region_id'] . '"><label>' . $_4th['region_name'] . '</label></li>';
+					}
+					if (count($_4ths))
+						$locations .= '</ul></li>';
+				}
+				if (count($_3rds))
+					$locations .= '</ul></li>';
+			}
+			if (count($_2nds))
+				$locations .= '</ul></li>';
+		}
+		$locations .= '</ul>';
+		file_put_contents(DP_BASE_DIR . '/templates/locations.tpl', $locations);
+	}*/
+
+	$q->addTable('companies');
+	$q->addQuery('company_id, company_acronym');
+	$aCompanies = $q->loadHashList();
+}
+
+$show_all_projects = false;
+if ($currentTabId == 500) {
+	$show_all_projects = true;
+}
+
+$perms =& $AppUI->acl();
+$df = $AppUI->getPref('SHDATEFORMAT');
+
+$base_table_cols = 9;
+$base_table_cols += (($show_all_projects) ? 1 : 0);
+
+$table_cols = $base_table_cols + ((($perms->checkModuleItem('projects', 'edit', $row['project_id']))) ? 1 : 0);
+$added_cols = $table_cols - $base_table_cols;
+
+$output_head = '<form action="./index.php" method="get">
+<table width="100%" border="0" cellpadding="3" cellspacing="1" class="tbl">
+<tr>
+	<!--  <th nowrap="nowrap">
+		<a href="?m=projects&orderby=project_color_identifier" class="hdr">' . $AppUI->_('Color') . '</a>
+	</th>
+	 -->
+	<th nowrap="nowrap" width="20%">
+		<a href="?m=projects&orderby=project_name" class="hdr">' . $AppUI->_('Project') . '</a>
+	</th>
+	<th nowrap="nowrap" width="15%">
+		<a href="?m=projects&orderby=company_name" class="hdr">' . $AppUI->_('Agency') . '</a>
+	</th>
+	<th nowrap="nowrap" width="40%">' . $AppUI->_('Sectors') . '</th>
+	<th nowrap="nowrap" width="90px">
+		<a href="?m=projects&orderby=project_start_date" class="hdr">' . $AppUI->_('Start') . '</a>
+	</th>
+	<th nowrap="nowrap" width="90px">
+		<a href="?m=projects&orderby=project_end_date" class="hdr">' . $AppUI->_('End') . '</a>
+	</th>
+	<!--  <th nowrap="nowrap">
+		<a href="?m=projects&orderby=project_actual_end_date" class="hdr">' . $AppUI->_('Actual') . '</a>
+	</th>
+	-->
+<tr/>';
+
+$CR = "\n";
+$CT = "\n\t";
+$none = true;
+
+//Tabbed view
+$project_status_filter = $currentTabId;
+//Project not defined
+if($_GET['m']=="projects" && (isset($_POST['project_id']) && count($_POST['project_id'])> 0 ) && !$project_id){
+	$tip=$_POST['project_id'];
+}elseif(count($project_id) > 0){
+	$tip=$project_id;
+}
+
+if (isset($_GET['template']) && ($_GET['template'] == 'old')) {
+	if(count($tip) > 0){
+		$nprojects=array();
+		foreach ($projects  as  $prid){
+			if(in_array($prid['project_id'] , $tip)){
+				$nprojects[]=$prid;
+			}
+		}
+		if(count($nprojects) > 0 )$projects=$nprojects;
+	}
+}
+
+foreach ($projects as $row) {
+	if (! $perms->checkModuleItem('projects', 'view', $row['project_id'])) {
+		continue;
+	}
+	if ($show_all_projects || $row['project_status'] == $project_status_filter) {
+		$none = false;
+		$proj_obj = new CProject();
+		
+		$start_date			= ((intval(@$row['project_start_date']))	? new CDate($row['project_start_date']) : null);
+		$end_date			= ((intval(@$row['project_end_date']))	? new CDate($row['project_end_date']) : null);
+		$actual_end_date	= ((intval(@$row['project_actual_end_date']))	? new CDate($row['project_actual_end_date']) : null);
+		$style				= ((($actual_end_date > $end_date) && !empty($end_date)) ? 'style="color:red; font-weight:bold"' : '');
+
+		$uname	= htmlspecialchars( ((strlen($row['project_name']) > 30) ? substr($row['project_name'],0,30).'...' : $row['project_name']), ENT_QUOTES);
+		$description = htmlspecialchars('<div><p>' . str_replace(array("\r\n", "\n", "\r"), '</p><p>', addslashes($row['project_description'])) . '</p></div>', ENT_QUOTES);
+		$agency	= ($perms->checkModuleItem('companies', 'access', $row['project_company']))
+				? $CT . '<a href="?m=companies&a=view&company_id=' . $row['project_company'] . '" title="' . htmlspecialchars($row['company_description'], ENT_QUOTES) . '">' . htmlspecialchars($row['company_name'], ENT_QUOTES) . '</a>'
+				: $CT . htmlspecialchars($row['company_name'], ENT_QUOTES);
+		$contractors = $proj_obj->getContractors($row["project_id"]);
+		$scom = '';
+		if (!empty($contractors)) {
+			foreach ($contractors as $contractor){
+				$scom .= ',' . $CT . "<a href='?m=companies&a=view&company_id=".$contractor['task_company']."'>".$companies[$contractor['task_company']]."</a>" ;
+			}
+		}
+		$sectors = $proj_obj->getSectors($row["project_id"]);
+		$sector_types = dPgetSysVal('SectorType');
+		$sex='';
+		if (!empty($sectors)) {
+			foreach ($sectors as $sector) {
+				//var_dump($sector['task_sector']);
+				if($sector_types[$sector['task_sector']] !=""){
+					$sex .=  $sector_types[$sector['task_sector']] .", ". $CR;
+				}
+			}
+		}
+		$sex=preg_replace("/,\s\n$/","",$sex);
+		if ($row['task_log_problem']) {
+			$tasks .= ('<a href="?m=tasks&a=index&f=all&project_id=' . $row['project_id'] . '">' . dPshowImage('./images/icons/dialog-warning5.png', 16, 16, 'Problem', 'Problem!') . '</a>');
+		} else if ($row['project_priority'] != 0) {
+			$tasks .= "\n\t\t" . dPshowImage('./images/icons/priority' . (($row['project_priority'] > 0) . abs($row['project_priority']) . '.gif'), 13, 16, '', '');
+		} else {
+			$tasks .= '&nbsp;';
+		}
+		$start_date = $start_date ? $start_date->format($df) : '-';
+		$end_date = $end_date ? $end_date->format($df) : '-';
+
+		$output_main1 .= '<tr>' .
+			$CR . '<td width="20%">' . $CT . '<a href="?m=projects&a=view&project_id=' . $row['project_id'] . '" onmouseover="return overlib(\'' . $description . '\', CAPTION, \'' . $AppUI->_('Description') . '\', CENTER);" onmouseout="nd();">' . $uname . '</a>' . $CR . '</td>' . 
+			$CR . '<td width="25%">' . $agency . $scom . $CR . '</td>' .
+			$CR . '<td align="center" width="15%" >' . $sex . $tasks . $CR . '</td>' .
+			$CR . '<td align="center">'. $start_date . '</td>' .
+			$CR . '<td align="center">'. $end_date .'</td>' .
+			$CR . '</tr>';
+
+		// Here is a new entry start
+		if (!$oldtemplate) {
+			// Checking all activities for this project
+			$q->addTable('tasks', 't');
+			$q->addQuery('*');
+			$q->addWhere('t.task_project = '.$row['project_id']);
+			$q->addOrder('t.task_name ASC');
+			$activities = $q->loadList();
+			$sActivities = '';
+			foreach($activities as $task) {
+				//$task_id			= 'id="activity_'.$task['task_id'].'" style="display: none;"';
+				$task_id			= $task['task_id'];
+				$task_head			= '" style="display: none;"';
+				$task_start_date	= ((intval(@$task['task_start_date']))	? new CDate($task['task_start_date']) : null);
+				$task_end_date		= ((intval(@$task['task_end_date']))	? new CDate($task['task_end_date']) : null);
+				$task_start_date	= $task_start_date ? $task_start_date->format($df) : '-';
+				$task_end_date		= $task_end_date ? $task_end_date->format($df) : '-';
+				if ($task['task_owner'] == $AppUI->user_id) {
+					$p_template			= $activity_template;
+					$task_sector		= arraySelect($aTask_Sectors, 'activities['.$task_id.'][task_sector]', 'title="Select one or more Sectors for this Activity" multiple="multiple" class="multiple"', explode(',', $task['task_sector']));
+					$task_type			= arraySelect($aTask_Types, 'activities['.$task_id.'][task_type]', 'title="Select one or more Activity Types" multiple="multiple" class="multiple"', explode(',', $task['task_type']));
+					$task_implementer	= arraySelect($aTask_Implementers, 'activities['.$task_id.'][task_implementer]', 'title="Select one or more Implementers" multiple="multiple" class="multiple"', explode(',', $task['task_implementer']));
+					$task_status		= arraySelect($aTask_Status, 'activities['.$task_id.'][task_status]', 'title="Select Activity Status"', $task['task_status']);
+					$task_locations		= $task['task_locations'];
+				} else {
+					$p_template			= $activity_disabled;
+					$task_sector		= '<input class="select_text" type="text" name="activities['.$task_id.'][task_sector]" value="' . InputValue($aTask_Sectors, $task['task_sector']) . '" disabled="disabled" />';
+					$task_type			= '<input class="select_text" type="text" name="activities['.$task_id.'][task_type]" value="' . InputValue($aTask_Types, $task['task_type']) . '" disabled="disabled" />';
+					$task_implementer	= '<input class="select_text" type="text" name="activities['.$task_id.'][task_type]" value="' . InputValue($aTask_Implementers, $task['task_implementer']) . '" disabled="disabled" />';
+					$task_status		= arraySelect($aTask_Status, 'activities['.$task_id.'][task_status]', 'title="Select Activity Status" disabled="disabled"', $task['task_status']);
+					$values		= explode(',', $task['task_locations']);
+					$options	= array();
+					foreach($admin_regions as $val) {
+						if (in_array($val['region_id'], $values))
+							$options[] = $val['region_name'];
+					}
+					$task_locations		= '<input class="select_text" type="text" name="activities['.$task_id.'][task_locations]" value="' . implode(', ', $options) . '" disabled="disabled" />';
+				}
+				$sActivities	.= TemplateReplace(
+					$p_template,
+					array('activity_id'=>$task_id, 'activity_view'=>$task_head,'activity_name'=>$task['task_name'], 'activity_project'=>$row['project_id'],'activity_sector'=>$task_sector, 'activity_type'=>$task_type, 'activity_description'=>$task['task_description'], 'activity_implementers'=>$task_implementer, 'activity_locations'=>$task_locations, 'activity_start_date'=>$task_start_date, 'activity_end_date'=>$task_end_date, 'activity_status'=>$task_status, 'activity_budget'=>$task['task_target_budget'], 'activity_benef'=>$task['task_beneficiares'])
+				);
+			}
+			$ds				= ($row['project_owner'] == $AppUI->user_id) ? '' : ' disabled="disabled"';
+
+			//$project_id		= 'id="project_'.$row['project_id'].'"';
+			$project_id		= $row['project_id'];
+			$project_type	= arraySelect($aProject_Types, 'projects['.$project_id.'][project_type]', 'title="Select the Project Type"' . $ds, $row['project_type']);
+			$donor			= arraySelect($aCompanies, 'projects['.$project_id.'][project_company]', ' title="Enter the Donor Agencies"' . $ds, $row['project_company']);
+			$project_status	= arraySelect($project_types, 'projects['.$project_id.'][project_status]', 'title="Select the Project Status"' . $ds, $row['project_status']);
+			$file_category	= arraySelect($aFile_Type, 'projects['.$project_id.'][file_category]', 'title="Select File Category"', 6);
+
+			$sProjects		.= TemplateReplace(
+				($row['project_owner'] == $AppUI->user_id) ? $project_template : $project_disabled,
+				array('project_id'=>$project_id, 'project_name'=>$uname, 'project_type'=>$project_type, 'project_description'=>$row['project_description'], 'project_donor'=>$donor, 'project_start_date'=>$start_date, 'project_end_date'=>$end_date, 'project_status'=>$project_status, 'project_budget'=>$row['project_target_budget'], 'file_category'=>$file_category, 'activities'=>$sActivities)
+			);
+		}
+	}
+}
+
+if ($none) {
+	$output_main1 .= $CR . '<tr><td colspan="' . $table_cols . '">' . $AppUI->_('No projects available') . '</td></tr></table></form>';
+} else {
+	$output_main1 .= '<tr><td colspan="' . $table_cols . '" align="right"></td></tr></table></form>';
+}
+
+if ($oldtemplate) {
+	echo $output_head, $output_main1;
+} else {
+	//New entry output
+	$project_type		= arraySelect(array_merge(array('default'=>'TYPE *'), $aProject_Types), 'projects[][project_type]', 'title="Select the Project Type"', 'default');
+	$donor				= arraySelect(array_merge(array('default'=>'DONOR *'), $aCompanies), 'projects[][project_company]', ' title="Enter the Donor Agencies"', 'default');
+	$project_status		= arraySelect(array_merge(array('default'=>'STATUS *'), $project_types), 'projects[][project_status]', 'title="Select the Project Status"', 'default');
+	$file_category		= arraySelect($aFile_Type, 'projects[][file_category]', 'title="Select File Category"', 6);
+	$empty_project		= TemplateReplace($project_template, array('project_id'=>'', 'project_name'=>'PROJECT NAME *', 'project_type'=>$project_type, 'project_description'=>'DESCRIPTION *', 'project_donor'=>$donor, 'project_start_date'=>'START DATE', 'project_end_date'=>'END DATE', 'project_status'=>$project_status, 'project_budget'=>'BUDGET *', 'file_category'=>$file_category, 'activities'=>''));
+	$task_sectors		= arraySelect($aTask_Sectors, 'activities[][task_sector]', 'title="Select one or more Sectors for this Activity" multiple="multiple" class="multiple"', '-1');
+	$task_type			= arraySelect($aTask_Types, 'activities[][task_type]', 'title="Select one or more Activity Types" multiple="multiple" class="multiple"', '-1');
+	$task_implementer	= arraySelect($aTask_Implementers, 'activities[][task_implementer]', 'title="Select one or more Implementers" multiple="multiple" class="multiple"', '-1');
+	$task_status		= arraySelect($aTask_Status, 'activities[][task_status]', 'title="Select Activity Status"', '-1');
+	$empty_activity		= TemplateReplace($activity_template, array('activity_id'=>'','activity_view'=>'','activity_project'=>'' ,'activity_name'=>'', 'activity_sector'=>$task_sectors, 'activity_type'=>$task_type, 'activity_description'=>'', 'activity_implementers'=>$task_implementer, 'activity_locations'=>'', 'activity_start_date'=>'', 'activity_end_date'=>'', 'activity_status'=>$task_status, 'activity_budget'=>'', 'activity_benef'=>''));
+
+	echo TemplateReplace($entry_template, array('empty_project'=>$empty_project, 'empty_activity'=>$empty_activity, 'projects'=>$sProjects));
+}
+?>

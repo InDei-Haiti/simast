@@ -1,0 +1,55 @@
+#preview{
+    display: none;
+}
+
+.swblock{
+    cursor: pointer;
+    font-size: 12pt;
+}
+
+.swblock:hover{
+    text-decoration: underline;
+}
+
+.vbox{
+    display: none;
+    border: 1px solid #cbcbcb;
+    margin: 2px;
+    padding: 5px;
+}
+
+.psels{
+    margin: 3px;
+}
+
+.mute-list{
+    list-style: none;
+    margin-left: 5px;
+    padding-left: 3px;
+}
+
+.cr_item{
+    border-top: 1px solid #b7b7b7;
+}
+
+#im_block{
+	display: none;
+}
+
+.vbox{
+	display: none;
+}
+#chg_view{
+	width: 17px;
+	height: 17px;
+	display: none;
+	background: url("/images/zload.gif") no-repeat;
+	margin-left: 1px;
+	float: left;
+}
+
+.visw{
+	float: left;
+	margin: 6px;
+	padding-left: 10px;
+}

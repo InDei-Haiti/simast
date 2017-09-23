@@ -1,0 +1,1286 @@
+@CHARSET "UTF-8";
+
+/* Caution! Ensure accessibility in print and other media types... */
+@media projection, screen { /* Use class for showing/hiding tab content, so that visibility can be better controlled in different media types... */
+    .tabs-hide {
+        display: none;
+    }
+}
+
+/* Hide useless elements in print layouts... */
+@media print {
+    .tabs-nav {
+        display: none;
+    }
+}
+
+.offview, div#mbox, .offwall, div#pagebox, .hstat_menu, div.bigtab, div.filter_box,#dbox, #debox, #load_progress,#stip,.exborder,.head_menu,.save_icon,.saving,.suprcov,#colgroupz,#importbox{
+	display:none;
+}
+
+/* Skin */
+.tabs-nav {
+    list-style: none;
+    margin: 0;
+    padding: 0 0 0 4px;
+}
+.tabs-nav:after { /* clearing without presentational markup, IE gets extra treatment */
+    display: block;
+    clear: both;
+    content: " ";
+}
+.tabs-nav li {
+    float: left;
+    margin: 0 3px 0 1px;
+    min-width: 84px; /* be nice to Opera */
+}
+.tabs-nav a, .tabs-nav a span {
+    display: block;
+    padding: 0 10px;
+    background: url(tab.png) no-repeat;
+}
+.tabs-nav a {
+    position: relative;
+    top: 1px;
+    z-index: 2;
+    padding-left: 0;
+    color: #27537a;
+    font-size: 10px;
+    /*font-weight: bold;*/
+    line-height: 1.2;
+    text-align: center;
+    text-decoration: none;
+    white-space: nowrap; /* required in IE 6 */    
+}
+.tabs-nav .tabs-selected a {
+    color: #000;
+}
+.tabs-nav .tabs-selected a, .tabs-nav a:hover, .tabs-nav a:focus, .tabs-nav a:active {
+    background-position: 100% -150px;
+    outline: 0; /* prevent dotted border in Firefox */
+}
+.tabs-nav a, .tabs-nav .tabs-disabled a:hover, .tabs-nav .tabs-disabled a:focus, .tabs-nav .tabs-disabled a:active {
+    background-position: 100% -100px;
+}
+.tabs-nav a span {
+    width: 64px; /* IE 6 treats width as min-width */
+    min-width: 64px;
+    height: 18px; /* IE 6 treats height as min-height */
+    min-height: 18px;
+    padding-top: 6px;
+    padding-right: 0;
+}
+*>.tabs-nav a span { /* hide from IE 6 */
+    width: auto;
+    height: auto;
+}
+.tabs-nav .tabs-selected a span {
+    padding-top: 7px;
+}
+.tabs-nav .tabs-selected a span, .tabs-nav a:hover span, .tabs-nav a:focus span, .tabs-nav a:active span {
+    background-position: 0 -50px;
+}
+.tabs-nav a span, .tabs-nav .tabs-disabled a:hover span, .tabs-nav .tabs-disabled a:focus span, .tabs-nav .tabs-disabled a:active span {
+    background-position: 0 0;
+}
+.tabs-nav .tabs-selected a:link, .tabs-nav .tabs-selected a:visited, .tabs-nav .tabs-disabled a:link, .tabs-nav .tabs-disabled a:visited { /* @ Opera, use pseudo classes otherwise it confuses cursor... */
+    cursor: text;
+}
+.tabs-nav a:hover, .tabs-nav a:focus, .tabs-nav a:active { /* @ Opera, we need to be explicit again here now... */
+    cursor: pointer;
+}
+.tabs-nav .tabs-disabled {
+    opacity: .4;
+}
+.tabs-container {
+    border-top: 1px solid #97a5b0;
+    padding: 1em 8px;
+/*    background: #fff;  declare background color for container to avoid distorted fonts in IE while fading */
+}
+.tabs-loading em {
+    padding: 0 0 0 20px;
+    background: url(loading.gif) no-repeat 0 50%;
+}
+
+.hands{
+	width: 100%;
+	/*padding-top: 5px;*/
+	float:left;
+	*float:none;
+}
+
+.hands:hover{
+	text-decoration: underline;
+}
+.cblox{			
+	list-style: none;	
+	/*margin: 0 auto;*/
+	/*max-height: 400px;*/
+	float: left;
+	width: 1000px;
+	border: 2px solid #d6d4d2;		
+}
+
+.cblox > li {	
+	list-style-type: none;
+	width: 180px;
+	float: left;
+}
+
+.exborder{	
+	padding: 2px;
+}
+
+
+.switch,.colic, .next_page, .prev_page,.last_page,.first_page,.head,.head_act,.head_menu,.asci, .desci,.coli, .psave, .lt, .gt, .eq, .ts, .fmonitor,.ne,.clflda,.fmonitor,.hstat_menu,.hstat_menu_on,.addbutt,.delbutt,.qeditor,.exportq{
+	background: url("images/icns.png") no-repeat;
+}
+
+.switch{
+	background-position:  0 -144px ;
+	width: 12px;
+	height: 12px;
+	float:left;
+	margin: 0 5px;
+}
+
+.colic{
+	background-position: -38px -141px;
+	width: 13px;
+	height: 15px;
+	float:left;
+	margin:0px 3px;	
+}
+
+.dates{
+	clear:both;
+	border: 0;
+}
+
+table.itable {
+	/*display:none;*/	
+	/*width: auto;*/
+	left: -10000px;
+	position: absolute;
+}
+
+table.rtable thead th{
+	white-space: nowrap;
+	margin:0 1px;
+	font-weight: normal;
+}
+
+table.rtable tbody td{	
+	white-space: nowrap;	
+	overflow:hidden;
+	border: 1px solid #a5cbf7;
+	padding: 2px;
+	text-align: center;
+	background-color: #fff;
+}
+
+.ueds{
+	background-color: #858585 !important;
+}
+
+.edbox{
+	border:1px solid #000;
+	padding:1px;
+	width: 70%;
+	margin: 0;		
+}
+
+.wborder{
+	border: 1px solid #030303;
+	padding: 2px;	
+}
+
+
+.bd{
+	display:block;
+	float:left;
+	/*width: 100%;*/
+}
+
+.head{
+	height: 26px;
+	*height: 20px;
+	height: 20px\9 ;
+	background-position: 0px -159px;
+	background-repeat: repeat-x;
+	color: #fff;
+	border: 1px solid #c8c8c8;		 
+	margin: 1px 1px;		
+	padding: 1px 32px 2px 24px;
+	font-size: 7pt;
+	white-space: nowrap;
+	text-align:left;
+	/*float: left;
+	width:100%;*/
+}
+
+.fsource{
+	color: #505366;
+	border: 1px solid #c8c8c8;		 
+	margin: 1px 1px;		
+	padding: 1px 32px 2px 24px;
+	font-size: 7pt;	
+	font-weight: normal;	
+}
+
+.head_act{
+	background-position: 0px -183px;	
+	margin-right:0px;
+	color: #505366;
+	/*padding-right:22px;*/		
+}
+
+.head_sel_act{
+	/*background-position: -0px -157px;*/
+	/*padding-right:8px;
+	*padding-right: 24px;*/		
+}
+
+.head_menu {
+	border: 1px solid #c8c8c8;
+	border-left:0px;
+	background-position: 0px -157px;
+	background-repeat: repeat-x;
+	/*float:left;*/
+	height:22px;
+	margin:1px 0;
+	padding:1px;
+	position:absolute;
+	/*top:-27px;*/
+	width:16px;
+	z-index:1;	
+}
+
+.head_menu_on {
+	background-position:-47px -79px;
+	background-repeat:no-repeat;	
+	margin:0;
+	/*padding:1px 1px 0 ;*/	
+	height:22px;
+	display:block;
+}
+
+.hstat_menu{
+	border: 1px solid #c8c8c8;
+	border-left:0px;
+	background-position: 0px -79px;
+	background-repeat: repeat-x;
+	/*float:left;*/
+	height:22px;
+	margin:1px 0;
+	padding:1px;
+	position:absolute;
+	/*top:-27px;*/
+	width:16px;
+	z-index:1;
+	
+}
+
+.hstat_menu_on {
+	background-position:0px -79px;
+	background-repeat:no-repeat;	
+	margin:1px 0;
+	/*padding:1px 1px 0 ;*/	
+	height:22px;
+	display:block;
+}
+
+.head_menu_sort{
+	background-position: -100px -300px;
+	background-repeat: no-repeat;
+	background-color: #efe4d3;
+}
+
+.menu_stay{
+	display:block;
+}
+
+.suprcov{		
+	clear:both;
+}
+
+.headerSortasc {
+	background: url(images/asc.gif) no-repeat 51% 95%;
+}
+.headerSortdesc {
+	background: url(images/desc.gif) no-repeat 51% 95%;
+}
+ .headerSortdesc,  .headerSortasc {
+	background-color: #efe4d3;
+	color: #2F2F2F;
+}
+
+
+div#pagebox{
+	/*width:190px;*/
+	margin:20px 0 100px 10px;	
+	float:left;
+	width:750px;
+}
+
+.next_page, .prev_page,.last_page,.first_page{	
+	width: 16px;
+	height: 16px;
+	display:none;
+	margin:0px 5px;
+	float: left;	
+}
+
+.next_page{
+	background-position: 0 -126px;
+}
+
+.prev_page{
+	background-position: -16px -126px;
+}
+
+.last_page{
+	background-position: -32px -126px;
+}
+
+.first_page{
+	background-position: -48px -126px;
+}
+
+.box3{
+	max-height: 170px;
+	overflow:auto;
+}
+
+.sline{
+	white-space:nowrap;
+}
+
+div#mbox{
+	background-color: #D8DEF0;
+	border: 2px solid #97A1C9; 
+	width: 150px; 
+	text-align: center; 
+	vertical-align: middle; 
+	padding: 5px;
+	
+}
+
+#pgbs{
+	float:left;
+	padding: 0 15px;
+	width: 170px;
+	margin-left: 30px;
+}
+
+/* ================================================================ 
+This copyright notice must be untouched at all times.
+
+The original version of this stylesheet and the associated (x)html
+is available at http://www.cssplay.co.uk/menus/dl-flyout.html
+Copyright (c) 2005-2009 Stu Nicholls. All rights reserved.
+This stylesheet and the associated (x)html may be modified in any 
+way to fit your requirements.
+=================================================================== */
+
+#menu {position:relative;}
+
+#menu ul {margin:0; padding:0; list-style:none; white-space:nowrap; text-align:left; padding:1px 1px 0 1px; background:#fff;border: 3px solid  #bdbdbd;}
+
+#menu li {margin:0; padding:0; list-style:none;}
+#menu li {display:inline-block; display:inline;}
+#menu ul ul {position:absolute; left:-9999px;}
+#menu ul#toplevel {position:absolute; left:-23px; top:-3px;}
+
+#menu a {display:block; font:normal 7pt verdana,arial,sans-serif; color:#000; line-height:20px; text-decoration:none;padding:2px 15px 0 20px;margin-bottom: 2px;border-bottom: 1px solid #BFC3D9;background-color: #F1F0FF;} 
+#menu span {display:block; font:normal 7pt verdana,arial,sans-serif; color:#000; line-height:20px; text-decoration:none;padding:2px 15px 0 20px;margin-bottom: 2px;border-bottom: 1px solid #BFC3D9;background-color: #F1F0FF;}
+
+#menu ul li:hover > ul {left:100%; margin-top:-23px; margin-left:-1px;}
+
+#menu a:hover ul,
+#menu a:hover a:hover ul, 
+#menu a:hover a:hover a:hover ul {left:100%;}
+#menu a:hover ul ul, 
+#menu a:hover a:hover ul ul {left:-9999px;}
+
+#menu span:hover ul,
+#menu span:hover span:hover ul, 
+#menu span:hover span:hover span:hover ul {left:100%;}
+#menu span:hover ul ul, 
+#menu span:hover span:hover ul ul {left:-9999px;}
+/*background:#09c;*/
+#menu li a:hover { background-color: #EEE4FF;color:#212024;} 
+#menu li:hover > a {background-color: #EEE4FF; color:#212024;}
+
+#menu li span:hover { background-color: #EEE4FF;color:#212024;} 
+#menu li:hover > span {background-color: #EEE4FF; color:#212024;}
+
+#menu table {position:absolute; left:99%; height:0; width:0; border-collapse:collapse; margin-top:-7px; margin-left:-1px;}
+
+.fhref,#menu a.wchb,.fbox,.first_page,.head_menu_on,.hstat_menu_on,.last_page,.next_page,.prev_page,.qeditor,.exportq{
+	cursor: pointer;
+}
+
+#menu a.wchb{
+	position: relative;
+	top: -2px;
+	width: 100%;
+	height: 100%;	
+	padding: 0 15px 0 3px; 
+	font:normal 7pt verdana,arial,sans-serif; color:#000; line-height:20px;
+	background-color: #F1F0FF;
+}
+
+#menu span.ebox{
+	width: 20px;
+	border-right: 1px solid #BBB4C9; 
+	background-color: #F1F0FF;
+}
+
+
+.fil_line{
+	padding:2px 0px 2px 0px;
+	border-bottom: 1px solid #BBB7C0;
+	margin-bottom: 3px;
+	background-color: #F1F0FF;
+}
+
+.fil_line:HOVER{
+	background-color: #EEE4FF;color:#212024;
+}
+.comsign{
+	/*padding: 2px;*/
+	margin: 0px 3px;
+	padding-bottom: 0px;
+	width: 16px;
+	height: 18px;
+	position:absolute;
+}
+
+div.sib{
+    border: 0;   
+    margin:3px 2px 0px 0px;
+    width: 18px;
+    height:  18px;
+    left: 0px;
+    position:absolute;	
+}
+
+.asci{
+	background-position: -39px -55px;
+}
+
+.desci{
+	background-position: -22px -55px;
+}
+
+.coli{
+	background-position: -4px -55px;
+}
+
+div.equ{
+    border: 0;   
+    margin:3px 2px 0px 0px;
+    width: 16px;
+    height:  16px;
+    left: 0px;
+    position:absolute;	
+}
+
+.lt{
+	background-position: -32px -31px;
+}
+
+.gt{
+	background-position: -16px -31px;
+}
+
+.eq{
+	background-position:  0px -31px;
+}
+
+.ne{
+	background-position:  -48px -104px;
+}
+
+.ts{
+	background-position: -48px -31px;
+}
+
+a.fillink{
+        width: 50px;
+        position:relative;
+        /*top:-5px;-*/ 
+}
+
+input.superbox{
+	position: relative;
+	left: -3px;
+	z-index:100;
+	top:-26px;
+	*top: -1px;
+	
+}
+
+.fil_line{
+	padding:2px 0px 2px 0px;
+	border-bottom: 1px solid #BBB7C0;
+	margin-bottom: 3px;
+	background-color: #F1F0FF;
+}
+
+.fil_line:HOVER{
+	background-color: #EEE4FF;color:#212024;
+}
+.comsign{
+	/*padding: 2px;*/
+	margin: 0px 3px;
+	padding-bottom: 0px;
+	width: 16px;
+	height: 18px;
+	position:absolute;
+}
+
+
+input.box {
+	padding-top:3px;
+	width: 100px;
+	background: #fff url(images/back-filter.gif) no-repeat left center;
+	margin-left: 24px;
+}
+
+input.boxd {
+	padding-top:3px;
+	width: 100px;
+	background: #fff url(images/back-filter.gif) no-repeat -8px center;
+	margin-left: 24px;
+}
+
+input.box:focus {
+	background: #fff url(images/back-filter.gif) no-repeat left -138px;
+	width: 100px;
+	outline: none;
+	margin-left: 24px;
+}
+
+li.ffbc{
+	list-style: none;
+	padding:0px 24px 0px 1px;	
+	margin: 0px ;
+	white-space:nowrap;
+	
+}
+
+li.ffbb{
+	list-style: none;
+	padding:0px 1px 0px 1px;	
+	margin: 0px ;
+	white-space:nowrap;	
+	*padding-top:2px;
+}
+
+.palebor{
+	color: #999797;
+}
+
+li.ffbb img{
+        border:0;
+        position:relative;
+        top:3px;
+        margin-right: 5px;
+}
+input.filter_work{
+	width: 100px;
+	padding-top:3px;
+	margin-left: 24px;
+}
+
+input.filter_work_date{
+	width: 100px;
+	padding-top:3px;
+	margin-left: 24px;
+	/**margin-left: 24px;*/
+}
+
+div.filter_box{
+	position:absolute;
+	border: 3px solid  #bdbdbd;
+}
+
+ul.tobs{
+	margin: 0px;    
+	height: auto;
+	padding:0px;
+	background-color: #fff;
+}
+/*
+ * simplyScroll 1.0.3 - a scroll-tastic jQuery plugin
+ *
+ * http://logicbox.net/jquery/simplyscroll
+ * http://logicbox.net/blog/simplyscroll-jquery-plugin
+ * http://plugins.jquery.com/project/simplyScroll
+ *
+ * Copyright (c) 2009 Will Kelly - http://logicbox.net
+ *
+ * Dual licensed under the MIT (MIT-LICENSE.txt)
+ * and GPL (GPL-LICENSE.txt) licenses.
+ *
+ * Last revised: 03/07/2009 21:13
+ *
+ */
+.sbut {
+	background: url("images/butstate.png" ) repeat-x 0px 0px;
+	width: 98%;
+	text-align: center;
+	height: 19px;
+	border: 1px solid #9EABB1;
+	margin: 1px;
+}
+
+.sbut:hover{
+	background: transparent  url("images/butstate.png" ) repeat-x 0px -20px;	 	
+}
+.fst {
+    left: 0;
+    top: 0;
+}
+
+.lst {
+    left: 0;
+	position:absolute;
+	top: 174px;
+	z-index:10;
+}
+
+.simply-scroll-container { /* Container DIV - automatically generated */
+    position: relative;
+}
+
+.simply-scroll-clip { /* Clip DIV - automatically generated */
+    position: relative;
+    overflow: hidden;
+    z-index: 2;
+}
+
+.simply-scroll-btn {
+    position: absolute;   
+    width: 10px;
+    height: 10px;
+    z-index: 3;
+    /*cursor: pointer;*/
+}
+
+
+.simply-scroll { /* Customisable base class for style override DIV */
+    /*width: 576px;*/
+    /*height: 200px;*/
+    margin-bottom: 1em;
+}
+
+
+/* Vertical scroller example */
+.vert { /* wider than clip to position buttons to side */
+    width: 190px;
+    height: 182px;
+    margin-bottom: 1.5em;
+}
+
+.vert .simply-scroll-clip {
+    top: 0px;
+    width: 190px;
+    height: 150px;
+	margin-bottom:20px;
+}
+
+.vert .simply-scroll-list {
+	height:110px;
+}
+
+.vert .simply-scroll-list li {
+    width: 190px;
+    height: 22px;
+	white-space: nowrap;
+	overflow: hidden;
+	font-size:8pt;
+}
+
+.vert .simply-scroll-list li img {
+}
+
+.vert .simply-scroll-btn {
+    background: url(images/mup.png) no-repeat;
+    position: relative;
+    top: 4px;
+    left: 90px;	
+	width:10px;
+	z-index: 10;
+}
+
+.vert .simply-scroll-btn-up { /* modified btn pos */
+    background-position: -20px -10px;
+}
+
+.vert .simply-scroll-btn-up.disabled {
+    background-position: -20px -10px;
+}
+
+
+.vert .simply-scroll-btn-down { /* modified btn pos */
+	background-position: -20px 0px;
+}
+
+.vert .simply-scroll-btn-down.disabled {
+	background-position: -20px 0px;
+}
+
+.clfld{
+	width:14px;	
+	height: 14px;
+	position: absolute;
+	float:right;
+	left: 110px;
+	top: 2px;
+}
+
+.clflda{
+	background-position: -25px -144px;
+	cursor: pointer;	
+	z-index: 100;
+	top: 27px;
+	*top: 31px;
+}
+
+.dbox{
+	width: 180px;	
+}
+
+.fmonitor{
+	background-position: 0px 0px;
+	float:left;
+	height:20px;
+	left:-5px;
+	/*position:relative;*/
+	top:3px;
+	width:65px;
+	margin: 0 15px;	 
+}
+
+
+.rlist{
+	margin-top: 5px;	
+}
+
+div.tb0{	
+	width: 3px;
+	float: left;
+	border: 0;
+}
+
+div.tb1 {	
+	float:left;
+	vertical-align:middle;
+	width:auto;
+}
+
+div.tb2{	
+	float:left;
+	width: 3px;
+	border:0;	
+}
+
+.ui-state-active a{
+	background: url("images/tabSelectedBg.png") repeat-x;	
+}
+
+div#tabs .ui-state-hover,div#tabs .ui-state-default, div#tabs .ui-state-active{
+	border: 1px solid #fff;	
+	color: #666666;
+}
+
+div#tabs .ui-state-default a{
+	background: url("images/tabBg.png");	
+}
+
+div#tabs .ui-widget-header{
+	background: transparent;
+	border:none;
+}
+
+div#tabs .ui-widget-content{
+	border: 1px solid #c8c8c8;
+	overflow :auto;
+}
+
+div.bigtab{
+	vertical-align:top;
+	float:left;
+	min-width: 1200px ;
+}
+
+.save_icon{	
+	border: none;
+	vertical-align: middle;
+	position:relative;
+	top:-9px;
+	left:10px;
+}
+
+
+#rbox , #cbox {
+       overflow:auto;
+       overflow-y:auto;
+}
+
+#rbox li, #cbox li , ul#box-home li,.fbox2, div#fsrc, ul#box-home{
+       float:left;
+}
+
+ul#box-home {  
+  margin: 1px;
+  padding: 1px;
+  list-style: none;
+  width: 80%
+}
+ 
+ul#box-home li {  
+  margin: 1px;
+  padding: 0;
+} 
+
+.ulit{
+	overflow: hidden;
+	white-space: nowrap;
+}
+
+.fbox{
+  padding: 1px;
+  border: 2px solid #799DFF;
+  margin: 5px 0 5px 10px ;
+  width: 120px;
+  font-size: 7pt;  
+}
+
+.fbox2{
+  padding: 2px;
+  border: 2px solid #799DFF;
+  margin: 1px;
+  width: 130px;
+  font-size: 7pt;  
+}
+
+.fbox2:hover{
+	border: 2px solid #4A629D;
+}
+
+.head-field, .hfc,.hfr {  
+  text-align: left;
+  font-size: 7pt;
+  white-space: nowrap;  
+  height: 31px;
+  padding: 1px 0px 1px 1px;    
+}
+
+.hfr{
+	width: 145px;
+}
+
+.hfc{
+	width: 155px;
+}
+
+.headf-connect{
+	background: url(images/group-connect.png) no-repeat 5% 0;
+}
+
+table.ofall tbody td{
+	padding-right: 30px;
+}
+
+ul.rcgetter{
+       	list-style: none;
+        margin: 2px;
+        padding: 3px;
+        display: block;
+        height: 120px;
+        overflow: auto; 
+        width: 170px;
+}
+
+div#fsrc{              
+		border:3px solid #96A19F;
+		height:100px;
+		margin:15px;
+		padding:10px;
+		text-align:center;
+		width:1100px;  
+		overflow:auto;
+}
+
+div.dgetter{
+        border: 3px solid #96A19F !important; 
+        text-align: center;
+        height: 155px;
+        width: 180px; 
+        float:left;
+        overflow: hidden;
+		margin: 30px 1px 1px 30px;		
+}
+
+.head-field:hover{
+        background: url(images/remove.gif) no-repeat 95% 29%;
+        *background-position: 95% 25%;
+        cursor: pointer; 
+}
+
+.kill_but{
+        position: relative;
+        top: 5px;
+        left: 0px;
+        margin-right: 1px;
+}
+
+.kill_area{
+        position: relative;
+        width: 18px;
+        height: 18px;        
+        float :right;
+        top: -22px;
+        margin-right: 3px;
+}
+
+.bbox{
+	width: 95%;
+	margin-bottom: 20px;
+	float: left;
+}
+
+.wider{
+	width: 90%;
+}
+
+.bigger {
+	border:3px solid #96A19F;
+	float:left;
+	height:145px;
+	margin:30px 1px 1px 30px;
+	padding:1px 10px 10px;
+	text-align:center;
+	width:285px;	
+}
+
+.gsmall{	    
+	display:block;
+	height:105px;
+	margin:2px;
+	overflow:auto;
+	padding:3px;
+	width:285px;            
+}
+
+.fbutton{	
+	cursor: pointer;
+	width: 18px;
+	height: 19px;
+	margin: 0px 3px;
+	display: inline-table;
+	*display: inline-block;
+	position: relative;
+
+}
+
+.fbutton:hover{
+	text-decoration: underline;
+}
+
+.plists{
+	white-space:nowrap;
+}
+
+.stext{
+	margin: 0px 15px;
+	float: left;
+}
+
+.addbutt{
+	background-position:-15px -104px;
+	padding:0 0 1px 1px;
+	width:15px !important;				
+}
+
+.delbutt{
+	background-position: 0px -106px;	
+}
+
+ol{
+	margin:0;
+	padding:0;
+	font-weight: bolder;
+}
+
+ol li {
+	margin-left: 5px;	
+}
+
+ol li p{
+	font-weight:normal;	
+}
+
+#oledr{
+	float:left;
+	margin:0;
+	padding-left: 20px;
+	list-style: none;
+}
+.vafer{
+	display: inline-table;
+	*display: inline-block;	
+}
+
+.attntn{
+	border: 2px solid #ff0000;
+}
+
+.fake {
+	background: url(images/fake-back.png) repeat-x 20%;
+}
+
+#load_progress{
+	background: url(images/ajax-loader.gif) no-repeat;	
+	float:left;
+	height:34px;
+	margin-left:30px;
+	width:33px;
+	margin-top: 30px;
+}
+
+#bbbox{
+	float:left;
+	width: 320px;
+	
+}
+
+#bbbox > input{
+/*	float:left;*/
+	margin-left: 3px;
+	margin-left: 2px\9;
+} 
+
+.adcbutt{
+	float:left;
+	margin-left: 20px;
+}
+
+.saving{
+	background:url("images/load-big.gif") no-repeat scroll 0 0 transparent;
+	color:red;	
+	font-size:10pt;
+	font-weight:bold;
+	height:32px;
+	left:160px;
+	position:relative;
+	top:-18px;
+	width:30px;
+}
+
+.qeditor{
+	width: 16px;
+	height: 16px;
+	margin: 3px;	
+	background-position: -24px -81px;	
+}
+
+#stip{
+	position:absolute;
+	border: 2px solid #a7ecfe;
+	background-color: #f0ebdb;;
+	padding: 2px;
+	font-size: 7pt;	
+	min-width: 100px;
+	max-width: 500px;
+	overflow: hidden;
+}
+
+.phead{
+	font-weight:bolder;
+	padding: 3px;
+	background-color:#c8c8c8;
+	text-align: center;	
+}
+
+.ltable td{
+	text-align: left !important;
+}
+
+#debox{
+	overflow: hidden !important;
+}
+
+.savewarn{
+	background:inherit;
+	left:155px;
+	width:160px;
+	top: -20px;
+}
+
+.stab_let{
+	width: 85px;	
+	margin-top: 10px;
+}
+
+.areaName{
+	font-size: 9pt;
+}
+
+.topnav{
+	width: 100%;
+}
+
+.text-left{
+	text-align:left !important;
+}
+
+div#shadow{
+	border: 1px solid #000;
+	background-color: #85868D;
+	position: absolute;
+}
+
+.stdw{
+	width: 71px;
+	float:left;
+}
+
+.tdw{
+	width: 100px;
+	white-space: nowrap;
+}
+
+.note{
+	font-weight: bolder;
+	font-size: 14pt;	
+}
+
+.binput{
+	width: 75px;
+}
+
+.blind{
+	display: none;
+	cursor: pointer;
+	width: 18px;
+	height: 17px;
+	margin: 0px 5px;
+	float: left;	
+}
+
+.txtit{
+	width: 40px;
+	float: right;
+	height:17px;
+}
+
+#dbox{
+	width: 350px !important;
+	height: 220px;
+	overflow: hidden;
+}
+
+.choseng{
+	background-color: #676d83;
+}
+
+.choseng:hover{
+	background-color: #7581b4;
+}
+
+.wsels{
+	width: 200px !important;	
+}
+
+.wsdiv{
+	width: 210px !important;
+}
+
+.itog > td{
+	font-weight: bolder !important;
+}
+
+.sttable th{
+	white-space: nowrap;
+}
+
+.sttable  td{
+	text-align: right;
+}
+.rowhead{
+	text-align: left !important;
+}
+
+.statcolx{
+	float: left;
+	margin: 2px !important;
+	padding-left: 15px !important;
+	position: relative;
+	top: 15px;
+	list-style: none;
+}
+
+.bfg{
+	width: 10px;
+	height: 30px;
+	float: left;
+}
+
+.exportq{
+	width: 16px;
+	height: 16px;	
+	background-position: -30px -106px;
+}
+
+#importbox{
+	border: 2px solid #c8c8c8;
+	padding: 5px;
+	width: 300px;
+	margin: 10px;
+}
+
+#importbox > input {
+	width: 250xp;
+}
+
+.msgs{
+	font-size: 10pt;
+	font-weight: bolder;
+	margin-left: 15px;
+	font-family: Geneva, Arial, Helvetica, sans-serif;	
+}
+
+.msg_ok{
+	color: #178e1b;
+}
+
+.msg_bad{
+	color: #bb1f1f;
+}
+
+.selgroup{
+	width: 120px;
+	border: 1px solid black;
+}
+
+#gslist{
+	text-align: left;
+	font-size: 8pt;
+}
+
+.higher{
+	height: 130px !important;
+}
+
+.thisli{
+	border: 2px solid red !important;
+}
+
+.flink:hover{
+	text-decoration:underline;
+}

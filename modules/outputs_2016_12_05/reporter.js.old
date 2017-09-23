@@ -1,0 +1,1400 @@
+var editorOptions = {
+	width:240,
+	height:35,
+	controls:"bold italic underline | font size style | color highlight ",
+	colors:// colors in the color popup
+			["FFF FCC FC9 FF9 FFC 9F9 9FF CFF CCF FCF " ,
+				"CCC F66 F96 FF6 FF3 6F9 3FF 6FF 99F F9F " ,
+				"BBB F00 F90 FC6 FF0 3F3 6CC 3CF 66C C6C " ,
+				"999 C00 F60 FC3 FC0 3C0 0CC 36F 63F C3C " ,
+				"666 900 C60 C93 990 090 399 33F 60C 939 " ,
+				"333 600 930 963 660 060 366 009 339 636 " ,
+				"000 300 630 633 330 030 033 006 309 303"].join(""),
+	fonts:// font names in the font popup
+			"Arial,Arial Black,Comic Sans MS,Courier New,Narrow,Garamond," +
+					"Georgia,Impact,Sans Serif,Serif,Tahoma,Trebuchet MS,Verdana",
+	sizes:// sizes in the font size popup
+			"1,2,3,4,5,6,7"
+
+};
+function endRTE(obj, e) {
+	var $editor = $j("#" + e),
+			ntxt2 = obj.body.innerHTML,
+			$par = $editor.parent();
+	$editor.closest(".rte_fld").removeClass("rte_fld_mask rte_on")
+			.attr("data-text", ntxt2)
+			.addClass("moreview")
+			.find(".cleditorMain").replaceWith(ntxt2).end()
+			.prev().val(ntxt2);
+	cleanSelection();
+}
+
+/*$j(".rte_fld").live("click", function () {
+ if ($j(this).hasClass("rte_on")) {
+ return  false;
+ } else {
+ $j("#stip").hide();
+ $j(this).addClass("rte_on").trigger("mouseleave").removeClass("moreview").attr("data-text", "");
+ /*$j(".rte_fld:not("+$j(this).index()+")").each(function(){
+ endRTE(this);
+ });*/
+/*}
+ var btxt = this.innerHTML, unid = "feid_" + uniqueID();
+ this.innerHTML = "";
+ $j(this).addClass("rte_fld_mask");
+ btxt = !btxt ? "" : btxt;
+ $j(this).data("taid", unid);
+ var $ntxt = $j("<textarea/>", {cols:50, rows:1, "class":'text', id:unid}).val(btxt);
+ $ntxt.appendTo(this);
+ $j("#" + unid)
+ .cleditor(editorOptions).focus();
+ $j($j(".cleditorMain iframe", this)[0].contentWindow.document)
+ .bind("keypress end_edit", {bfid:unid}, function (e) {
+ var code = (e.keyCode ? e.keyCode : e.which);
+ if (code == 13 || e.type != 'keypress') {
+ endRTE(this, e.data.bfid);
+ }
+ });
+ });*/
+
+function uniqueID() {
+	return  Math.round(new Date().getTime() / 10);
+}
+
+var reporter = (function (my) {
+	var rows = [], rcell = 0, $visualRowSet, rowIndex = 1, $statHead, $statBody, $statTable, dBox, curRow, self = this, $rform = $j("#datareport"), $breport = $j("#breport", $rform),
+			$brbody = $j("tbody", $breport), sections = [], sIndex = 0, lastdbox = 0, rowsPart = 0, lastFoundItem, anyColumnitem = false, $cbrbody, $rhouse = $j("#reportHouse"),
+			delLink = '<span onclick="reporter.delr(this);" class="fhref" title="Delete"><img height="16" border="0" alt="Delete" width="16" src="/images/delete1.png"></span>',
+			$replist = $j("#reportList"), $rlbody = $replist.find("tbody") , sdbox = [], loadSrc, curChoice = false, choice_det, ndtitle, tempAreaText = '', sitemSelector = '',
+			activated = false, $rnote = $j("#rep_note"), inBays = [], startAddPoint = '', sectionsCount = 0, lastPicked, buildingSample = false, textStore = '',
+			dropDOptions = {
+				accept:'#box-home li, li.head-field',
+				activeClass:'ui-state-hover',
+				hoverClass:'ui-state-active',
+				addClasses:"head-field hfc",
+				greedy:true,
+				tolerance:'pointer',
+				drop:function (ev, $ui) {
+					pasteToRowPlace($ui, ev, this);
+					return true;
+				}
+			}, sortableOptions = {
+				//handle: '.mover',
+				//update: updateSorting
+
+				scroll:true,
+				tolerance:'pointer',
+				cursorAt:{
+					top:-2,
+					left:-2
+				},
+				/*start: function(ev, ui){
+				 $j(this).css("position","absolute");
+				 },*/
+				stop:function (event, ui) {
+					$j(this).find(".moreview").trigger("mouseout");
+				},
+				deactivate:function (event, ui) {
+					$j(".moreview").trigger("mouseout");
+				}
+			},
+			$sectionTypes = $j("<select/>", {"class":"section_typer text"})
+					.append("<option value='-1'>----</option>")
+					.append("<option value='text'>Text</option>")
+					.append("<option value='stat'>Stat table</option>")
+					.append("<option value='graph'>Chart</option> ")
+					.change(function () {
+						var tob = $j(this).val();
+						applyType(this, tob);
+					});
+
+	function applyType(obj, type) {
+		if (type != '-1') {
+			SectionAddRow($j(obj).closest(".zxrow").attr("data-sid"), type, $j(obj).closest(".table_edit_cell"));
+		} else {
+			return false;
+		}
+		return true;
+	}
+
+	function findIndex(obj) {
+		var $ro = $j(obj).closest("li");
+		return [$ro, $ro.attr("data-rid")];
+	}
+
+	function rowActions(method, rcell, wipeit) {
+		if (wipeit === null || wipeit === undefined) {
+			wipeit = false;
+		}
+		var row = findIndex(rcell)[1];
+		if (method === 'add') {
+			rowIndex = $visualRowSet.length + 1;
+			var $rowClone = $j($visualRowSet[0]).clone();
+			$rowClone
+					.attr("data-rid", rowIndex)
+					.find("input:not([type='button'])").val("").end().html(function (ixh, code) {
+						return code.replace(/rep\[\d{1,}\]/gi, "rep[" + rowIndex + "]");
+					})
+					.find(".demobox").text("").end()
+					.find(".rtit").val("").end()
+					.find(".indata").val(amnt(+sdbox) - 1);
+
+			$rowClone.appendTo("ol", $j("#reportBag")[0]);
+
+		}
+		else
+		if (method === 'del') {
+			var $zr = $j(rcell).closest("tr"), xclass = $zr.attr("class"), pclass = xclass.match(/secsub_\d+/g),
+			//sibles=$j("." + pclass[0], $brbody).length;
+					sibles = $j("." + pclass[0], $j(rcell).closest(".breport").find("tbody")).length;
+			if (isArray(pclass) && pclass[0] && ( (sibles > 1 && wipeit === false) || wipeit === true)) {
+				$zr.slideUp("fast", function () {
+					$j(this).find(".moreview").each(
+							function () {
+								if (wipeit === false) {
+									$j(this).trigger("dblclick");
+								} else {
+									setFree(this, true);
+								}
+							}).end().remove();
+				});
+				delete rows[row];
+			}
+		}
+		refreshRowSet();
+	}
+
+	function getColumn(obj, within) {
+		return within ? $j(obj).closest(".breport").find("tbody") : $j(obj).parent().find(".breport > tbody");
+	}
+
+
+	function killSection(id, force) {
+		if (force === null || force === undefined) {
+			force = false;
+		}
+		//var $lbrbody = getColumn(this,true);
+		if (force === true || confirm("Do you really want to remove this section?")) {
+			var $fsection = $j("#sec_" + id),
+					$lbrbody = getColumn($fsection, true),
+					zmode = $fsection.attr("data-stype"), //zmode = $j("#sec_" + id, $lbrbody).attr("data-stype"),
+					pretxt = '', secAct = '';
+			if (zmode === 'table') {
+				pretxt = "All rows ";
+				secAct = 'rowActions("del",$j(this).find("td:eq(0)"),' + force + ');';
+			}
+			else
+			if (zmode === 'text') {
+				pretxt = "Text entered";
+				secAct = '$j(this).remove();'
+			}
+			else
+			if (zmode === 'graph') {
+				pretxt = 'Content';
+				secAct = 'rowActions("del",$j(this).find("td")[0],' + force + ');';
+			}
+			if (force === true || confirm(pretxt + " inside this section also will be removed")) {
+				// launch killer section and rows inside
+				$j("#sec_" + id, $lbrbody).next("tr.herow").andSelf().remove();
+				$j(".secsub_" + id, $lbrbody).map(function () {
+					eval(secAct);
+				});
+			}
+		}
+	}
+
+	function buildSection(stype) {
+		var id = sIndex, postAction = '', vtype = stype.replace("sec_", ""),
+				xtxt = ["<tr id='sec_", id, "' data-stype='", vtype, "' class='slink zxrow'><td colspan='6'><div style='float: left;'>Section name&nbsp;</div><div style='float:left;width: 430px;'><input type='hidden' class='text offview  longwrite ichsection' name='sec[", id, "][name]'><div class='rte_fld'/>",
+					//"<span class='fbutton addbutt unfloat' title='Add new section' onclick='reporter.newSectionPre(this,true)'></span>",
+					//"<span class='fbutton delbutt unfloat' onclick='reporter.delSection(", id, ",true)' title='Remove Section'></span>&nbsp;&nbsp;",
+					"<div style='float: right;'>",
+					"<div class='fbutton delbutt' onclick='reporter.delSection(", id, ",true)' title='Remove Section'></div>",
+					"<div class='section_move section_move_up' title='Move UP'/>",
+					"<div class='section_move section_move_down' title='Move DOWN'/> </div>",
+					"</div></td></tr>"];
+		if (stype == 'sec_table') {
+			//col_type col_add col_del
+			xtxt = xtxt.concat(["<tr class='herow'><td class='head_home'>",
+				"<div class='head_unit'><input type='text' class='text sechead head_hint' size='10' name='sec[", id, "][cols][0]'></div>",
+				"<div class='head_ctrl'><div class='fbutton addbutt' title='Add column' onclick='reporter.colFrm(", id, ",\"add\")'></div>",
+				"<div class='fbutton delbutt' title='Delete column' onclick='reporter.colFrm(", id, ",\"del\")'></div></div>",
+				"</td></tr>"]);
+		}
+		++sIndex;
+		postAction = ['SectionAddRow(', (sIndex - 1), ',"', vtype, '");'].join("");
+
+		xtxt = xtxt.join("");
+		sections[id] = 0;
+
+		$j(xtxt).hide();
+		if (startAddPoint === 'origin') {
+			$j(xtxt).appendTo($cbrbody);//.slideDown("fast");
+		} else {
+			$j(xtxt).insertAfter(["tr.", (startAddPoint.replace("_", "sub_")), ":last"].join(""), $cbrbody);//.slideDown("fast");
+		}
+		eval(postAction);
+		$j("<tr/>", {"class":"secsub_" + (sIndex - 1)}).append("<td/>").find("td").html($j("#secadder > input").clone(true)).end().insertAfter($j(".secsub_" + (sIndex - 1) + ":last", $cbrbody));
+		//$j("#secadder > input").clone(true).appendTo(".secsub_"+(sIndex-1)+":last td ",$brbody);
+	}
+
+	function buildSection2() {
+		var id = sIndex, postAction = '',
+				xtxt = ["<tr id='sec_", id, "' data-stype='' data-sid='", id, "' class='slink zxrow'><td colspan='2' class='sec_ware'><div style='float: left;'>Section name&nbsp;</div><div style='float:left;width: 350px;'><input type='hidden' class='text offview  longwrite ichsection'  name='sec[", id, "][name]'><div class='rte_fld'/>",
+					//"<span class='fbutton addbutt unfloat' title='Add new section' onclick='reporter.newSectionPre(this,true)'></span>",
+					//"<span class='fbutton delbutt unfloat' onclick='reporter.delSection(", id, ",true)' title='Remove Section'></span>&nbsp;&nbsp;",
+					"<div style='float: right;'>",
+					"<div class='fbutton delbutt' onclick='reporter.delSection(", id, ",true)' title='Remove Section'></div>",
+					"<div class='fbutton sceditor' onclick='reporter.editSection(", id, ",this)' title='Edit Section'></div>",
+					"<div class='section_move section_move_up' title='Move UP'/>",
+					"<div class='section_move section_move_down' title='Move DOWN'/> </div>",
+					"</div><div class='sec_cont_view'/><input type='hidden' name='sec[", id, "][content]' class='sec_cont_all'>",
+					"<input type='hidden' name='sec[", id, "][type]' class='sec_cont_type'></td></tr>"];
+		++sIndex;
+//		postAction = ['SectionAddRow(', (sIndex - 1), ',"', vtype, '");'].join("");
+
+		xtxt = xtxt.join("");
+		sections[id] = 0;
+
+		$j(xtxt).hide();
+		if (startAddPoint === 'origin') {
+			$j(xtxt).appendTo($cbrbody);//.slideDown("fast");
+		} else {
+			$j(xtxt).insertAfter(["tr.", (startAddPoint.replace("_", "sub_")), ":last"].join(""), $cbrbody);//.slideDown("fast");
+		}
+		//eval(postAction);
+		$j("<tr/>", {"class":"secsub_" + (sIndex - 1)}).append("<td/>").find("td").html($j("#secadder > input").clone(true)).end().insertAfter($j(".secsub_" + (sIndex - 1) + ":last", $cbrbody));
+		//$j("#secadder > input").clone(true).appendTo(".secsub_"+(sIndex-1)+":last td ",$brbody);
+	}
+
+	function proceedEdit(id, obj) {
+		var $sec = $j(obj).closest(".slink"), $sec_info_block = $sec.find(".sec_ware");
+		var backup = $sec.html();
+		$sec_info_block.empty();
+		var sctype = $sec.attr("data-stype"), sname = $j(backup).find(".longwrite").val();
+		sname = sname ? sname : "";
+		sctype = sctype ? sctype : "-1";
+		var $new_data = $j("<table/>", {"class":"table_edit_cell"})
+				.append("<tr><td>Section Name:</td> <td><input type='text' class='text' value='" + sname + "'></td></tr>")
+				.append("<tr><td>Section Type:</td> <td></td></tr>");
+		$new_data.find("tr:eq(1) > td:eq(1)").append($sectionTypes.clone(true).val(sctype));
+		$sec.data("old-content", backup);
+		$sec_info_block.append($new_data);
+		if (sctype && sctype.length > 2) {
+			if (sctype == 'text') {
+				textStore = $j(backup).find(".sec_cont_all").val();
+			}
+			applyType($sec.find(".section_typer"), sctype);
+			if (sctype != 'text') {
+				$sec.find(".repits").val($j(backup).find(".sec_cont_all").val());
+			}
+		}
+	}
+
+	/*function columnWork(id, mode){
+	 var $vhrow = $j("#sec_" + id + " ~ tr.herow:eq(0)", $brbody), $hrows = $j(".secsub_" + id, $brbody), hid = $j(".head_unit", $vhrow).length;
+	 ++hid;
+	 if (mode === 'add' && hid < 11) {
+	 //1st. add hew header to top
+	 $j(".head_ctrl", $vhrow).before(["<div class='head_unit'><input type='text' data-hid='", (hid - 1), "' class='text sechead head_hint' size='10' name='sec[", id, "][cols][", (hid - 1), "]'></div>"].join(""));
+	 //2nd. add new places to all rows
+	 $hrows.each(function(xy){
+	 $j("td > .rctrl", this).before(["<input type='hidden' name='rows[", id, "][", $j(this).attr("data-rsid"), "][cols][", (hid - 1), "][rid]'><div class='rowdrops'></div>"].join(""));
+	 $j(this).find(".rowdrops:last").droppable(dropDOptions);
+	 });
+
+	 }
+	 else
+	 if (mode === 'del' && hid > 2) {
+	 //1st. delete header unit
+	 $j(".head_home > .head_unit:last", $vhrow).remove();
+	 //2nd. delete places + return dropped field
+	 $hrows.each(function(){
+	 $j(".rowdrops:last", this).trigger("dblclick").prev("input").andSelf().remove();
+	 });
+	 }
+	 }*/
+
+	function SectionAddRow(sid, xmode, parentCell) {
+		var curId = sections[sid], srid = ['[', sid, '][', curId, ']'].join(""), rtxt = [],
+				$srows = $j("tr#sec_" + sid, $cbrbody).next(),
+				apresent = $srows.find(".head_unit").length, afterSector = '', zclass = 'zxrow';
+
+		/*if (xmode == 'table') {
+		 rtxt = rtxt.concat(["<td colspan='1'><div style='float:left;' class='place_bay'>Text&nbsp;&nbsp;<input type='text' class='rtit text ' size='20' name='rows", srid, "[title]' value=''></div>"]);
+		 for (var i = 0; i < apresent; i++) {
+		 rtxt = rtxt.concat(["<input type='hidden' name='rows", srid, "[cols][", i, "][rid]'><div class='rowdrops'></div>"]);
+		 }
+		 afterSector = ' ~ .herow:eq(0)';
+		 rtxt = rtxt.concat(["<div class='rctrl'><span title='Add row' onclick='reporter.freshRow(", sid, ",\"table\");' class='fbutton addbutt'></span>",
+		 "<span title='Delete' onclick='reporter.delRow(this);' class='fbutton delbutt'></span></div></td></tr>"]);
+		 }
+		 else*/
+
+		$j(".sec_cont, .sec_ctrl", parentCell).remove();
+
+		if (xmode == 'text') {
+			var localtxt = 'loc_' + uniqueID();
+			rtxt = rtxt.concat(["<td></td><td><textarea id='" , localtxt , "' name='rows", srid, "[title]' class='rte_box' cols=60 rows=2>", textStore, "</textarea></td></tr>"]);
+		}
+		else
+		if (xmode == 'graph' || xmode == 'stat') {
+			/*rtxt = rtxt.concat(["<td><input type='hidden' name='rows", srid, "[title][0]' class='text' size='60'><div class='rte_fld'/></td></tr>",
+			 "<tr class='secsub_", sid, "'><td ><input class='text' name='rows", srid, "[label][0]' class='text' title='Label'></td></tr>",
+			 "<tr class='secsub_", sid, "' ><td><input type='hidden' name='rows", srid, "[item]'><div class='rowdrops big_size'></div></td></tr>"]);*/
+			var localitems = "<tr class='sec_cont'><td>Section Element</td><td>" + sitemSelector + "</td></tr>";
+			$j(localitems).appendTo(parentCell).find("optgroup").each(function () {
+				var $tgt = $j(this).add("option", this);
+				if ($j(this).attr("label").toLowerCase() == xmode) {
+					$tgt.show();
+				} else {
+					$tgt.hide();
+				}
+			});
+			//rtxt = rtxt.concat([localitems]);
+		}
+
+		rtxt = ["<tr class='secsub_", sid, " ", zclass, " sec_cont' data-rsid='", curId, "'>"].concat(rtxt);
+
+		++sections[sid];
+		var $secrows = $cbrbody.find(".secsub_" + sid + ":last");
+		/*if ($secrows.length > 0) {
+		 $j(rtxt.join("")).insertAfter($secrows).find(".rowdrops").droppable(dropDOptions);
+		 }
+		 else {
+		 $j(rtxt.join("")).insertAfter("#sec_" + sid + afterSector, $cbrbody).find(".rowdrops").droppable(dropDOptions);
+		 }*/
+
+		$j(rtxt.join("")).appendTo($j(parentCell));
+		if (localtxt) {
+			var lopts = cloneThis(editorOptions);
+			delete lopts.width;
+			delete lopts.height;
+			$j("#" + localtxt).val(textStore).cleditor(lopts);
+		}
+		$j("<tr class='sec_ctrl'><td><input type='button' class='text sec_app do_save' value='Save'></td><td style='text-align: right;'><input type='button' class='text sec_app do_cancel' value='Cancel'></td> </tr>").appendTo(parentCell);
+	}
+
+	function headTravel(zind, yind) {
+		var initPos = 0, initRows = 0, xpos = 0, vvals = [], hvals = [], pureDataCell = 0, yrz = false;
+		//Walk through all levels of header and get all values from THs
+		$statHead.find("tr:not(.decor)").each(function (trind) {
+			xpos = 0;
+			$j("th:not(.sblk):not(.missgr)", this).each(function (thind) {
+				if (xpos === zind) {
+					vvals.push($j(this).attr("data-ptitle"));
+					xpos = 0;
+					return false;
+				}
+				else
+					var tcspan = $j(this).attr("colspan");
+				if (isNaN(tcspan)) {
+					tcspan = 0;
+				}
+				if (xpos < zind && (xpos + tcspan) > zind) {
+					vvals.push($j(this).attr("data-ptitle"));
+					return false;
+				}
+				else
+				if ((xpos + tcspan) > zind && thind > 0) {
+					vvals.push($j(this).prev().attr("data-ptitle"));
+					return false;
+				}
+				if (xpos < zind) {
+					xpos += tcspan;
+				}
+				if (vvals[trind]) {
+					return false;
+				}
+			});
+		});
+		return vvals;
+	}
+
+	function bodyTravel(yind) {
+		var vvals = [], vpos = 0, foundYr = false, tar = [],
+		//1.Treat row where cell was selected
+				$wrow = $statBody.find("tr:eq(" + yind + ")"), wrlen = $wrow.find("td.rowhead").length,
+				$statRows = $j("tr", $statBody), rowCnt = $j("tr:first > th:first", $statHead).attr("colspan");
+		$j("td.rowhead", $wrow).each(function (xind) {
+			vvals.push($j(this).attr("data-ptitle"));
+		});
+		yrz = true;
+		for (var i = yind; i > -1; i--) {
+			tar = [];
+			if ($j("td.rowhead", $statRows[i]).length > wrlen) {
+				var diff = $j("td.rowhead", $statRows[i]).length - wrlen;
+				wrlen += diff;
+				$j("td.rowhead:lt(" + diff + ")", $statRows[i]).each(function (xyrx) {
+					tar.push($j(this).attr("data-ptitle"));
+				});
+				if (vvals.length == rowCnt) {
+					i = -2;
+				}
+			}
+			vvals = tar.concat(vvals);
+		}
+		//}
+		return vvals;
+	}
+
+	function inOrder() {
+		$statTable = $j("#tthome");
+		$statHead = $j("thead", $statTable);
+		$statBody = $j("tbody", $statTable);
+		$j("#qtable")
+				.undelegate(".qreditor", "click")
+				.delegate(".qreditor", "click", function (e) {
+					loadRepData(e);
+				});
+		dBox = stater.collector();
+		delete dBox.list;
+		dBox.selects = selects;
+		lastdbox = findMaxKey(sdbox);
+		sdbox[lastdbox] = dBox;
+		$j(".stabh_vis", $statTable).hover(
+				function () {
+					$statTable.css("background-color", "#B8B5B5");
+				},
+				function () {
+					$statTable.css("background-color", "inherit");
+				}).live("dblclick", function (e) {
+					pickerAct(e);
+				});
+		/*$j("td:not(.fk):not(.rowhead):not(.perc), .stabh_vis", $statTable).die('dblclick').live("dblclick",function(e){
+		 pickerAct(e);
+		 });*/ // removed support for cell pick
+	}
+
+	function refreshRowSet() {
+	}
+
+	function loadRepData(e) {
+		var $xrow = $j(e.target).closest("tr"), rid = $j(e.target).attr("data-id");
+		loadSrc = $xrow.parent().find("tr").index($xrow);
+		e.stopPropagation();
+		$j("#tabs").toTab(4);
+		$j.getJSON("?m=outputs&a=reports&mode=loadinfo&suppressHeaders=1", {
+			"dbrid":rid
+		}, function (rdata) {
+			cleanTabStat(true);
+			sIndex = 0;
+			inBays = [];
+			//$breport.data("fromdb",rid);
+			$j("#reportHouse").data("fromdb", rid);
+			sdbox = rdata.backdoor.bdata;
+			/*var ndpos = findMaxKey(sdbox);
+			 sdbox[ndpos] = dBox;*/
+			rows = rdata.backdoor.rows.concat(rows);
+
+			startAddPoint = "origin";
+			var entries = rdata.entries, secs = entries.sec, bdata = rdata.backdoor, $srow, second = false;
+			/*if(bdata.second == 1){
+			 $j("#scol_view").trigger("click").attr("checked",true );
+			 }*/
+
+			for (var colm in bdata.columns) {
+				if (bdata.columns.hasOwnProperty(colm)) {
+					$cbrbody = $j(".breport:eq(" + colm + ") > tbody");
+					for (var i = 0, l = bdata.columns[colm].length; i < l; i++) {
+						//for(var i=0, l=bdata.order.length; i  <l; i++){
+						var cursec = bdata.columns[colm][i], //cursec = bdata.order[i],
+						//pprow = entries.rows[cursec];
+								pprow = secs[cursec];
+
+						if (bdata.types[i] === 'text') {
+							tempAreaText = pprow.name;
+						}
+						//buildSection2('sec_' + bdata.types[i]);
+						buildSection2();
+						var $pcell = $j(".slink:last",$cbrbody).attr("data-stype", pprow.type);
+						$pcell	.find(".rte_fld").html(pprow.name)
+								.prev("input:hidden").val(pprow.name).end()
+								.end()
+								.find(".sec_cont_view").html(pprow.content)
+								.next("input").val(pprow.content).end()
+								.end()
+								.find(".sec_cont_type").val(pprow.type);
+						--sIndex;
+						$srow = $j("#sec_" + sIndex, $cbrbody);
+						//filled section name
+						//$srow.find("input.offview").val(entries.sec[cursec].name).next(".rte_fld").html(entries.sec[cursec].name);
+
+						/*if (bdata.types[i] === 'table') {
+						 for (var y in entries.sec[cursec].cols) {
+						 if(y > 0){
+						 columnWork(sIndex,'add');
+						 }
+						 //fill header names
+						 if (entries.sec[cursec].cols[y] !== null) {
+						 $srow.next("tr.herow:eq(0)").find("input.sechead:eq(" + y + ")").removeClass("head_hint")
+						 .val(entries.sec[cursec].cols[y]);
+						 }
+						 }
+						 //move on to rows
+						 for (var y in entries.rows[cursec]) {
+						 var crow=entries.rows[cursec][y];
+						 if(y > 0){
+						 SectionAddRow(sIndex,'table');
+						 }
+						 var $csrow=$j(["tr.secsub_",sIndex,":eq(",y,")"].join(""),$brbody),vcols=crow.cols;
+						 $csrow.find("input.text").val(crow.title);
+						 for(var cx in vcols){
+						 if (vcols[cx].rid !== null && vcols[cx].rid !== undefined) {
+						 pasteToRowPlace(vcols[cx].rid,true,$csrow.find(".rowdrops:eq("+cx+")"));
+						 }
+						 }
+						 }
+						 }else */
+
+
+
+						/*if (bdata.types[i] === 'text') {
+							$j("tr.secsub_" + sIndex + ":eq(0)", $cbrbody).find("textarea").val(pprow[0].title);
+						} else if (bdata.types[i] === 'graph') {
+							$j(".secsub_" + sIndex, $cbrbody).each(function (i) {
+								var $inp = $j(this).find("input");
+								if (i == 0) {
+									$inp.val(pprow[0].title[0]).next(".rte_fld").html(pprow[0].title[0]);
+								}
+								else if (i == 1) {
+									$inp.val(pprow[0].label[0]);
+								} else if (i == 2) {
+									//pasteToRowPlace(pprow[0].item, true, $j("tr.secsub_" + sIndex + ":eq(2)", $cbrbody).find(".rowdrops"));
+									pasteToRowPlace(pprow[0].item, true, $j(".rowdrops", this));
+									//return false;
+								}
+							});
+
+
+						}*/
+						++sIndex;
+					}
+				}
+			}
+
+			for (var i in rdata.entries) {
+				if (!isNaN(i) && rdata.entries.hasOwnProperty(i)) {
+					var crow = rdata.entries[i], $rcln = $rowClone.clone(true),
+							$vinput = $j(["<input type='text' class='rtit text' name='rep[1].title' value='", crow.title, "'>"].join(""));
+
+					$rcln
+							.find(".rtit").replaceWith($vinput).end()
+							.find(".hibox").val(crow.rid).end()
+							.find(".indata").val(crow.bdid).end()
+							.find(".demobox").text(rdata.backdoor.rows[crow.rid].n).end()
+							.html(
+							function (inx, code) {
+								var rcode = code.replace(/rep\[\d{1,}\]/gi, "rep[" + (parseInt(i) + 1) + "]");
+								$j($j(rcode)[0]).val(crow.title);
+								return rcode;
+							}).attr('data-rid', crow.rid)
+							.appendTo("ol", $j("#reportBag"));
+				}
+			}
+			$rowClone = null;
+			//$j("#tabs").toTab(4);
+			$j("#rep_name").val(rdata.title);
+			$j("#rep_start").val(rdata.start_date);
+			$j("#rep_end").val(rdata.end_date);
+			refreshRowSet();
+			$j("tr", $cbrbody).show();
+		});
+		e.stopPropagation();
+		return false;
+	}
+
+	function findMaxKey(obj) {
+		var i, res, tcase = (isArray(obj) === true ? 'array' : 'object');
+		for (i in obj) {
+			if (tcase === 'array') {
+				if (i != 'indexOf' && i != 'length' && i !== null) {
+					res = i;
+				}
+			}
+			else if (tcase === 'object') {
+				if (typeof obj === 'object' && obj.hasOwnProperty(i)) {
+					res = i;
+				}
+			}
+		}
+		return (res === undefined ? 0 : parseInt(res) + 1);
+	}
+
+	function prepareEq(obj) {
+		var grabNext = false, lrow, ind = 0, prerow = {}, vstr = [];
+		for (var area in obj) {
+			prerow[area] = [];
+			ind = 0;
+			for (var ablock in dBox[area]) {
+				var bkey = dBox[area][ablock].id, lrow = [];
+				if (!isNaN(bkey)) {
+					grabNext = false;
+					if (bkey && dBox.range && dBox.range[bkey] && dBox.range[bkey].hasOwnProperty("val") &&
+							(dBox.range[bkey].val != "none" && dBox.range[bkey].val != "annually") && !isArray(dBox.range[bkey].val)) {
+						grabNext = true;
+					}
+					if (grabNext === false) {
+						lrow = [obj[area][ind]];
+					}
+					else {
+						lrow = [obj[area][ind], obj[area][(ind + 1)]];
+						++ind;
+					}
+
+					prerow[area].push({
+						db:extractDB(bkey, rels),
+						value:lrow,
+						title:dBox[area][ablock].title,
+						dkey:bkey
+
+					});
+					++ind;
+				}
+			}
+			vstr.push(obj[area].join(","));
+		}
+
+		rcell = findMaxKey(rows); //amnt(rows);
+		rows[rcell] = {
+			"v":vstr.join("; "),
+			"n":ndtitle,
+			"r":prerow,
+			"d":(findMaxKey(sdbox) - 1),
+			"c":choice_det,
+			"t":uniqueID()
+
+		};
+	}
+
+	function extractDB(ind, arr) {
+		var zind = 0;
+		for (var i in arr) {
+			if (ind == zind) {
+				return {
+					field:i,
+					table:arr[i]
+				};
+			}
+			++zind;
+		}
+	}
+
+	function pickerOff(mode) {
+		rcvField(rcell);
+	}
+
+	function pickerAct(e) {
+		var lthis = e.target;
+		if (lthis === lastPicked) {
+			return false;
+		} else {
+			lastPicked = lthis;
+		}
+		ndtitle = prompt("Enter name for selected item");
+		curChoice = lthis.tagName.toLowerCase();
+		choice_det = $j(lthis).attr("data-rep_item");
+		if (curChoice == "td") {
+			choice_det = 'cell';
+			$j(lthis).addClass("cseled");
+			$j("#tthome").css("cursor", "auto");
+			reporter.detectParents(lthis);
+		}
+		else {
+			var rtabd = form2object("sendAll"); // result table form data
+			rcell = findMaxKey(rows);//amnt(rows);
+			if (curChoice === "div" && choice_det === 'stat') {
+				// we got selected stat table
+				var spiv = ['cols', 'rows'], stxt = [];
+				for (var si = 0, sl = spiv.length; si < sl; si++) {
+					var ssi = spiv[si];
+					stxt.push(si);
+					stxt[si] = [];
+					for (var aitem in dBox[ssi]) {
+						if (typeof dBox[ssi][aitem].title === 'string') {
+							stxt[si].push(dBox[ssi][aitem].title);
+						}
+					}
+					stxt[si] = stxt[si].join(",");
+				}
+				var $ztab = $j(lthis).parent().children("table");
+				rows[rcell] = {
+					"v":stxt.join("; "),
+					"r":rtabd,
+					"n":ndtitle,
+					"d":(findMaxKey(sdbox) - 1),
+					"c":choice_det,
+					"s":{
+						'width':$ztab.width(),
+						'height':$ztab.height()
+					},
+					"t":uniqueID()
+				};
+			}
+			else
+			if (curChoice === 'img' && choice_det === 'graph') {
+				//we have selected graph
+				var graphData = grapher.emulSend(true);
+				rows[rcell] = {
+					"v":"Graph",
+					"n":ndtitle,
+					"r":[rtabd, graphData],
+					"d":(findMaxKey(sdbox) - 1),
+					'c':choice_det,
+					's':{
+						'width':$j(lthis).width(),
+						'height':$j(lthis).height()
+					},
+					"t":uniqueID()
+				};
+			}
+			//rcvField(rcell);
+			saveFieldItem(rcell);
+		}
+		return false;
+	}
+
+	function saveFieldItem(rcid) {
+		$j.ajax({
+			url:"/?m=outputs&a=reports&mode=save_item&suppressHeaders=1",
+			data:["itemfo=", JSON.stringify(rows[rcid]), "&sddata=", JSON.stringify(stater.collector())].join(""),
+			type:'post',
+			success:function (msg) {
+				if (msg && msg.length > 0) {
+					if (parseInt(msg) > 0) {
+						//request fresh list of items
+						refreshItemsList();
+					}
+				}
+			}
+		});
+	}
+
+	function refreshItemsList() {
+		var localselects = [];
+		$j.getJSON("/?m=outputs&a=reports&mode=get_item_list&suppressHeaders=1", function (data) {
+			if (data) {
+				localselects.push('<select class="repits">');
+				localselects.push('<option value="-1">-----</option>');
+				sdbox = [];
+				for (var ic in data) {
+					if (data.hasOwnProperty(ic)) {
+						localselects.push("<optgroup label='" + ic + "'>");
+						var ttype = data[ic];
+						for (var ti in ttype) {
+							if (ttype.hasOwnProperty(ti)) {
+								sdbox[ti] = $j.parseJSON(ttype[ti]);
+								localselects.push(["<option value='", ti, "'>", sdbox[ti].n, "</option>"].join(""));
+							}
+						}
+						localselects.push("</optgroup>");
+					}
+				}
+				localselects.push("</select>");
+				sitemSelector = localselects.join("");
+			}
+		});
+	}
+
+	function popMsg(tmsg, mode) {
+		var mmode;
+		if (mode == 'error') {
+			mmode = 'msg_bad';
+		}
+		else {
+			mmode = 'msg_ok';
+		}
+		$j("#reportMSG").append(["<span class='msgs offview ", mmode, "'>", tmsg, "</span>"].join(""))
+				.find("span").fadeIn(300).delay(2000)
+				.fadeOut(300, function () {
+					$j(this).parent().html("");
+				});
+	}
+
+	function delReport(obj) {
+		var $rid = $j(obj).closest("tr"), dbrid;
+		$j("a", $rid).attr("href", function (i, xhr) {
+			dbrid = xhr.match(/\d{1,}$/);
+			return xhr;
+		});
+		$j.ajax({
+			type:'get',
+			url:'?m=outputs&a=reports&mode=delete&suppressHeaders=1&dbrid=' + dbrid[0],
+			success:function (msg) {
+				if (msg && msg.length > 0) {
+					if (msg === 'ok') {
+						popMsg('Report template deleted.', 'ok');
+						$rid.remove();
+					}
+				}
+			}
+		});
+	}
+
+	function cleanTabStat(leaveRows) {
+		//$brbody.empty();
+		$j(".breport tbody").empty();
+		if (leaveRows !== true) {
+			rows = [];
+			$j("#tthome").find(".cseled").removeClass("cseled");
+		}
+		//remove all item areas
+		$j(".sub_port").remove();
+	}
+
+	function findItem(ts) {
+	}
+
+	function setFree(obj, totalClean) {
+		if (totalClean) {
+			$j("#pbay").find(".sub_port").fadeOut("fast").remove();
+		}
+		else {
+			var rpar = $j(obj).parent(), rcell = rpar.attr("data-hid"),
+					$myUL = $j(rpar).closest("ul"), sibles = $myUL.children("li").length,
+					xbox = $myUL.closest(".sub_port"), ritem = getRowItem(rcell), tbdel = ritem.c, //tbdel = rows[rcell].c,
+					ipos = $j.inArray(tbdel, inBays);
+			rows[lastFoundItem] = null;
+			//rows[rcell] = null;
+			$j(rpar).remove();
+			if (sibles < 2) {
+				$j(xbox).remove();
+				delete inBays[ipos];
+			}
+		}
+	}
+
+	function rcvField(rid, popm) {
+		var preimg = '', trow, ccase;
+		(!popm ? trow = rows[rid] : trow = getRowItem(rid));
+		ccase = trow.c;
+
+		if (ccase != 'cell') {
+			preimg = '<img src="images/small-' + ccase + '.png" border="0" style="float:left;">';
+		}
+		if ($j.inArray(ccase, inBays) < 0) {
+			$j(["<div class='sub_port ", ccase, "'><ul class='rcgetter moretable dgetter'></ul><div class='bottom-txt'>", prettyCamelCases(ccase), 's', "</div></div>"].join(""))
+					.children("ul").sortable(sortableOptions).disableSelection().end().appendTo("#pbay");
+			inBays.push(ccase);
+		}
+		var shortt = trow.n && trow.n.length ? trow.n : trow.v;
+		var $destin = $j("#pbay").children("." + ccase).children("ul");
+		var approved = ($j(".hfc[data-hid='" + trow.t + "']", $destin).length ? false : true);
+		if (approved === true) {
+			$j(['<li class="head-field hfc" data-hid="', trow.t , '" aria-disabled="false" unselectable="on" style="-moz-user-select: none;">',
+				'<div class="bfg"></div>',
+				'<div class="ulit fbox2 moreview" data-text="', shortt, '">', preimg, trimView(shortt, 25).s, '</div>',
+				'<div title="Delete" class="kill_area"></div></li>'].join(""))
+					.appendTo($destin).find(".kill_area").bind('click', function (x) {
+						setFree(this);
+					});
+			if (!popm) {
+				$rnote.text("Element " + ccase + " for report template added!").show().animate({
+					"top":"5px"
+				}, 400, function () {
+					$j(this).stop(true).delay(600).animate({
+						top:"-105px"
+					}, 500);
+				});
+			}
+		}
+	}
+
+	function prettyCamelCases(text) {
+		return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
+	}
+
+	function putBack(e) {
+		var rc = $j(this).removeClass("moreview row_active graph_back stat_back ui-resizable").attr({
+			"style":"",
+			"data-text":""
+		}).text("").die("dblclick").find(".fader").remove().end().data("rcell");
+		rcvField(rc, true);
+		$j(".moreview").trigger("mouseout");
+	}
+
+	function getRowItem(rid, onlyID) {
+		if (amnt(rows) === 0) {
+			return 0;
+		}
+		rid = parseInt(rid);
+		for (var i in rows) {
+			if (rows[i] !== null) {
+				if (rows[i].t === rid) {
+					lastFoundItem = i;
+					return onlyID ? i : rows[i];
+				}
+			}
+		}
+		return false;
+	}
+
+	function pasteToRowPlace($pitem, pev, tgt) {
+		var rucell, faux = false;
+		if (typeof $pitem === 'object') {
+			var $item = $pitem.draggable;
+			rucell = $item.attr('data-hid');
+		} else {
+			rucell = $pitem;
+			faux = true;
+		}
+
+		var self = this, trow = getRowItem(rucell), fromer, df, aclass, killSrc = false,
+				isForChart = $j(tgt).hasClass("big_size"), rtype = trow.c, shortt = trow.n && trow.n.length ? trow.n : trow.v;
+
+		if (rtype == 'cell' && isForChart === false) {
+			$j(tgt)
+					.addClass("moreview row_active")
+					.attr("data-text", shortt)
+					.data("rcell", rucell)
+					.text(shortt)
+					.bind("dblclick", putBack)
+					.append("<div class='fader'></div>")
+					.prev().val(rcell);
+			killSrc = true;
+		}
+		else
+		if ((rtype == 'graph' || rtype == 'stat') && isForChart === true) {
+			$j(tgt).animate({
+				width:trow.s.width,
+				height:trow.s.height
+			}, 50).addClass(function (ix, rcl) {
+						var bclass = [ "moreview row_active " , rtype , "_back"];
+						if (rtype === 'graph') {
+							//bclass.push(" ui-widget-content");
+							$j(this).resizable({
+								helper:"ui-resizable-helper",
+								ghost:true,
+								stop:function (event, ui) {
+									var tcell = getRowItem($j(this).data("idcell"), true);
+									rows[tcell].s = {
+										width:$j(this).width(),
+										height:$j(this).height()
+									}
+								}
+							});
+						}
+						return bclass.join("");
+					})
+					.attr("data-text", shortt)
+					.data("rcell", rucell)
+					.data("idcell", trow.t)
+				//.text(shortt)
+					.append("<div class='ui-widget-header'>" + shortt + "</div>")
+					.bind("dblclick", putBack)
+					.prev().val(rucell).closest("tr").prev().find("input").val(trow.n);
+			killSrc = true;
+		}
+		if (killSrc === true && faux === false) {
+			$item.remove();
+		}
+	}
+
+	function writeOn(e) {
+		var curtxt = $j(this).val(), curlen = curtxt.length, vislen = $j(this).attr("size"), marked = $j(this).data("lenup");
+		if (curlen > vislen * 1.5 && curlen < vislen * 2) {
+			$j(this).attr("size", vislen * 2).data("lenup", 1).css("width", "auto");
+			if ($j(this).hasClass("ichsection")) {
+				// just in case if we'll have to add cleaner for section title entrance
+			}
+			else {
+				$j(this).closest("td").find("div.rowdrops:first").prev().before("<br><br><div style='float:left; width: 162px;height: 20px;'></div>");
+			}
+		}
+		else
+		if ((curlen > vislen && marked === 1) || (curlen > (vislen * 2) && !marked)) {
+			$j(this).attr("size", (vislen * 1.5)).data("lenup", 2).css("width", "auto");
+		}
+		else
+		if ((curlen > vislen && marked === 2) || (curlen > (vislen * 3) && !marked)) {
+			var $parent = $j(this).closest("td");
+			$j(this).replaceWith(["<textarea name='", $j(this).attr("name"), "' cols='", (marked ? vislen + 5 : (vislen * 2) + 5), "' rows='3'></textarea>"].join(""));
+			if ($j(this).hasClass("ichsection")) {
+				//again if section title is too long - maybe we'll have to remove "add new row" button and headers.
+			}
+			else {
+				$parent.find(".rowdrops").each(
+						function () {
+							$j(this).trigger("dblclick");
+						}).remove().end().attr("colspan", 5).find("textarea").focus().val(curtxt);
+			}
+		}
+	}
+
+	function cleanBData() {
+		var used = [], ndbox = [];
+		for (var r in rows) {
+			if (rows[r] !== null && $j.inArray(rows[r].d, used) < 0 && !isNaN(r)) {
+				used.push(rows[r].d);
+			}
+		}
+		if (used.length > 0) {
+			for (var i = 0, l = used.length; i < l; i++) {
+				ndbox[used[i]] = sdbox[used[i]];
+			}
+			sdbox = cloneThis(ndbox);
+			ndbox = null;
+		}
+	}
+
+	function cleanUnUsedItems() {
+		//close all sections in edit to keep all data
+		$j(".do_save").each(function () {
+			$j(this).trigger("click");
+		});
+
+		var used = [], nsdbox = [];
+		$j(".sec_cont_type").each(function () {
+			if ($j(this).val() !== 'text') {
+				used.push($j(this).closest(".sec_ware").find(".sec_cont_all").val());
+			}
+		});
+		if (used.length > 0 && used.length < sdbox.length) {
+			/// not all items were used and we need clear report from trash data
+			for (var u = 0, kl = used.length; u < kl; u++) {
+				var t = sdbox[ used[u] ];
+				if (t && t.filters) {
+					t.filters = $j.parseJSON(t.filters);
+				}
+				nsdbox[used[u]] = t;
+			}
+			return nsdbox;
+		} else {
+			return sdbox;
+		}
+
+	}
+
+	function endAllEdits() {
+		$j(".rte_fld", $j("#reportHouse")).each(function () {
+			var tframe = $j(".cleditorMain iframe", this);
+			if (tframe && tframe.length > 0) {
+				$j(tframe[0].contentWindow.document).trigger("end_edit");
+			}
+		});
+
+	}
+
+	return {
+		init:function () {
+			if (activated === false) {
+				inOrder();
+				/*$j("#scol_view").click(function(){
+				 $j("#second-column").toggle();
+				 });*/
+				$j(".bpick", $j("#reportBag")[0]).live("click", reporter.pickerOn);
+				$j("#rep_start").val($j("#start_date").val());
+				$j("#rep_end").val($j("#end_date").val());
+				refreshRowSet();
+				$j(".longwrite").live("keyup", writeOn);
+				// $j(".sec_type"/*,$rform*/).live("click", function () {
+				/*	var xcl = $j(this).attr("class"), potr = xcl.match(/sec_[^\s]+\s?/g);
+				 if (potr && potr[1]) {
+				 $j(this).parent().hide("fast");
+				 buildSection(potr[1]);
+				 }
+				 });*/
+
+				/******** Provide support for section edit buttons : SAVE AND CANCEL ********/
+				$j(".sec_app").live("click", function () {
+					var $xbox = $j(this).closest(".zxrow"), back = $xbox.data("old-content");
+					if ($j(this).hasClass("do_cancel")) {
+						$xbox.html(back);
+					} else {
+						var sok = true, sltype, content, vcontent, sname;
+						//We go save this section
+						$j(this).closest(".table_edit_cell").find("tr").each(function (row) {
+							var $tdcell = $j("td:eq(1)", this);
+							if (row === 0) {// name of section
+								sname = $j("input", $tdcell).val();
+							} else if (row === 1) {// type of section
+								sltype = $j("select", $tdcell).val();
+							} else if (row === 2) { // for text is text-content, for others - id of picked item
+								if (sltype === 'text') {
+									var $tobj = $j(".cleditorMain > iframe", $tdcell);
+									content = $tobj[0].contentDocument.body.innerHTML;
+									vcontent = content;
+								} else {
+									content = $j(".repits", this).val();
+									vcontent = $j(".repits option:selected").text();
+									if (content == '-1') {
+										alert("Please select report item, or remove section");
+										sok = false;
+									}
+								}
+							}
+						});
+						if (sok === true) {
+							var $pcell = $j(this).closest(".slink").attr("data-stype", sltype),
+									pdata = $pcell.data("old-content");
+							$pcell.empty().append(pdata)
+									.find(".rte_fld").html(sname)
+									.prev("input:hidden").val(sname).end()
+									.end()
+									.find(".sec_cont_view").html(vcontent)
+									.next("input").val(content).end()
+									.end()
+									.find(".sec_cont_type").val(sltype);
+							textStore = '';
+						}
+					}
+				});
+				$j(".head_unit > input", $rhouse).live('focusin',
+						function () {
+							$j(this).removeClass("head_hint");
+						}).live('focusout', function () {
+							var tval = $j(this).val();
+							if (tval.length == 0) {
+								$j(this).addClass("head_hint");
+							}
+						});
+				activated = true;
+
+				$j(".section_move").live("click", function () {
+					endAllEdits();
+					var areas = 0;
+					var $lbrbody = getColumn(this, true);
+					$j(".rte_box", $lbrbody).each(function () {
+						var $ta = $j(this),
+								$t = $j("<input/>")
+										.attr("name", $ta.attr("name"))
+										.val($ta.val())
+										.attr("id", $ta.attr("id"))
+										.addClass("area_subst");
+						//.insertAfter($ta);
+						$ta.closest(".cleditorMain").replaceWith($t);
+						++areas;
+					});
+					var $mysec = $j(this).closest("tr"),
+							drct = $j(this).hasClass("section_move_up") ? "up" : "down",
+							$step,
+							mypos = $j("tr.slink", $lbrbody).index($mysec);
+					if (drct == 'up') {
+						$step = $j("tr.slink:lt(" + mypos + "):last", $lbrbody);
+					} else {
+						$step = $mysec;
+						$mysec = $j("tr.slink:gt(" + mypos + "):first", $lbrbody);
+					}
+					var $bunch = $mysec.nextUntil("tr.slink");
+					if ($step && $step.length > 0) {
+						$mysec.insertBefore($step);
+						$bunch.each(function () {
+							$j(this).insertBefore($step);
+						});
+					}
+					if (areas > 0) {
+						var lopts = cloneThis(editorOptions);
+						delete lopts.width;
+						delete lopts.height;
+						$j(".area_subst").each(function () {
+							var $ti = $j(this), nid = $ti.attr("id");
+							var $n = $j(["<textarea id='", nid , "' name='", $ti.attr("name") , "' class='rte_box' cols=60 rows=3>", $ti.val(), "</textarea>"].join(""));
+							$ti.replaceWith($n);
+
+							$j("#" + nid).cleditor(lopts);
+						});
+					}
+				});
+				$j("#rep_selector > li").click(function () {
+					$j(".rpparts").hide();
+					$j(this).parent().find("li").removeClass("rep_link_on").end().end().addClass("rep_link_on").attr("data-mode", function (i, x) {
+						$j("#rpdata_" + x).show();
+						if (x === 'preview') {
+							reporter.saveReport(this, true);
+						}
+					});
+				});
+				$j(".rpparts:eq(0)").show();
+
+				//get recent list of picked items
+				refreshItemsList();
+
+			}
+			else {
+				inOrder();
+			}
+		},
+		pickerOn:function (e) {
+			curRow = findIndex(this)[0];
+			$j("#tthome").css("cursor", "crosshair");
+			tabPrepare(3);
+
+			$j(window).bind("keypress", function (e) {
+				var code = (e.keyCode ? e.keyCode : e.which);
+				if (code == 27) { // user pressed Esc button
+					pickerOff(false);
+				}
+			});
+		},
+		reget:function () {
+			if (activated === false) {
+				reporter.init();
+			}
+			else {
+				inOrder();
+			}
+		},
+		addRow:function (obj) {
+			rowActions("add", obj);
+		},
+		delRow:function (obj) {
+			rowActions("del", obj);
+		},
+		detectParents:function (obj) {
+			var $trpos = $j(obj).closest("tr"), xpos = $trpos.find("td:not(.rowhead)").index(obj), //:not(.fk) we consider all cells, cause cospan also do
+					ypos = $j("tr", $statBody).index($trpos);
+			prepareEq({
+				cols:headTravel(xpos),
+				rows:bodyTravel(ypos)
+			});
+			pickerOff(true);
+		},
+		saveReport:function (but, tryCase) {
+			if (buildingSample === true) {
+				return false;
+			} else {
+				buildingSample = true;
+			}
+			endAllEdits();
+			//$j(but).attr("disabled", true);
+			var $rep_name = $j("#datareport").find("input:eq(0)");
+			if ($rep_name.val() == '') {
+				alert("Please enter name of report");
+				$rep_name.focus();
+				//$j(but).attr("disabled", false);
+				return false;
+			}
+			$j("#rep_ps").show("fast");
+			//cleanBData();
+			psdbox = cleanUnUsedItems();
+			var order = [], stypez = [], columnItems = [];
+			$j(".breport").each(function (ci) {
+				//$j(".slink",$brbody).each(function(){
+				columnItems[ci] = [];
+				$j(".slink", $j(this)).each(function () {
+					var sid = $j(this).attr("id").replace("sec_", "");
+					order.push(sid);
+					stypez.push($j(this).attr("data-stype"));
+					columnItems[ci].push(sid);
+				});
+			});
+
+			var entries = $j("#datareport").formParams(), strpre = [], //form2object("datareport"),
+					startD = $j("#rep_start").val(), endD = $j("#rep_end").val(), res = false, indb = $j("#reportHouse").data("fromdb"), //indb = $breport.data("fromdb"),
+					postAction,
+					dfp = {
+						entries:entries,
+						start:startD,
+						end:endD,
+						bdata:psdbox,
+						rows:rows,
+						order:order,
+						types:stypez,
+						columns:columnItems,
+						second:1//$j("#scol_view:checked").length
+					};
+			if (isNaN(indb) || indb === null || tryCase === true) {
+				postAction = 'save';
+			}
+			else {
+				postAction = 'update';
+				//dfp.push("&indb=" + indb);
+				strpre.push("indb=" + indb + "&");
+			}
+			strpre.unshift("mode=" + postAction + "&");				//sdbox.push(dBox);
+
+			$j.ajax({
+				url:'?m=outputs&a=reports&suppressHeaders=1',
+				data:strpre.join("") + "bps=" + encodeURIComponent(JSON.stringify(dfp)), //dfp.join(""),
+				type:'post',
+				success:function (msg) {
+					if (msg && msg.length > 0) {
+						if (msg != 'fail' && !isNaN(parseInt(msg))) {
+							if (tryCase === false) {
+								buildingSample = false;
+								$rlbody.find("tr.emptydb").remove().end();
+								msg = (postAction == 'update' ? indb : msg);
+								chface.add2Table({
+									id:(msg ? parseInt(msg) : 0),
+									name:entries.rep_name,
+									desc:'',
+									type:'Report',
+									sdate:startD,
+									edate:endD,
+									brest:0,
+									eaction:postAction
+								});
+								res = true;
+								inBays = [];
+								cleanTabStat();
+								popMsg("Report template saved", "ok");
+								$j(but).attr("disabled", false);
+								$rep_name.val("");
+								qurer.reporter(startD, endD, msg, false);
+							} else {
+								if (parseInt(msg) > 0) {
+									//we have valid id and now we can post create report window
+									//1.open new window with parameters of temp report
+									//qurer.reporter(startD,endD,msg,true);
+									//2.Add close button so it will remove temp report
+									//$j(but).attr("disabled", false);
+
+									$j("#rpdata_preview")
+											.html("<img src='/modules/outputs/images/report-load.gif'>")
+											.load(['/?m=outputs&a=reports&mode=wfrm&itid=' , msg , "&ds=", startD, "&de=", endD, "&kadze=kami&suppressHeaders=1" ].join(""), function () {
+												buildingSample = false;
+											});
+								}
+							}
+						}
+					}
+					$j("#rep_ps").fadeOut("fast", function () {
+						$j(this).hide();
+					});
+				}
+			});
+
+
+		},
+		delr:function (obj) {
+			delReport(obj);
+		},
+		newSection:function () {
+			buildSection();
+		},
+		freshRow:function (x, y) {
+			SectionAddRow(x, y);
+		},
+		delSection:function (x, tforce) {
+			killSection(x, tforce);
+		},
+		editSection:function (i, x) {
+			proceedEdit(i, x);
+		},
+		newSectionPre:function (obj, rightAfter) {
+			$cbrbody = getColumn(obj, rightAfter);
+			if (rightAfter && rightAfter === true) {
+				/*if (!$j(obj).data("badds")) {
+				 $j("#candidset").clone().attr("id", "canset_" + sectionsCount).css("float", "left").insertAfter(obj);
+				 $j(obj).data("badds", true);
+				 }*/
+				startAddPoint = $j(obj).closest("tr").attr("class").replace("zxrow", "").replace("sub", "");
+				++sectionsCount;
+			} else {
+				startAddPoint = 'origin';
+			}
+			/*$j(obj).next().add("div", obj).fadeOut(0).width(100).show().fadeIn("slow").delay(6000).fadeOut('slow', function () {
+			 $j(this).width(0).hide();
+			 });//.hide();*/
+			buildSection2();
+		},
+		colFrm:function (x, y) {
+			columnWork(x, y);
+		},
+		initGraph:function () {
+			$j("#graph_home > img").live("dblclick", pickerAct);
+		}
+
+
+	}
+}(reporter));

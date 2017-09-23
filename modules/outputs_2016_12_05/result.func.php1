@@ -1,0 +1,1012 @@
+<?php
+
+function admFirst($arr) {
+	$pos = array_search ( 'client_adm_no', $arr );
+	if ($pos > 0) {
+		array_splice ( $arr, $pos, 1 );
+		$arr = array_merge ( array ('client_adm_no' ), $arr );
+	}
+	return $arr;
+}
+
+class diskFile {
+	private static $fh;
+	private static $fpath;
+	private static $fbh;
+	private static $fbpath;
+	private static $fbs;
+	private static $fspath;
+	private static $i = 0;
+	private static $zar = array ();
+	
+	static function init() {
+		global $baseDir, $_SESSION;
+		$fname = md5 ( time () );
+		if (isset ( $_SESSION ['fileNameCsh'] )) {
+			$fdel = $baseDir . '/files/tmp/' . $_SESSION ['fileNameCsh'];
+			@unlink ( $fdel . '.tst' );
+			@unlink ( $fdel . '.tbd' );
+			@unlink ( $fdel . '.tch' );
+		}
+		$_SESSION ['fileNameCsh'] = $fname;
+		$fip = $baseDir . '/files/tmp/' . $fname;
+		diskFile::$fpath = $fip . '.tch';
+		if (file_exists ( diskFile::$fpath )) {
+			unlink ( diskFile::$fpath );
+		}
+		diskFile::$fh = fopen ( diskFile::$fpath, "a+" );
+		
+		diskFile::$fbpath = $fip . '.tbd';
+		if (file_exists ( diskFile::$fbpath )) {
+			unlink ( diskFile::$fbpath );
+		}
+		diskFile::$fbh = fopen ( diskFile::$fbpath, "a+" );
+		
+		diskFile::$fspath = $fip . '.tst';
+		if (file_exists ( diskFile::$fspath )) {
+			unlink ( diskFile::$fspath );
+		}
+		diskFile::$fbs = fopen ( diskFile::$fspath, "a+" );
+	}
+	
+	static function putTXT(&$str) {
+		fprintf ( diskFile::$fh, "%s", $str );
+		$str = '';
+		diskFile::$i ++;
+	}
+	
+	static function calls() {
+		return diskFile::$i;
+	}
+	
+	static function tableBody($row, $row_id) {
+		//diskFile::$zar[$row_id]=$row;
+		fprintf ( diskFile::$fbh, "%s", serialize ( $row ) . "\n" );
+		$row = null;
+	}
+	
+	static function tableBodyWrite(&$stats) {
+		//fprintf(diskFile::$fbh,"%s",serialize(diskFile::$zar));
+		fclose ( diskFile::$fbh );
+		//unset(diskFile::$zar);		
+		fprintf ( diskFile::$fbs, "%s", serialize ( $stats ) );
+		fclose ( diskFile::$fbs );
+	}
+	
+	static function printOut() {
+		//fpassthru(diskFile::$fh);
+		if (strlen ( diskFile::$fpath ) > 0) {
+			//fclose(diskFile::$fh);
+			rewind ( diskFile::$fh );
+			while ( ! feof ( diskFile::$fh ) ) {
+				$buffer = fread ( diskFile::$fh, 2048 );
+				echo $buffer;
+			}
+			fclose ( diskFile::$fh );
+			//readfile(diskFile::$fpath);
+			//unlink(diskFile::$fpath);
+			flush_buffers ();
+		}
+	}
+}
+
+function resultBuilder($qmode) {
+	global $l, $f, $h, $u, $s, $r, $m1, $staterd, $final, $nfei, $y, $tab_src, $e, $p, $html, $rhtml, $fielder, 
+	$titles, $tkeys, $bigtar, $rqid, $lpost, $bigtar_cnt, $bigtar_keys, $starter, $ender, $show_start, $show_end, 
+	$sels, $clients, $uamode, $colsConst, $clients_cnt,$vis_mode;
+	
+	if (! $e || ! is_array ( $e )) {
+		$e = array ();
+	}
+	if (( int ) $_POST ['qsid'] > 0) {
+		$quid = ( int ) $_POST ['qsid'];
+		$spost = getSaves ( $quid, $_POST ['stype'] );
+		$vis_mode = $spost [0] ['visits'];
+		$lpost = $spost [0] ['posts'];
+		if(strlen($spost [0] ['sdate']) >= 8 ){			
+			$starter = prepareDate($spost [0] ['sdate']);			
+		}		
+		if(strlen($spost [0] ['edate']) >= 8){			
+			$ender = prepareDate($spost [0] ['edate']);			
+		}	
+		
+		$filters = $spost [0] ['fils'];
+		$dfil = $spost[0]['dfilter'];
+		$spost [0] ['actives'] == 1 ? $uamode = false : $uamode = true;
+		if ($spost [0] ['id'] === null) {
+			return false;
+		}
+		if ($_POST ['stype'] == 'Stats') {
+			$rqid = $spost [0] ['id'];
+		} else {
+			$rqid = $quid;
+		}
+		if ($_POST ['beginner'] != '0' && strlen ( $_POST ['beginner'] ) > 4) {
+			$starter = prepareDate( $_POST ['beginner'] );
+		}
+		if ($_POST ['finisher'] != '0' && strlen ( $_POST ['finisher'] ) > 4) {			
+			$ender = prepareDate($_POST ['finisher'] );
+		}
+	
+	} else {
+		if (in_array($_POST ['vis_sel'], array('last','all','first'))) {
+			$vis_mode = $_POST ['vis_sel'];
+		} else {
+			$vis_mode = '';
+		}
+		foreach ( $_POST as $pkey => $pval ) {
+			if (in_array ( $pkey, $tkeys ) || $pkey == 'extra') {
+				$lpost [$pkey] = $pval;
+			}
+		}
+		if ($_POST ['beginner'] != "" && $_POST ['beginner'] != '0' ) {
+			$tdd = new CDate ( $_POST ['beginner'] ); // ( int ) $_POST ['filter_beginner'];
+			$starter = $tdd->format ( FMT_DATE_MYSQL );
+			unset ( $tdd );
+		}
+		if ($_POST ['finisher'] != '' && $_POST ['finisher'] != '0') {
+			$tdd = new CDate ( $_POST ['finisher'] ); //( int ) $_POST ['filter_finisher'];
+			$ender = $tdd->format ( FMT_DATE_MYSQL );
+			unset ( $tdd );
+		}
+		if($_POST['dfilter'] != '' ){
+			$dfil=$_POST['dfilter'];
+			if(!in_array($dfil,array('visit','doa'))){
+				$dfil='visit';
+			}			
+		}
+		if (isset ( $_POST ['actives'] ) && $_POST ['actives'] == 'on') {
+			$uamode = false;
+		} else {
+			$uamode = true;
+		}
+	
+	}
+	
+	$locCase = false;
+	$locCaseOne = false;
+	if (array_key_exists ( 'admission', $lpost )) {
+		if (in_array ( 'admission_location', $lpost ['admission'] )) {
+			$locCase = true;
+			if (count ( $lpost ['admission'] ) == 1) {
+				$locCaseOne = true;
+			}
+		}
+	
+	}
+	
+	$header = array (0 => array (), 1 => array (), 2 => array () );
+	$edcref = array ();
+	$clientCase = false;
+	/*dbHistory::setViewMode($uamode);
+	dbHistory::types();*/
+	//$sels= array('0'=>'plain','1'=>'plain');
+	//$columns=array('client_id'=>'clients','client_adm_no'=>'clients');
+	$decoder = array ();
+	$sels = $columns = array ();
+	$q = new DBQuery ();
+	$activCase=false;
+	if (array_key_exists ( 'activity', $lpost )) {
+		$activCase=TRUE;
+		$delayed = array ();
+		$q->addQuery ( 'activity_id as rid ,activity_date as edate' );		
+		$tia = $titles ['activity'];
+		$fia = $fielder ['activity'];
+		$header [0] = array_merge ( $header [0], getTitles ( $lpost ['activity'], $fia ['list']->getList () ) );
+		$q->addTable ( 'activity' );
+		if ($starter != '' && strlen ( $starter ) == 10) {
+			$q->addWhere ( 'activity_date >= "' . $starter . '"' );
+		}
+		if ($ender != '' && strlen ( $ender ) == 10) {
+			$q->addWhere ( 'activity_date <= "' . $ender . '"' );
+		}
+		foreach ( $lpost ['activity'] as $lf ) {
+			$header [1] [] = array ('v' => 'Activities', 'r' => 'ACT' );
+			$header [2] [] = $titles ['activity'] ['db'];
+			$decoder [$lf] = 'activity';
+			$sels [] = $fielder ['activity'] ['list']->getSelects ( $lf );
+			$columns [$lf] = 'activity';
+			if ($fia ['list']->instant ($lf) && !array_key_exists($lf, $tia['plurals'])) {
+				$q->addQuery ( $lf );
+			} else {
+				$delayed [] = $lf;
+			}
+		}
+		$bigtar = $q->loadList ();
+		if(count($bigtar) > 0){
+			$marker=true;
+		}
+	
+	}elseif (array_key_exists('chwcheck', $lpost)){
+		$delayed = array ();
+		$q->addQuery ( 'chw_id as rid ,chw_entry_date as edate' );		
+		$tia = $titles ['chwcheck'];
+		$fia = $fielder ['chwcheck'];
+		$header [0] = array_merge ( $header [0], getTitles ( $lpost ['chwcheck'], $fia ['list']->getList () ) );
+		$q->addTable ( 'chw_info' );
+		if ($starter != '' && strlen ( $starter ) == 10) {
+			$q->addWhere ( 'chw_entry_date >= "' . $starter . '"' );
+		}
+		if ($ender != '' && strlen ( $ender ) == 10) {
+			$q->addWhere ( 'chw_entry_date <= "' . $ender . '"' );
+		}
+		foreach ( $lpost ['chwcheck'] as $lf ) {
+			$header [1] [] = array ('v' => 'CHW', 'r' => 'CHW' );
+			$header [2] [] = $titles ['chwcheck'] ['db'];
+			$decoder [$lf] = 'chwcheck';
+			$sels [] = $fielder ['chwcheck'] ['list']->getSelects ( $lf );
+			$columns [$lf] = 'chwcheck';
+			if ($fia ['list']->instant ($lf) && !array_key_exists($lf, $tia['plurals'])) {
+				$q->addQuery ( $lf );
+			} else {
+				$delayed [] = $lf;
+			}
+		}
+		$bigtar = $q->loadList ();
+		if(count($bigtar) > 0){
+			$marker=true;
+		}
+	}else {	
+		//$q->addQuery ( "client_id,client_adm_no" );
+		$q->addQuery ( "client_id,client_status as zstate" );
+		$q->addTable ( 'clients' );
+		if (@count ( $lpost ['clients'] ) > 0) {
+			$zccnt=count ( $lpost );
+			if(array_key_exists('extra',$lpost)){
+				$zccnt--;
+			}
+			if(array_key_exists('admission',$lpost) && count($lpost['admission']) == 1 && 
+				$lpost['admission'][0] == 'admission_location'){
+					$zccnt--;
+			}
+			if($zccnt === 1 && array_key_exists('clients',$lpost)){
+				$clientCase= true;				
+			}
+			$header [0] = array_merge ( $header [0], getTitles ( $lpost ['clients'], $fielder ['clients'] ['list']->getList () ) );
+			$tl = count ( $lpost ['clients'] );
+			for($i = 0; $i < $tl; $i ++) {
+				if ($lpost ['clients'] [$i] == 'client_adm_no' || $lpost ['clients'] [$i] == 'client_name') {
+					$colsConst [] = $i;
+				}
+				$header [1] [] = array ('v' => 'Clients', 'r' => 'CLI' );
+				$header [2] [] = $titles ['clients'] ['db'];
+				$decoder [$lpost ['clients'] [$i]] = 'clients';
+			}
+			$upost = admFirst ( $lpost ['clients'] );
+			$txtpost = mysql_real_escape_string ( join ( ",", $upost ) );
+			$index = array_search ( 'client_name', $lpost ['clients'] );
+			if ($index !== false && $index >= 0) {
+				$upost [$index] = $titles ['clients'] ['client_name'];
+				$txtpost = str_replace ( 'client_name', $titles ['clients'] ['client_name'], $txtpost );
+			}
+			$q->addQuery ( $txtpost );
+		}
+		$clist = @array_search ( 'client_status', $lpost ['clients'] );
+		if($uamode === false){
+			$q->addWhere('client_status = "1"');
+		}
+		
+		for($i = 0; $i < $tl; $i ++) {
+			$m1 [] = false;
+			if (is_array ( $filters ) && count ( $filters ) > 0) {
+				if (array_key_exists ( $i, $filters ) && $filters [$i]->state == true) {
+					if (count ( $filters [$i]->mvals ) > 0) {
+						$ors = array ();
+						foreach ( $filters [$i]->mvals as $mv ) {
+							/*if($i==0){
+						$ucol='client_id';
+						}elseif ($i ==1){
+						$ucol='client_adm_no';
+						}elseif($i > 0){//was >1*/
+							$cn = 0;
+							foreach ( $lpost ['clients'] as $pcol ) {
+								if ($i == $cn) {
+									$ucol = $pcol;
+									$mv = $fielder ['clients'] ['list']->reverse ( $ucol, $mv );
+									break;
+								} else {
+									$cn ++;
+								}
+							}
+							//}
+							$ors [] = 'clients.' . $ucol . '="' . $mv . '"';
+						}
+						if (count ( $ors ) > 0) {
+							$q->addWhere ( '( ' . join ( ' OR ', $ors ) . ' )' );
+						}
+					}
+					$ors = array ();
+					foreach ( $filters [$i]->methods as $mtd => $mv ) {
+						/**if($i==0){
+					$ucol='client_id';
+					}elseif ($i ==1){
+					$ucol='client_adm_no';
+						 */
+						$cn = 0;
+						foreach ( $lpost ['clients'] as $pcol ) {
+							if ($i == $cn) {
+								$ucol = $pcol;
+								$mv = $fielder ['clients'] ['list']->reverse ( $ucol, $mv );
+								break;
+							} else {
+								$cn ++;
+							}
+						}
+						//}
+						$ors [] = 'clients.' . $ucol . ' ' . $mtd . ' "' . $mv . '"';
+					
+		//$q->addWhere();
+					}
+					if (count ( $ors ) > 0) {
+						$q->addWhere ( '( ' . join ( ' AND ', $ors ) . ' )' );
+					}
+				}
+			}
+		}
+		
+		/*if($locCase){
+		$q->addQuery('" " as adm_loc');
+	}*/
+		
+		if ($tl > 0) {
+			foreach ( $lpost ['clients'] as $cl ) {
+				$sels [] = $fielder ['clients'] ['list']->getSelects ( $cl );
+				$columns [$cl] = 'clients';
+			}
+		}
+		if ($locCase) {
+			$q->leftJoin('admission_info','ai','ai.admission_client_id=client_id');
+			/*$q->addTable ( 'admission_info', 'ai' );
+			$q->addWhere ( 'ai.admission_client_id=client_id' );*/
+			$q->addQuery ( 'admission_location' );
+			$columns ['admission_location'] = 'admission';
+		}
+		
+		if($clientCase || $dfil === 'doa'){
+			if ($starter != '' && strlen ( $starter ) == 10) {
+				$q->addWhere ( 'client_doa >= "' . $starter . '"' );
+			}
+			if ($ender != '' && strlen ( $ender ) == 10) {
+				$q->addWhere ( 'client_doa <= "' . $ender . '"' );
+			}
+		}
+		
+		$clients = $q->loadArrayList ();
+		$did = 0;
+		//unset ( $q ,$ors,$ucol,$mv);
+		$marker = false;
+		$extraCase = false;
+		if (is_array ( $lpost ['extra'] ) && count ( $lpost ['extra'] ) > 0) {
+			$extraCase = true;
+		}
+		$offset = $tl;
+		$delayed = array ();
+		$extras = array ();
+		
+		$locCaseDel = false;
+		if (count ( $clients ) > 0) {
+			$q1 = new DBQuery ();
+			$first = false;
+			$queries = array ();
+			foreach ( $lpost as $key => $var ) {
+				$vname = findkey ( $key, $tkeys );
+				$fv = $fielder [$vname];
+				$tiv = $titles [$vname];
+				if ($key == 'admission' && in_array ( 'admission_location', $var )) {
+					$header [0] = array_merge ( $header [0], getTitles ( $var, $fv ['list']->getList () ) );
+					$vpp = array_search ( 'admission_location', $var );
+					array_splice ( $var, $vpp, 1 );
+					$locCaseDel = true;
+					$sels [] = $fielder [$key] ['list']->getSelects ( 'admission_location' );
+					$header [1] [] = array ('v' => oneWord ( $fv ['title'] ), 'r' => $tiv ['abbr'] );
+					$header [2] [] = $vname;
+				}
+				$q1 = new DBQuery ();
+				
+				if ($vname != '' && $key != 'clients' && $key != 'extra' && ! ($key == 'admission' && $locCaseOne)) {
+					$staterd ++;
+					$pure_val = array ();
+					if ($extraCase) {
+						foreach ( $lpost ['extra'] as $pid => $pval ) {
+							if (! array_key_exists ( $pval, $tiv ) && ! in_array ( $vname . '_' . $pval, $fv ['list']->getList () )) {
+								$decoder [$vname . '_' . $pval] = $key;
+								$edcref [$vname . '_' . $pval . '1'] = $vname . '_' . $pval;
+							} else {
+								$decoder [$tiv [$pval]] = $key;
+								$edcref [$vname . '_' . $pval . '1'] = $tiv [$pval];
+							}
+							//$sels[]=$fielder
+							$q1->addQuery ( $tiv [$pval] . ' as ' . $vname . '_' . $pval . '1' );
+							$extras [] = $vname . '_' . $pval . '1';
+							$sels [] = $fielder ['extra'] ['list']->getSelects ( $pval );
+							$header [1] [] = array ('v' => oneWord ( $fv ['title'] ), 'r' => $tiv ['abbr'] );
+							$header [2] [] = $vname;
+						}
+						$header [0] = array_merge ( $header [0], getTitles ( $lpost ['extra'], $fielder ['extra'] ['list']->getList (), $vname . '_', '1' ) );
+					}
+					$tv = count ( $var );
+					for($z = 0; $z < $tv; $z ++) {
+						$socialCase = preg_match ( "/^social_services/", $var [$z] );
+						if (! $socialCase && $fv ['list']->instant ( $var [$z] ) && ((isset($tiv['plurals']) &&  ! array_key_exists ( $var [$z], $tiv ['plurals'] )) || !isset($tiv['plurals'])) ) {
+							$bff = $fv ['list']->isComplex ( $var [$z] );
+							if (! $bff) {
+								$pure_val [] = $var [$z];
+							} else {
+								if (! in_array ( $bff, $pure_val )) {
+									$pure_val [] = $bff;
+								}
+							}
+							$bff = FALSE;
+						} elseif (! $socialCase) {
+							$delayed [] = $var [$z];
+						}
+						
+						$decoder [$var [$z]] = $key;
+						$fkey = $fielder [$key];
+						$sels [] = $fkey ['list']->getSelects ( $var [$z] );
+						//$m1[]=$fkey['list']->polyCase($var [$z]);
+						$header [1] [] = array ('v' => oneWord ( $fv ['title'] ), 'r' => $tiv ['abbr'] );
+						$header [2] [] = $vname;
+					}
+					$marker = true;
+					$header [0] = array_merge ( $header [0], getTitles ( $var, $fv ['list']->getList () ) );
+					if (! $queries [$key]) {
+						$first = true;
+						if (count ( $pure_val ) > 0) {
+							$tstr = join ( ',', $pure_val );
+							$q1->addQuery ( $tstr );
+						}
+						$q1->addQuery ( $tiv ['did'] . ' as rid' );
+						$q1->addQuery ( $tiv ['client'] . ' as clid' );
+						$q1->addQuery ( $tiv ['date'] . ' as ed' );
+						$ltn = $tiv ['db'];
+						$ltr = explode ( ',', $ltn );
+						if (count ( $ltr ) > 1) {
+							foreach ( $ltr as $tn ) {
+								$q1->addTable ( trim ( $tn ) );
+							}
+						} else {
+							$q1->addTable ( $tiv ['db'] );
+						}
+						if ($vis_mode !== 'all' && $vis_mode != '') {
+							$q1->setLimit ( '1' );
+							if ($vis_mode === 'last') {
+								$q1->addOrder ( $tiv ['date'] . ' DESC' );
+							} elseif ($vis_mode === 'first') {								
+								$q1->addOrder ( $tiv ['date'] . ' ASC' );
+							}
+						}
+						
+						if (! ($vname == 'admission' && $locCaseOne) && $dfil === 'visit') {
+							if ($starter != '' && strlen ( $starter ) == 10) {
+								$q1->addWhere ( $tiv ['date'] . '>= "' . $starter . '"' );
+							}
+							if ($ender != '' && strlen ( $ender ) == 10) {
+								$q1->addWhere ( $tiv ['date'] . '<= "' . $ender . '"' );
+							}
+						}
+						if ($titles [$vname] ['where'] != '') {
+							$q1->addWhere ( $tiv ['where'] );
+						}
+						if (count ( $filters ) > 0) {
+							for($i = $offset, $lil = ($offset + count ( $var )); $i < $lil; $i ++) {
+								if (count ( $filters ) > 0 && array_key_exists ( $i, $filters ) && $filters [$i]->state == true) {
+									$tar = $filters [$i];
+									if (count ( $tar->mvals ) > 0) {
+										$ors = array ();
+										foreach ( $tar->mvals as $obval ) {
+											$valName = $var [($i - $offset)];
+											$pval = $fkey ['list']->reverse ( $valName, $obval );
+											$addReg = '';
+											$fieldName = $tiv ['db'] . '.' . $valName;
+											if ($fkey ['list']->polyCase ( $valName ) !== false) {
+												$addReg = 'OR ' . $fieldName . ' REGEXP "[[.comma.]]?(' . $pval . ')[[.comma.]]?"';
+											}
+											$ors [] = '(' . $fieldName . ' = "' . $pval . '" ' . $addReg . ')';
+										}
+										if (count ( $ors ) > 0) {
+											$q1->addWhere ( '( ' . join ( ' OR ', $ors ) . ' )' );
+										}
+									}
+									$ors = array ();
+									if (count ( $tar->methods ) > 0) {
+										foreach ( $tar->methods as $mtd => $mv ) {
+											$valName = $var [($i - $offset)];
+											$pval = $fkey ['list']->reverse ( $valName, $mv );
+											if (strlen ( $pval ) > 0) {
+												$ors [] = $titles [$vname] ['db'] . '.' . $valName . ' ' . $mtd . ' "' . $pval . '"';
+											}
+										}
+										if (count ( $ors ) > 0) {
+											$q1->addWhere ( '( ' . join ( ' AND ', $ors ) . ' )' );
+										}
+									}
+								}
+							}
+						}
+						$queries [$key] = clone $q1;
+					}
+				}
+				unset ( $q1, $fv, $tiv, $fkey );
+				if ($key != 'clients') {
+					$offset += count ( $var );
+				}
+			}
+			
+			$columns = array_merge ( $columns, $decoder );
+			$bti = 0;
+			//dbHistory::prepareHistory();
+			$chwnulls = false;
+			
+			$lastinOrder = (count ( current ( $clients ) ) - 1); // amount of non-forms fields already preset in query result
+			
+			if (count ( $queries ) > 0) {
+				foreach ( $clients as $clid => $clar ) {
+					$lrow = array ();
+					foreach ( $queries as $qkey => $qreal ) {
+						$q2 = clone $qreal;
+						$atxt = '';
+
+
+						$q2->addWhere ( $titles [$qkey] ['client'] . '="' . $clar [0] . '"' );
+						//$q2->addWhere ( $titles [$qkey] ['client'] . ' IN (' . join(',',array_keys($clients)) . ')' );
+						
+						$tvar = $q2->loadList ();
+						/*if ($vis_mode != 'all') {
+							if (is_array ( $tvar ) && count ( $tvar ) > 0) {
+								$lrow = array_merge ( $lrow, $tvar [0] );
+								foreach ( $lpost as $pcl => $pvars ) {
+									if ($pcl != 'clients' && $pcl != 'extra' && $pcl != $qkey && ! ($pcl == 'admission' && $locCaseOne)) {
+										foreach ( $pvars as $pvk ) {
+											$lrow [$pvk] = 'AwSeDrFtG';
+										}
+									}
+								}
+								$bigtar [$bti] = $lrow;
+								$bti ++;
+							}*/
+						//} else if ($vis_mode == 'all') {
+							if (count ( $tvar ) > 0) {
+								foreach ( $tvar as $nrow ) {
+									//if (dbHistory::checkStatus ( $nrow ['clid'], $nrow ['ed'] )) {
+									//if ($uamode === true || ($uamode === FALSE && $clients [$nrow ['clid']] [1] == 1)) {
+										$bigtar [$bti] = $nrow;
+										
+										foreach ( $lpost as $pcl => $pvars ) {
+											if ($pcl != 'clients' && $pcl != 'extra' && $pcl != $qkey && ! ($pcl == 'admission' && $locCaseOne)) {
+												foreach ( $pvars as $pvk ) {
+													if ($pvk != 'admission_location'/* && $pcl!= 'admission'*/){
+														$bigtar [$bti] [$pvk] = 'AwSeDrFtG';
+													}
+												}
+											}
+										}
+										//ksort($bigtar[$bti]);
+										if (! ($locCaseOne && $qkey == 'admission')) {
+											$bti ++;
+										} else if ($qkey == 'admission' && $locCaseOne) {
+											//$clients [$nrow['clid']] [$lastinOrder] = $nrow ['admission_location'];
+											$clients [$clid] [$lastinOrder] = $nrow ['admission_location'];
+											unset ( $bigtar [$bti] );
+										}
+
+									
+									}
+								//}
+							//}
+						}
+						unset ( $q2 );
+					}
+				
+				}
+			}
+		}
+	//}
+	unset ( $queries );
+	diskFile::init ();
+	$bigtar_cnt = count ( $bigtar );
+	$clients_cnt = count ( $clients );
+	if ($bigtar_cnt > 0 || $clients_cnt > 0) {
+		$bigtar_keys = array_keys ( $bigtar );
+		$rhtml = '<div style="text-align: center;*text-align:none;padding-left:50px;padding-bottom:30px;">
+		<form method="POST" action="/?m=outputs&suppressHeaders=1" name="saveme">
+		<input type="hidden" name="list" id="stabbox">
+		<input type="hidden" name="mode" value="save">
+		<input type="hidden" name="fname" value="">
+		<input type="button" onclick="popTable(\'mholder\',\'print\')" style="float:left; " value="Print" class="button">
+		<input type="button" onclick="gpgr.saveTable()" style="float:left; " value="Export to Excel" class="button adcbutt">
+		</form>';
+		if ($qmode != 'mas') {
+			$rhtml .= '<input type="button" class="button adcbutt" value="Save Table Query" onclick="qurer.saveDialog()">
+			<input type="button" class="button adcbutt" value="Build Stats" onclick="gpgr.startss();">';
+		}
+		$rhtml .= '</div>';
+		$tab_start = '<div id="mholder"><table class="rtable moretable" id="rtable" border="0" style="display:none;" cellpadding="2" cellspacing="1">';
+		$tab_head = "\n<thead><tr>";
+		$colz = '<colgroup>';
+		$ind = 0;
+		$addcl = '';
+		foreach ( $header [0] as $hcode => $hname ) {
+			$tab_head .= '<th id="head_' . $ind . '" data-thid="' . $ind . '" class="head ' . $addcl . '" data-part="' . $header [1] [$ind] ['r'] . '">' . $hname . '<div class="head_menu"></div></th>' . "\n";
+			$tab_src .= '<th class="fsource">' . $header [1] [$ind] ['v'] . '</th>' . "\n";
+			$colz .= '<col id=col_' . $ind . '></col>';
+			$ind ++;
+			$addcl = ' forsize';
+		}
+		$tab_head .= "</tr>\n<tr>" . $tab_src . '</tr></thead>' . "\n";
+		$rhtml .= $tab_start . $colz . $tab_head;
+		unset ( $tab_start, $colz );
+		$rhtml .= '<tbody>';
+		diskFile::putTXT ( &$rhtml );
+		$clIds = array ();
+		$onceMulti = false;
+		if ($marker) {
+			foreach ( $bigtar as $big_id => $rvals ) {
+				/*|| dbHistory::checkStatus ( $rvals ['clid'], $rvals ['ed'] )*/
+				if (/*$vis_mode == 'all' &&*/ ($uamode || ($uamode === false && $clients [$rvals ['clid']] [1] == 1))) {
+					$row = '';
+					$x = 0;
+					$xpos = 0;
+					$jsar [$y] ['fakes'] = array ();
+					$jsar [$y] ['hidden'] = false;
+					$rid = $rvals ['clid'];
+					if (($rid > 0 && is_array ( $clients [$rid] )) || $marker === true) { //</td>\n\t\t<td class='txtit'>
+						$firstTD = true;
+						$row = "\n\t<tr id='row_" . $y . "'>\n\t\t";
+						$clIds [$y] = $clients [$rid] [0];
+						//$nfei->store ( $clients [$rid] [0] );
+						//$nfei->store ( $clients [$rid] [1] );
+						if ($tv > 0 && count ( $lpost ['clients'] ) > 0 ) {
+							foreach ( $lpost ['clients'] as $pid => $pcl ) {
+								
+								/*if($pcl == 'client_status'){
+								$rt=dbHistory::checkStatus($rvals['clid'],$rvals['ed'],'actual');
+								}else{*/
+								
+								$rt = $fielder ['clients'] ['list']->value ( $pcl, $clients [$rid] [($pid + 2)] );
+								
+								//}
+								
+
+								$edCell = 'vcell ';
+								$forStore = $rt;
+								if ($pcl == 'client_name') {
+									preg_match ( "/\,(.*)$/", $rt, $pureLast );
+									$forStore = $pureLast [1];
+									$edCell = '';
+								} elseif ($pcl == 'client_adm_no') {
+									$edCell = '';
+								}
+								$nfei->store ( $forStore/* ,$fielder [$decoder [$colname]] ['list']->polyCase($pcl)*/);
+								
+								if ($firstTD) {
+									if ($pcl == 'client_adm_no') {
+										$item = "<div class='txtit fhref flink' onclick='shCl(" . $clients [$rid] [0] . ")'>" . $rt . "</div>";
+									} else {
+										$item = $rt;
+									}
+									$firstTD = false;
+									$row .= "<td class='rowfdel'><div class='delbutt blind'></div><div class='qeditor blind'></div>" . $item . "</td>\n";
+								} else {
+									$row .= "\t\t<td class='" . $edCell . $nfei->colType ( $xpos ) . "'>" . $rt . "</td>\n";
+								}
+								$xpos ++;
+							}
+							if ($locCase) {
+								$rt = $fielder ['admission'] ['list']->value ( 'admission_location', $clients [$rid] [($lastinOrder)] );
+								$nfei->store ( $rt );
+								$row .= "\t\t<td class='vcell " . $nfei->colType ( $xpos ) . "'>" . $rt . "</td>\n";
+								$xpos ++;
+							}
+						}
+						//foreach ( $rvals as $colname => $zval ) {
+						$part = '';
+						$wclass = '';
+						$wcind = 0;
+						$passed = 0;
+						if(!isset($extras)){
+							$extras=array();
+						}
+						foreach ( $header [0] as $colname => $cltit ) {
+							if ($colname != 'clid' && $colname != 'ed' && ! preg_match ( "/^client/", $colname ) && $colname != 'admission_location') {
+								if (array_key_exists ( $colname, $edcref )) {
+									$colname1 = $colname;
+									$pcolname = $edcref [$colname];
+									$colname = $edcref [$colname];
+								
+								} else {
+									$colname1 = $colname;
+									$pcolname = $colname;
+								}
+								$dcname = $decoder [$colname];
+								$fv = $fielder [$dcname];
+								
+								$polyCase = $fv ['list']->polyCase ( $pcolname );
+								$haveMode = $fv ['list']->extraMode ( $pcolname );
+								$pluriCase = $fv ['list']->pluriCase ( $pcolname );
+								
+								if (! $onceMulti) {
+									$m1 [] = $polyCase;
+								}
+								$zval = $rvals [$colname1];
+								if (is_null ( $zval ) || trim ( $zval ) == '') {
+									$zval = '&nbsp;';
+								}
+								if ($zval == 'AwSeDrFtG') {
+									$zclass = 'fake';
+									$zval = '';
+									$nfei->itFake ();
+								} else {
+									$zclass = 'vcell';
+									$part = $dcname;
+									$wclass = $header [2] [($wcind + $passed)];
+								}
+								if (preg_match ( "/^social_services/", $colname )) {
+									$zval = array ($rvals ['clid'], $rvals ['rid'] );
+								} elseif (in_array ( $colname, $delayed )) {
+									if(strstr($colname, 'household')){
+										$zval=$rvals['clid'];	
+									}else{
+										$zval = $rvals ['rid'];
+									}
+								}
+								
+								if (in_array ( $colname1, $extras )) {
+									$localName = @array_reverse ( @split ( '_', str_replace ( '1', '', $colname1 ) ) );
+									$pval = $fielder ['extra'] ['list']->value ( $localName [0], $zval, $rvals ['rid'] );
+								} else {
+									$pval = $fv ['list']->value ( $colname, $zval, $rvals ['rid'] );
+								}
+								$nfei->store ( $pval, $polyCase, $haveMode, $pluriCase ? $fv ['list']->getPData ( $colname ) : FALSE );
+								if($polyCase !== false){
+									if(is_array($pval) && count($pval) > 0){
+										$cellTxt=implode(', ' , $pval);
+									}
+								}else{
+									$cellTxt = $pval;
+								}								
+								$st = trimView ( $cellTxt );
+								if ($st ['show'] === true) {
+									$zclass .= ' moreview ';
+									$dct = ' data-text="' . $st ['orig'] . '" ';
+								} else {
+									$dct = '';
+								}
+								if($firstTD === true ){//&& $activCase === true									
+									$firstTD = false;
+									$row .= "<td class='rowfdel'><div class='delbutt blind'></div><div class='qeditor blind'></div><div class='vcell'>" . $st['str'] . "</div></td>\n";									
+								}else{
+									$row .= "\t\t<td " . $dct . " class='$zclass " . $nfei->colType ( $xpos ) . "'>" . $st ['str'] . "</td>\n";
+								}
+								$xpos ++;
+								$x ++;
+								$wcind ++;
+							} else {
+								++ $passed;
+							}
+						}
+					}
+					if ($wclass != '') {
+						$row = str_replace ( "class='qeditor blind'", 'data-tbl="' . $wclass . '||' . $rvals ['clid'] . '||' . $rvals ['rid'] . '" class="qeditor blind"', $row );
+						if (@! in_array ( $wclass, $e )) {
+							$e [] = $wclass;
+						}
+					}
+					$row .= '</tr>' . "\n";
+					//$final [$y] = array ('row' => $row, 'id' => $rvals ['rid'], 'table' => $wclass );
+					//$rhtml .= $row;
+					diskFile::tableBody ( array ('row' => str_replace ( array ("\r\n", "\n", "\r" ), '', $row ), 'id' => $rvals ['rid'], 'table' => $wclass, 'client' => $rvals ['clid'] ), $y );
+					diskFile::putTXT ( &$row );
+					$y ++;
+					$nfei->nextRow ();
+				} //else {
+				unset ( $bigtar [$big_id] );
+				//}
+				unset ( $row );
+				$onceMulti = true;
+			}
+		} else {
+			foreach ( $clients as $cld => $clar ) {
+				/*$row = "\n\t<tr  id='row_" . $y . "'>\t\t<td>" . $clar [0] . "</td>\n\t\t<td>" . $clar [1] . "</td>\n";
+				$nfei->store ( $clar [0] );
+				//$nfei->store ( $clar [1] );
+				$xpos = 2;
+				if (count ( $lpost ['clients'] > 0 )) {
+					foreach ( $lpost ['clients'] as $pid => $pcl ) {
+						$td = $fielder ['clients'] ['list']->value ( $pcl, $clar [($pid + 2)] );
+						$row .= "\t\t<td class='vcell " . $nfei->colType ( $xpos ) . "'>" . $td . "</td>\n";
+						$nfei->store ( $td/*,$fielder ['clients'] ['list']->polyCase($td)*///);
+						/*-$xpos ++;
+					}
+				}
+				$row .= '</tr>' . "\n";*/
+						$row = "\n\t<tr id='row_" . $y . "'>\n\t\t";
+						$firstTD=true;
+						$xpos=0;
+						$rid=$cld;
+						if (count ( $lpost ['clients'] ) > 0 ) {
+							foreach ( $lpost ['clients'] as $pid => $pcl ) {								
+								
+								
+								
+								/*if($pcl == 'client_status'){
+								$rt=dbHistory::checkStatus($rvals['clid'],$rvals['ed'],'actual');
+								}else{*/
+								
+								$rt = $fielder ['clients'] ['list']->value ( $pcl, $clar [($pid + 2)] );
+								
+								//}
+								
+
+								$edCell = 'vcell ';
+								$forStore = $rt;
+								if ($pcl == 'client_name') {
+									preg_match ( "/\,(.*)$/", $rt, $pureLast );
+									$forStore = $pureLast [1];
+									$edCell = '';
+								} elseif ($pcl == 'client_adm_no') {
+									$edCell = '';
+								}else {
+									$zclass = 'vcell';
+									$part = $dcname;
+									$wclass = $header [2] [($wcind + $passed)];
+								}
+								$nfei->store ( $forStore/* ,$fielder [$decoder [$colname]] ['list']->polyCase($pcl)*/);
+								
+								if ($firstTD) {
+									if ($pcl == 'client_adm_no') {
+										$item = "<div class='txtit fhref flink' onclick='shCl(" . $clients [$rid] [0] . ")'>" . $rt . "</div>";
+									} else {
+										$item = $rt;
+									}
+									$firstTD = false;
+									$row .= "<td class='rowfdel'><div class='delbutt blind'></div><div class='qeditor blind'></div>" . $item . "</td>\n";
+								} else {
+									$row .= "\t\t<td class='" . $edCell . $nfei->colType ( $xpos ) . "'>" . $rt . "</td>\n";
+								}
+								$xpos ++;
+							}
+							if ($locCase) {
+								$rt = $fielder ['admission'] ['list']->value ( 'admission_location', $clients [$rid] [($lastinOrder)] );
+								$nfei->store ( $rt );
+								$row .= "\t\t<td class='vcell " . $nfei->colType ( $xpos ) . "'>" . $rt . "</td>\n";
+								$xpos ++;
+							}
+						}
+				$nfei->nextRow ();
+				if ($wclass != '') {
+					$row = str_replace ( "class='qeditor blind'", 'data-tbl="' . $wclass . '||' . $rid . '||' . $rid . '" class="qeditor blind"', $row );
+					if (@! in_array ( $wclass, $e )) {
+						$e [] = $wclass;
+					}
+				}
+				$row .= '</tr>' . "\n";
+				$rhtml .= $row;
+				diskFile::putTXT ( &$rhtml );
+				//$final[$y]=array('row'=>$row,'id'=>$clar[0]);
+				diskFile::tableBody ( array ('row' => str_replace ( array ("\r\n", "\n", "\r" ), '', $row ), 'id' => $clar [0], 'table' => 'clients', 'client' => $rid ), $y );
+				$y ++;
+				$row='';
+			}
+			unset ( $row, $td );
+		}
+		//unset($header);
+		//dbHistory::purge();
+		unset ( $clients );
+		diskFile::tableBodyWrite ( $nfei->getForStat () );
+		$rhtml .= '</tbody></table></div><div id="pagebox"><span id="pgbs"></span>
+		<span style="float:left;">&nbsp;&nbsp;&nbsp;&nbsp;Rows per page<select name="npp" onchange="gpgr.reorder(this)">
+		<option value="10" >10</option>
+		<option value="20">20</option>
+		<option value="50" selected="selected">50</option>
+		<option value="100">100</option>
+		<option value="200">200</option>
+		<option value="500">500</option>
+		<option value="-1">All</option>
+		</select></span>
+		<div id="cleanbox" style="display:none;float:left;margin-right: 15px;">
+			<span class="fmonitor" id="fmbox"></span>
+			<input type="button" class="button" onclick="cleanAllF();" disabled="disabled" value="Clear Filters" id="fclean">
+		</div></div>';
+		diskFile::putTXT ( &$rhtml );
+		$l = $nfei->html ();
+		$f = $nfei->getFakes ();
+		$h = $nfei->getHeads ();
+		$u = $nfei->getLects ();
+		$r = $nfei->getRefs ();
+		$p = $nfei->getPlurals ();
+		//$_SESSION['stat']=$nfei->getForStat();
+		$nfei->purge ();
+		unset ( $nfei, $fielder );
+		$_SESSION ['table'] = array ("head" => $tab_head, "body" => $final, 'clids' => $clIds );
+		$_SESSION ['query'] = array (
+										"posts" => $lpost, "begin" => $starter, "end" => $ender, 
+										"visits" => $vis_mode, 'cols' => $columns, 'dfilter' => $dfil
+									);
+		unset ( $final, $clIds, $lpost, $columns );
+	
+	}
+}
+
+class dbHistory {
+	private static $tar = array ();
+	private static $needStatus = 1;
+	private static $defaultStatus;
+	private static $types = array ();
+	private static $row;
+	private static $last = array ('client' => '', 'date' => '' );
+	
+	public static function prepareHistory() {
+		if (self::$defaultStatus === false) {
+			$sql = 'select * from status_client order by social_client_id, social_entry_date ASC';
+			$res = mysql_query ( $sql );
+			if ($res) {
+				while ( $row = mysql_fetch_object ( $res ) ) {
+					if (! is_array ( self::$tar [$row->social_client_id] )) {
+						self::$tar [$row->social_client_id] = array ();
+					}
+					self::$tar [$row->social_client_id] [] = array ('date' => $row->social_entry_date, 'status' => $row->social_client_status );
+				}
+				mysql_free_result ( $res );
+			}
+			unset ( $row );
+		
+		}
+	}
+	
+	public static function types() {
+		self::$types = dPgetSysVal ( 'ClientStatus' );
+	}
+	
+	private static function cleanDate($date) {
+		return ( int ) str_replace ( '-', '', $date );
+	}
+	
+	private static function foundStatus($clid, $ed) {
+		$ed = self::cleanDate ( $ed );
+		$lset = self::$tar [$clid];
+		if (is_array ( $lset )) {
+			$actualStatus = false;
+			foreach ( $lset as $entry ) {
+				$udate = self::cleanDate ( $entry ['date'] );
+				if (! is_null ( $entry ['date'] ) && $ed >= $udate) {
+					self::$row = $entry;
+				}
+			}
+		}
+	}
+	
+	public static function checkStatus($clid, $ed, $mode = 'show') {
+		if (self::$defaultStatus === true) {
+			return true;
+		}
+		if ($clid != self::$last ['client'] || $ed != self::$last ['date']) {
+			self::$last = array ('client' => $clid, 'date' => $ed );
+			self::$row = false;
+			self::foundStatus ( $clid, $ed );
+		}
+		$mode == 'actual' ? $res = '&nbsp;' : $res = self::$defaultStatus;
+		if (is_array ( self::$row )) {
+			if (self::$row ['status'] == self::$needStatus) {
+				$res = true;
+			}
+			if ($mode == 'actual') {
+				if (self::$row ['status'] >= 0) {
+					$res = self::$types [self::$row ['status']];
+				}
+			}
+		}
+		return $res;
+	}
+	
+	public static function setViewMode($res = false) {
+		self::$defaultStatus = $res;
+	}
+	
+	public static function purge() {
+		self::$tar = null;
+		self::$types = null;
+		self::$last = null;
+	}
+}
+?>

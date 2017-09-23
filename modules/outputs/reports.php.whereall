@@ -1,0 +1,421 @@
+<?php
+global  $AppUI,$baseDir;
+require_once($baseDir.'/modules/outputs/php_json.class.php');
+$textFormat="%b %e, %Y"; //"j F Y";
+
+function __unserialize($sObject) {
+	$__ret =preg_replace('!s:(\d+):"(.*?)";!e', "'s:'.strlen('$2').':\"$2\";'", $sObject );
+	$__ret =preg_replace('/;n;/', ';N;', $sObject);
+	return unserialize($__ret);
+}
+if($_POST['mode'] == 'save' || $_POST['mode'] == 'update'){
+	$jdec= new Services_JSON(SERVICES_JSON_LOOSE_TYPE);
+	$fdata=json_decode(str_replace ( '\\"', '"', $_POST['entries']),true);
+	//$bdata=json_decode(str_replace ( '\\"', '"', $_POST['bdata']),true);
+	$spre=str_replace ( '\\"', '"', $_POST['bdata']);
+	/*$spre=preg_replace(array('/^\[/','/\]$/'), array('{','}'),$spre);*/
+	$bdata=$jdec->decode($spre);
+	$sdate='';$edate='';
+	if(strlen($_POST['start']) > 8){
+		$tdate = new CDate($_POST['start']);
+		$sdate= $tdate->format(FMT_DATE_MYSQL);
+	}
+	if(strlen($_POST['end']) > 8){
+		$tdate = new CDate($_POST['end']);
+		$edate= $tdate->format(FMT_DATE_MYSQL);
+	}
+
+	// ADD iterate over rows to check presence of all bdata sets, if bdata id is not met - then just remove it from big data set!
+	/**
+	 * ************************************************
+	 */
+	if($_POST['mode'] == 'save'){
+		$stmpl='insert into reports (title,start_date,end_date,entries,backdoor) values ("%s","%s","%s","%s","%s")';
+	}elseif ($_POST['mode'] == 'update' && (isset($_POST['indb']) && (int)$_POST['indb'] > 0 ) ){
+		$stmpl='update reports set title="%s",start_date="%s", end_date="%s", entries="%s", backdoor="%s" where id="'.(int)$_POST['indb'].'"';
+	}
+	$rep_name=$fdata['rep_name'];
+	unset($fdata['rep_end'],$fdata['rep_start'],$fdata['rep_name']);
+	$sql=sprintf($stmpl,mysql_real_escape_string($rep_name),
+	$sdate,
+	$edate,
+	mysql_real_escape_string(serialize($fdata)),
+	mysql_real_escape_string(gzencode(serialize($bdata),9,FORCE_GZIP))
+	);
+	$res=mysql_query($sql);
+	if($res){
+		$rtext=mysql_insert_id();
+	}else{
+		$rtext='fail';
+	}
+	echo $rtext;
+	return ;
+}elseif ($_GET['mode'] == 'delete'){
+	$rid=(int)$_GET['dbrid'];
+	if(is_numeric($rid)){
+		$sql='delete from reports where id="'.$rid.'" LIMIT 1';
+		$res=mysql_query($sql);
+		if($res){
+			echo "ok";
+		}
+	}
+	return ;
+}elseif ($_GET['mode'] == 'loadinfo'){
+	require_once $AppUI->getSystemClass('systemImport');
+	$rid=(int)($_GET['dbrid']);
+	$df = $AppUI->getPref('SHDATEFORMAT');
+	$q = new DBQuery();
+	$q->addTable('reports');
+	$q->addWhere('id="'.$rid.'"');
+	$datas=$q->loadList();
+	$datas=$datas[0];
+	$datas['backdoor']=__unserialize(gzdecode(($datas['backdoor'])));
+	$datas['entries']=__unserialize($datas['entries']);
+	$sdate = new CDate($datas['start_date']);
+	$edate = new CDate($datas['end_date']);
+	$datas['start_date']=($sdate->getYear() > 0 ? $sdate->format($df) : '');
+	$datas['end_date']=($edate->getYear() > 0 ? $edate->format($df): '');
+	echo json_encode($datas);
+	return ;
+}
+
+elseif ($_GET['mode'] === 'compile' && (int)($_GET['itid']) > 0){
+	require_once $AppUI->getSystemClass('systemImport');
+	global $titles;
+	$pov;
+	$rid=(int)($_GET['itid']);
+	$q= new DBQuery();
+	$q->addTable('reports');
+	$q->addWhere('id="'.$rid.'"');
+	$q->setLimit(1);
+	$rdata=$q->loadList();
+	$rdata=$rdata[0];
+	if(count($rdata) > 0){
+		$glback=__unserialize(stripslashes(gzdecode($rdata['backdoor'])));
+		$entries=__unserialize(stripslashes($rdata['entries']));
+		$cliTabMet=false;
+		$title=$rdata['title'];
+		$sdate= new CDate($rdata['start_date']);
+		$edate= new CDate($rdata['end_date']);
+		$sdvalid=$sdate->getYear();
+		$edvalid=$edate->getYear();
+		$html='<div style="background-color: #ffffff;border: 2px solid black; margin: 5px;padding: 10px;"><b>'.$title. '</b> ';
+		$datePre.=' - ';
+		if($sdvalid > 0){
+			$html.=$datePre.$sdate->format($textFormat);
+			$datePre='';
+		}
+		if($edvalid > 0){
+			$html.=$datePre.' to '.	$edate->format($textFormat);
+		}
+
+		$html.="<br><ol>";//'<br><table border="0" cellpadding="2" cellspacing="1">';
+		foreach ($entries['sec'] as $sec_id => $svals) {
+			$sec_rows=$entries['rows'][$sec_id];
+			$html.='<li><b>'.$svals['name'].'</b><br>';
+			//here will be place for distinct attention to type of report value, but for now we're developing for plain cell value
+			if(count($svals['cols']) > 0){
+				$html.='<table border="0" cellpadding="2" cellspacing="1"><tr><th>&nbsp;</th>';
+				foreach ($svals['cols'] as $col_name) {
+					$html.='<th>'.$col_name.'</th>';
+				}
+				$html.='</tr>';
+			}
+
+
+			//foreach ($lentries as $id => $eval) {
+			foreach ($sec_rows as $row_id => $row_cells) {
+				foreach ($row_cells['cols'] as $rcell) {
+					
+				$rcid=$rcell['rid'];
+			
+				$tables=array();
+				$fields=array();
+				$values=array();
+				$cliref=array();
+				$orCase=array();
+				$visits_dates=array();
+				$curCenter=false;
+				$rbdata=$glback['rows'][$rcid];
+				$ugla=$glback['bdata'][$rbdata['d']];				
+				$crowData=$rbdata['r'];
+				$selectedCase=$rbdata['c'];
+				$onlyActive=$ugla['actives'];
+				$onlyThisCenter=$ugla['cur_center'];
+				if($onlyThisCenter === true){
+					$curCenter=getThisCenter();
+				}
+				$dateApply=$ugla['date_crit']; // possible values are DOA and VISIT
+				switch ($selectedCase) {
+					case 'cell':
+						foreach ($crowData as $area => $dset) {
+							foreach ($dset as $tbid => $tbval) {
+								if(count($tbval) == 3){
+									//if(!in_array($tbval['db']['table'],$tables)){
+									$ltab=$titles[$tbval['db']['table']]['db'];
+									if($ltab != 'clients'){
+										$visits_dates[]=$ltab.'.'.$titles[$tbval['db']['table']]['date'];
+										if($ugla['sunqs'] === true){
+											$pov=' distinct '.$ltab.'.'.$titles[$tbval['db']['table']]['client'];
+										}elseif (!($tbval['db']['table'] === 'admission' && $tbval['db']['field'] == 'admission_location') ){
+											$pov=$ltab.'.'.$titles[$tbval['db']['table']]['did'];
+										}
+
+									} else {
+										$cliTabMet=count($tables);
+									}
+									$tables[]=$ltab;
+									//in case when only this center switch is on
+									if($curCenter !== false){
+										$values[$ltab.'.'.$titles[$tbval['db']['table']]['center']] = $curCenter;
+									}
+
+									//}
+
+									$cliref[]=$ltab.'.'.$titles[$tbval['db']['table']]['client'];
+									$tbField=$ltab .'.'.$tbval['db']['field'];
+									$lClass= &$fielder[$tbval['db']['table']];
+									$xitem=$ugla[$area][$tbid];
+									$colId=$xitem['id'];
+									$itemSel=$ugla['selects'][$colId];
+									$xval=$tbval['value'];
+									if($itemSel === 'plain'){
+										if(strstr(strtolower($xitem['title']),'dob') && $ltab == 'clients'){
+											// we have dob and we need special where for this
+											$ms = preg_match_all('/(\d{1,})\s\w{1,}/', $xval[0],$gets);
+											$ageInDays=0;
+											if($ms == 1){
+												// we have age in liters
+												if(strstr($gets[0][0],'year')){
+													$ageInDays=((int)$gets[1][0] * 365);
+												}elseif (strstr($gets[0][0],'mon')){
+													$ageInDays=((int)$gets[1][0] * 30);
+												}
+											}elseif ($ms == 2){
+												// count age in days for datediff mysql function
+												$ageInDays = (((int)$gets[1][0] * 365 ) + (int)$gets[1][1] * 30);
+											}
+											$values['datediff(now(),'.$tbField.',)']=$ageInDays;
+										}
+										if($xitem['type'] == 'date'){
+											if(count($xval) == 2){
+												$xid=(int)$xval[1];
+												$year=$xval[0];
+											}else{
+												$xid=(int)$xval[0];
+											}
+
+											$rangeType=$ugla['range'][$colId]['val'];
+											if(!in_array($rangeType,array('none','annually') )) {
+												$values['YEAR('.$tbField.')']=$year;
+											}
+											switch ($rangeType) {
+												case 'annually':
+													$values['YEAR('.$tbField.')']=(strlen($xid) == 4 ? $xid : $year);
+													break;
+
+												case 'quarterly':
+													if($xid == 1){
+														$values['MONTH('.$tbField.')'] = array(" < 4");
+													}elseif ($xid == 2){
+														$values['MONTH('.$tbField.')'] = array(">= 4 "," < 7");
+													}elseif ($xid == 3){
+														$values['MONTH('.$tbField.')'] = array(">= 7"," < 10");
+													}elseif ($xid == 4){
+														$values['MONTH('.$tbField.')'] = array(">= 10 ");
+													}
+													break;
+
+												case 'weekly':
+													$values['WEEK('.$tbField.',7)'] = array($xid);
+													break;
+
+												case 'monthly':
+													$xmon=strptime($xval[1], "%b");
+													$values['MONTH('.$tbField.')'] = array($xmon);
+													break;
+												default:
+													// case for none grouped dates
+													$values[$tbField] = $xval[0];
+													break;
+											}
+
+										}
+										else if(count($tbval['value']) == 1){
+											$values[$tbval['db']['field']]=$tbval['db']['value'];
+										}
+									}elseif(is_array($itemSel) && count($itemSel) > 0){
+										$multy = $lClass['list']->polyCase($tbval['db']['field']);
+										for($in=0,$il = count($itemSel); $in < $il; $in ++){
+											if($itemSel[$in]['v'] == $xval[0]){
+												if($multy !== false){
+													$values[$tbField] = array(' = "'.$itemSel[$in]['r'].'"',' REGEXP "[[.comma.]]?('.mysql_real_escape_string($itemSel[$in]['r']) .')[[.comma.]]?" ');
+													$orCase[]=$tbField;
+												}else{
+													$values[$tbField]=$itemSel[$in]['r'];
+												}
+												$in=$il+1;
+											}
+										}
+									}
+								}
+							}
+						}
+
+						if(count($tables) > 0 && count($values) > 0){
+							$q = new DBQuery();
+							$untabs=array_unique($tables);
+							foreach ($untabs as $ut) {
+								$q->addTable($ut);
+							}
+							if($dateApply == 'visit'){
+								$untvd=array_unique($visits_dates);
+								foreach ($untvd as $ut) {
+									if($sdvalid > 0){
+										$q->addWhere($ut.' >="'.$sdate->format(FMT_DATE_MYSQL).'"' );
+									}
+									if($edvalid > 0){
+										$q->addWhere($ut.' <="'.$edate->format(FMT_DATE_MYSQL) .'"');
+									}
+								}
+							}elseif ($dateApply == 'doa'){
+								if($sdvalid > 0){
+									$q->addWhere('clients.client_doa >="'.$sdate->format(FMT_DATE_MYSQL).'"' );
+								}
+								if($edvalid > 0){
+									$q->addWhere('clients.client_doa <="'.$edate->format(FMT_DATE_MYSQL) .'"');
+								}
+							}
+							if($cliTabMet === false){
+								$q->addTable('clients');
+							}else {
+								if($pov == ''){
+									$pov='clients.client_id';
+									if($ugla['sunqs'] ){
+										$pov='distinct '.$pov;
+									}
+								}
+							}
+							if(isset($ugla['result_filter'])){
+								foreach ($ugla['result_filter'] as $key => $varz) {
+									if(count($varz) === 1 && isset($varz['vars'])){
+										foreach ($varz['vars'] as $xvarz){											
+											if($xvarz['poly'] === 'multi'){												
+												$rvar=mysql_real_escape_string($xvarz['r']);
+												$q->addWhere($key .' = "'.$rvar.'" OR '.$key.' REGEXP "[[.comma.]]?('.mysql_real_escape_string($rvar) .')[[.comma.]]?" ');
+											}
+										}
+									}else{
+										foreach ($varz as $xvarz) {
+											$rvar=mysql_real_escape_string($xvarz['r']);
+											$q->addWhere($key .' = "'.$rvar.'"');
+										}
+										
+									}
+								}
+							}
+							if($ugla['vis_crit'] != 'all'){
+								$pov = 'distinct '.$ltab.'.'.$titles[$tbval['db']['table']]['client'];
+							}
+
+							//$q->addQuery('count('.$pov.')');
+							$q->addQuery('count(*)');
+							foreach ($values as $vid => $vval) {
+								if(is_array($vval)){
+									$qastr=array();
+									foreach ($vval as $rkey => $rval) {
+										$qastr[]=$vid.' '.$rval;//mysql_real_escape_string($rval);
+									}
+									if(!in_array($vid,$orCase)){
+										$glue=" AND ";
+									}else{
+										$glue=" OR ";
+									}
+									$q->addWhere('('.join($glue,$qastr).')');
+								}else{
+									$q->addWhere($vid.'="'.mysql_real_escape_string($vval).'"');
+								}
+
+							}
+							$urefs=array_unique($cliref);
+							$bcliField=$urefs[0];
+							for($i=1,$l= count($urefs); $i < $l; $i++){
+								$q->addWhere($bcliField.' = '.$urefs[$i]);
+							}
+							foreach ($cliref as $cid => $clr){
+								$uposn=array_search($clr,$urefs);
+								if(is_numeric($uposn)){
+									if($cliTabMet !== false && $cid != $cliTabMet && $cliref[$cliTabMet] != $clr){
+										$q->addWhere($cliref[$cliTabMet].' = '.$clr);
+									}elseif($cliTabMet === false){
+										$q->addWhere($clr .'=clients.client_id');
+									}
+									unset($urefs[$uposn]);
+								}
+							}
+							//tell mysql to consider ids of clients in tables as same
+							
+							if(isset($onlyActive) && $onlyActive ){
+								$q->addWhere('clients.client_status="1"');
+							}
+							$q->addGroup($pov);
+							$xres=$q->loadResult();
+							//echo $xres;
+							$html.='<tr><td><b>'.($id+1).'</b></td><td>'.$eval['title'].'</td><td>'.$xres.'</td></tr>';
+						}
+						$cliTabMet=false;
+
+						break;
+
+					case 'stat':
+						require_once('result.func.php');
+						require_once('stater.class.php');
+						$_POST=$crowData;
+						$final = array();
+						$nfei= new evolver();
+						resultBuilder('out');
+						$svals=array(
+						"rows" => ($ugla['rows']),
+						'cols' => ($ugla['cols']),
+						'range'=> ($ugla['range']),
+						'sunqs'=> bool2bit($ugla['sunqs']),
+						'stots_rows'=> bool2bit($ugla['stots_rows']),
+						'stots_cols'=> bool2bit($ugla['stots_cols']),
+						'sperc_rows'=> bool2bit($ugla['sperc_rows']),
+						'sperc_cols'=> bool2bit($ugla['sperc_cols']),
+						'sblanks'=> bool2bit($ugla['sblanks']),
+						'list' => array(),
+						);
+						$do_show_result=bool2bit($ugla['brest']);
+
+						$trows=count($ugla['rows']);
+						$tcols=count($ugla['cols']);
+						$bar=getFileBody('stat');
+						if(count($bigtar_keys) > 0){
+							$ulines=$bigtar_keys;//array_keys($bigtar);
+						}else{
+							$ulines=range(0,count($clients));
+						}
+						$svals['list']=$ulines;
+						$table=makeStat($bar,$svals);
+
+						$html.='<tr><td><b>'.($id+1).'</b></td><td  colspan="2">'.$eval['title'].'<br>'.$table.'</td></tr>';
+						unset($table,$bar,$svals);
+						break;
+
+					case 'graph':
+						break;
+
+					default:
+						break;
+
+				}
+				}//end of all items from report iteration - CELLS
+			}// end of iteration over rows of cell
+		}//end of section iteration
+		$html.='</table></div>';
+		echo $html;
+	}
+}
+
+?>

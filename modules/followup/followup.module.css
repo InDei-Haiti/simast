@@ -1,0 +1,74 @@
+@CHARSET "UTF-8";
+
+.add_row, .del_row,.bsubmit {
+	background: url("/images/icons/icns_fcc.png") no-repeat;
+	width: 16px;
+	height: 16px;
+	cursor: pointer;
+	border: none;
+	float: left;
+	margin: 1px 5px;
+}
+
+.add_row{
+	background-position: -15px 0px;
+}
+
+.del_row{
+	background-position: -1px -1px;
+}
+
+.bsubmit {
+	background-position: -32px 0px;
+	margin: 1px !important;
+}
+
+.hiback{
+	background-color: #e7e7e7 !important;
+}
+.but_home, .issue_home {
+	float: left;
+}
+
+.atbl{
+	/*width: 90%*/
+}
+
+.atbl td{
+	padding: 3px;
+}
+
+.warn{
+	background-color: #f2bebe !important;
+}
+
+
+#ilist{
+	border: 2px solid #b6b4b4;
+	padding: 2px;
+	position: absolute;
+	width: 250px;
+	background-color: #FFFFFF;
+	max-height: 270px;
+	min-height: 100px;
+	overflow-y: scroll;
+	overflow-x: hidden;	
+}
+
+#iinfo{
+	border: 2px solid #b6b4b4;
+	padding: 2px;
+	position: absolute;
+	width: 250px;
+	background-color: #FFFFFF;
+	min-height: 50px;			
+	font-size: 8pt;
+}
+
+.adm_field{
+	float:left;
+}
+
+.tinies{
+	font-size: 8pt;
+}

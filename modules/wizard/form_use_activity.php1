@@ -1,0 +1,104 @@
+<?php
+
+global $AppUI;
+global $l;
+require_once ($AppUI->getModuleClass("clients"));
+
+$fuid = (int)$_GET['fid'];
+$task_id = (int)$_GET['task_id'];
+$parent_id = (int)$_GET['idIns'];
+$xmode = 'view';
+$useID = false;
+$useID = (int)$_GET['itemid'];
+
+if (isset($_GET['todo']) && trim($_GET['todo']) == 'addedit') {
+	$xmode = 'edit';
+	if (!isset($_GET['itemid']) || $useID === 0) {
+		$xmode = 'add';
+	}
+}
+echo $l;
+$teaser = false;
+if(isset($_GET['teaser']) && $_GET['teaser'] == 1){
+	$teaser = true;
+}
+
+if ($task_id === 0 && (int)$_POST['$task_id'] > 0) {
+	$task_id = (int)$_POST['$task_id'];
+}
+
+//$wz = new Wizard($xmode, $task_id, $useID);
+$wz = new Wizard($xmode, $task_id, $client_id = 0, $useID);
+//echo date("Y-m-d");
+if ($fuid > 0) {
+	$dvals = array();
+	
+	$wz->loadFormInfo($fuid);
+
+
+	$wz->tableWrap();
+	$blist = '';
+	if($parent_id){	
+		//$wz->parent = (int)$parent_id;
+		$wd = $wz->drawDigest($fuid,$parent_id,true);
+	}else $wd = $wz->drawDigest($fuid,0,true);
+	$useID = ($useID > 0 ? $useID : $wd[2]);
+	$drows = $wd[1];
+	$blist = $wd[0];
+	if ($useID > 0) {
+		$sql = 'select * from ' . $wz->form_prefix . $fuid . ' where id="' . $useID;
+		$res = mysql_query($sql);
+		if ($res) {
+			$dvals = mysql_fetch_assoc($res);
+		} else {
+			$dvals = array();
+		}
+	}else{
+		
+		$sql = 'select * from ' . $wz->form_prefix . $fuid;// . ' where id="' . $useID;
+		if($parent_id){
+			$sql = 'select * from ' . $wz->form_prefix . $fuid . ' where ref="' . $parent_id;
+		}
+		$res = mysql_query($sql);
+		if ($res) {
+			$dvals = mysql_fetch_assoc($res);
+		} else {
+			$dvals = array();
+		}
+	}
+	$subCnt = 0;
+	$subTables = explode(",", $wz->formSubs);
+	$subRowSet = array();
+	
+	
+	$blist .= $wz->getDefaultFields(false, $dvals);
+	$blist .= '</tbody></table>';
+	echo $blist;
+	$AppUI->plainJS($wz->formJSsupport());
+}?>
+<script type="text/javascript">
+function dialogNewClient(idfw) {
+	
+	//$j("#dbnewsv").dialog("destroy").remove();
+	var $dbox = $j('<div id="dbnewsv" title="Import Form"></div>')
+	$j("<form id='formfileid'  action='/?m=wizard&a=form_import&mode=read&idfw="+idfw+"' enctype='multipart/form-data' method='POST'><table><tr><td><input type='file' id='fileimp' name='qfile'  data-ext='xls|xlsx'/></td></tr></table></form>")
+		.appendTo($dbox);
+	
+	$dbox.dialog({
+		modal: true,
+		width: "400px",
+		resizable: false,
+		autoOpen: true,
+		buttons: {
+			Cancel: function () {
+				$j(this).dialog("close");
+				$j("#dbnewsv").remove();
+			},
+			Process: function () {
+					 	$("#formfileid").submit();
+					 }
+		}
+	}).prev(".ui-dialog-titlebar").css("background","#aed0ea").css("border","1px solid #aed0ea");
+	
+}
+</script>

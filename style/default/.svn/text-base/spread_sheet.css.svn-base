@@ -1,0 +1,51 @@
+/*
+*************CSS elements and classes code format************
+			*-Comments on the class or element
+			*-Color/Background Color Properties
+			*-Font Properties
+			*-Text Properties
+			*-Size(height and width) properties
+			*-Border/Margin Properties
+			*-Other Properties
+*/
+
+.spread_sheet_text_box {
+	font-size: 9px; 
+	font-family: Verdana;
+	text-align: left; 
+	border-top: #99acc1 0px solid; 
+	border-bottom: #99acc1 0px solid;
+	border-right: #99acc1 1px solid; 
+	border-left: #99acc1 1px solid; 
+}
+.spread_sheet_numeric_text_box {
+	font-size: 9px; 
+	font-family: Verdana;
+	text-align: right; 
+	border-top: #99acc1 0px solid; 
+	border-bottom: #99acc1 0px solid;
+	border-right: #99acc1 1px solid; 
+	border-left: #99acc1 1px solid; 
+}
+.spread_sheet_header_row{
+	background-color:#999999;	
+	font-size: 9px; 
+	font-family: Verdana;	
+	border-right: #99acc1 0px solid; 
+	border-top: #99acc1 0px solid; 
+	border-left: #99acc1 0px solid; 
+	border-bottom: #99acc1 0px solid; 
+}
+.spread_sheet_header_row a{
+	color:#000066; 
+	text-decoration:none;
+}
+.spread_sheet_numbering_column{
+	background-color:#999999;
+	font-size: 9px; 
+	font-family: Verdana; 
+}
+.spread_sheet_numbering_column a{
+	color:#000066; 
+	text-decoration:none;
+}

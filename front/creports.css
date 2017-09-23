@@ -1,0 +1,389 @@
+body, html {
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+}
+
+#all-wrap{
+    background-color: #dddddd;
+    padding: 0;
+    margin: 0;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+}
+
+.text{
+    border: 1px solid #000;
+    height: 25px;
+    vertical-align: middle;
+    margin-top: 0;
+    padding: 2px;
+}
+
+#preview{
+    display: none;
+}
+
+.swblock{
+    cursor: pointer;
+    font-size: 12pt;
+}
+
+.swblock:hover{
+    text-decoration: underline;
+}
+
+.vbox{
+    display: none;
+    border: 1px solid #cbcbcb;
+    margin: 2px;
+    padding: 5px;
+}
+
+.psels{
+    margin: 3px;
+}
+
+.mute-list{
+    list-style: none;
+    margin-left: 5px;
+    padding-left: 3px;
+}
+
+.cr_item{
+    border-top: 1px solid #b7b7b7;
+}
+
+
+#crdata{
+    margin-top: 15px;
+    background-color: #fff !important;
+    border: 2px solid #909090;
+    width: 98%;
+    clear: both;
+    margin-left: 10px;
+    border-radius: 3px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    min-height: 500px;
+    max-height: 750px;
+    overflow: auto;
+}
+.all-wrap{
+    width: 100%;
+    padding: 3px;
+}
+
+#rempty{
+    border: 1px solid #f4efe3;
+    background-color: #fff29f;
+    font-size: 9pt;
+    display: none;
+    color: #000;
+    padding: 2px;
+    margin: 1px;
+    white-space: nowrap;
+    float: right;
+
+}
+
+.icns {
+    background: url("icns.png") no-repeat;
+}
+
+.top_sels{
+    width: 1000px;
+    float: left;
+}
+
+.top_sels > ul{
+    list-style: none;
+    padding-left: 5px;
+    margin-left: 2px;
+    margin-top: 3px;
+}
+
+.top_sels > ul > li {
+    float: left;
+    font-size: 10pt;
+    color: #A0A0A2;
+    border: 1px solid #cecece;
+    background-color: #ececec;
+    padding: 2px 10px;
+    margin: 1px;
+}
+
+.top_sels > ul > li:hover {
+    border: 1px solid #acacac;
+    background-color: #ededed;
+    color: #164a4f;
+    cursor: pointer;
+}
+
+.sel_li{
+    border: 1px solid #89747b !important;
+    background-color: rgba(246, 241, 209, 0.72) !important;
+    color: #0a2c31 !important;
+}
+
+.pdf_wrap{
+    width: 35px;
+    height: 32px;
+    float: right;
+}
+
+.pdf_loading{
+    background: url("pdf_loading.gif") no-repeat;
+    width: 32px;
+    height: 7px;
+    margin: 1px;
+    padding: 1px;
+    display: none;
+    float: left;
+}
+
+.pdf_but{
+    width: 24px;
+    height: 24px;
+    padding: 2px;
+    margin: 1px 1px 1px 3px;
+    cursor: pointer;
+    float: left;
+}
+
+.pdf_on{
+    background-position: 0 -1px;
+}
+
+.pdf_off{
+    background-position: -24px -1px;
+    cursor: inherit !important;
+}
+
+#browser{
+    float: left;
+    clear: both;
+    width: 100%;
+}
+
+.tbl {
+    background: #a5cbf7;
+}
+
+.tbl th {
+    background-color: #08245b;
+    color: #ffffff;
+    font-size: 8pt;
+    list-style-type: disc;
+    list-style-position: inside;
+    border: outset #D1D1CD 1px;
+    font-weight: normal;
+    text-align: center;
+}
+
+.tbl td {
+    font-size: 8pt;
+    background-color: #fff;
+}
+
+.vdata, .summr {
+    text-align: right;
+}
+
+.offwall {
+    display: none;
+}
+
+.vdata, .summr {
+    text-align: right;
+}
+
+.report {
+    font-weight: 500;
+    margin-left: 20px;
+}
+
+.tbgrid {
+    border: 1px solid #dfdfdf;
+}
+
+.tbgrid th, .rowhead {
+    color: #4B4A4E;
+    padding: 1px 3px;
+}
+
+.tbgrid td {
+    border: 1px solid #dfdfdf;
+}
+
+.rborder{
+    border: 2px solid #cecece;
+    color: #7c7c7c;
+    background-color: #e0e0e0;
+    padding: 3px;
+    text-shadow: 1px 2px #e3ffe0;
+}
+
+.rborder:hover{
+    border: 2px solid #989898;
+    color: #000;
+    background-color: rgba(236, 236, 236, 0.83);
+    text-shadow: 1px 2px #fff8dd;
+}
+
+.ico_but{
+    padding-left: 30px !important;
+    height: 32px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 9pt;
+    margin: 2px;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    border-radius: 4px;
+}
+
+#show_but{
+    background-position: -48px -1px;
+}
+
+#clear_but{
+    background-position: 2px -28px;
+}
+
+#rep_but{
+    background-position: 0 -74px;
+    float: left;
+    display: none;
+}
+
+#view_but{
+    background-position: 1px -104px;
+}
+.period_sel{
+    color: #808080;
+    float: left;
+    margin: 3px;
+    border: 1px solid #dfdfdf;
+    border-radius: 2px;
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+    padding: 2px;
+}
+
+.period_sel:hover{
+    color: #000;
+    background-color: #cecece;
+    border: 1px solid #8c8c8c;
+}
+
+#rqvals{
+    clear: left;
+    float: right;
+}
+
+.sec_cont{
+    clear: both;
+}
+
+.bcenter{
+    width: 100px;
+    float: left;
+}
+
+.bkill{
+    float: right;
+    background-position: -6px -58px !important;
+    width: 18px;
+    height: 18px;
+    margin: 2px;
+    cursor: pointer;
+}
+
+#dialog,#fail{
+    display: none;
+}
+
+.ptbl{
+    font-size: 9pt;
+}
+
+.ptbl td{
+    border: 1px solid #cecece;
+    padding: 3px;
+}
+
+/*.body_flow{
+    height: 250px;
+    overflow: auto;
+}*/
+
+.ui-dialog {
+    height: auto !important;
+}
+
+#rep_selector{
+    height: 21px !important;
+    float: left;
+    margin-top: 7px;
+}
+
+.ui-dropdownchecklist-selector .ui-dropdownchecklist-text{
+    padding: 4px;
+    float: left;
+    width: 180px;
+}
+
+.ui-dropdownchecklist-selector{
+    width: 240px !important;
+}
+
+#rqvals .ui-dropdownchecklist {
+	float: left !important;
+	margin-top: 4px !important;
+}
+
+.ui-dropdownchecklist  * {
+	font-size: 9pt !important;
+}
+
+.ui-tabs .ui-tabs-nav li a, .ui-tabs.ui-tabs-collapsible .ui-tabs-nav li.ui-tabs-selected a {
+	width: 85%;
+	padding: 1px 2px 1px 3px !important;
+}
+
+.ui-icon-close:hover{
+	cursor: pointer;
+}
+
+#tabs{
+    overflow: hidden;
+    width: 99%;
+    clear:both;
+}
+
+.dropdown{
+    background-position: -4px -138px;
+    float: right;
+    width: 18px;
+    height: 18px;
+}
+
+.ui-dropdownchecklist-selector-wrapper{
+    width: 250px;
+}
+
+.ui-tabs .ui-tabs-panel{
+    overflow: auto;
+    max-height: 800px;
+    padding: 1.5em 1.4em !important;
+    margin-top: 10px !important;
+    margin-bottom: 10px !important;
+}
+
+#loading{
+    display: none;
+    float: right;
+}

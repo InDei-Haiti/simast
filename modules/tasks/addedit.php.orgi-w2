@@ -1,0 +1,564 @@
+<?php /* TASKS $Id: addedit.php 5773 2008-07-21 15:04:07Z merlinyoda $ */
+if (! (defined ( 'DP_BASE_DIR' ))) {
+	die ( 'You should not access this file directly.' );
+}
+
+function getChildAreas(&$parent){
+	$q= new DBQuery();
+	$q->addTable("st_area");
+	$q->addWhere("parent_id='".$parent['id']."'");
+	$kids = $q->loadList();
+	if(count($kids) > 0){
+		foreach($kids as &$child){
+			$ckid = getChildAreas($child);
+			if(count($ckid) > 0){
+				$child['kids']=$ckid;
+			}
+		}
+	}
+	return $kids;
+}
+
+function buildListAreas(){
+	$q = new DBQuery();
+	$q->addTable('st_area');
+	$q->addWhere('parent_id ="0"');
+	$tops = $q->loadList();
+
+	foreach($tops as &$tip){
+		$kids = getChildAreas($tip);
+		if(count($kids) > 0){
+			$tip['kids'] = $kids;
+		}else{
+			$tip['kids'] = false;
+		}
+	}
+	return $tops;
+}
+
+function subArea(&$parent){
+	$html='<li><input class="last" type="checkbox" id="'.$parent['id'].'"><label>'.$parent['prex'].' '.$parent['title'].'</label>'."\n\t";
+	if($parent['kids'] !== false && count($parent['kids']) > 0){
+		$html.='<ul>';
+		foreach($parent['kids'] as &$child){
+			$html.=subArea($child);
+		}
+		$html.='</ul>';
+	}
+	return $html;
+}
+
+function htmlAreasList(){
+	$list = buildListAreas();
+	$code='<ul class="top" >';
+	foreach($list as &$item){
+		$code.=subArea($item)."\n\t";
+	}
+	$code.='</ul>';
+	return $code;
+}
+
+if ($_GET ['pulp'] = "jsel" && ( int ) $_GET ['par_id'] > 0) {
+	//print "you posted ".$_GET['par_id']. " er.gjwekrgjwelkg";
+	$q = new DBQuery ( );
+	$q->addTable ( 'administrative_regions' );
+	$q->addQuery ( 'region_id, region_name' );
+	$q->addWhere ( 'region_parent = "' . ( int ) $_GET ['par_id'] . '"' );
+	$q->addOrder ( 'region_name' );
+	$admin_list = arrayMerge ( array (- 1 => 'all' ), $q->loadHashList () );
+	
+	$q = new DBQuery ( );
+	$q->addTable ( 'administrative_regions' );
+	$q->addQuery ( ' region_name' );
+	$q->addWhere ( 'region_parent in (' . implode ( ",", array_keys ( $admin_list ) ) . ')' );
+	//$q->addOrder('region_name');
+	$admin2_list = arrayMerge ( array (- 1 => 'all' ), $q->loadHashList () );
+	
+	$con_id = ( int ) $_GET ['top_id'];
+	
+	if (sizeof ( $admin2_list ) > 1) {
+		$pfur = 1;
+	} else {
+		$pfur = 0;
+	}
+	if (sizeof ( $admin_list ) == 1) {
+		$sel_str = "fool";
+	} elseif (count ( $admin_list ) > 1) {
+		$clev = ( int ) $_GET ['clevel'];
+		$tcase = $_GET ['scase'];
+		if ($tcase != "" && $tcase != "act_top") {
+			$ucase = $tcase . "_";
+		} else {
+			$ucase = "";
+		}
+		$clev ++;
+		$sel_str = arraySelect ( $admin_list, $ucase . "b_task_admin_" . $clev, "id='" . $ucase . "level_" . $clev . "' onchange='show_sel(\"" . $tcase . "\",this,$clev)'  class='text' style='width: 230px;'", '', false );
+		$sel_str = preg_replace ( "/\r/", "", $sel_str );
+		$sel_str = preg_replace ( "/\n/", "", $sel_str );
+	}
+	
+	$q = new DBQuery ( );
+	$q->addTable ( 'admin_titles' );
+	$q->addQuery ( 'title' );
+	$q->addWhere ( "country_id='$con_id' and level='$clev'" );
+	$rtitle = $q->loadResult ();
+	
+	print '["' . $pfur . '","' . mysql_real_escape_string ( $rtitle ) . '","' . mysql_real_escape_string ( $sel_str ) . '"]';
+	return;
+}
+
+if($_GET['pmode'] == 'newsub'){
+	$cnew=true;
+}else{
+	$cnew=false;
+}
+
+if (isset ( $_GET ['scope'] ) && trim ( $_GET ['scope'] ) == "subs") {
+	$we_do = "sub";
+} else {
+	$we_do = "root";
+}
+
+$cur_subs = 0;
+/*
+ * Tasks :: Add/Edit Form
+ */
+
+$task_id = intval ( dPgetParam ( $_REQUEST, 'task_id', 0 ) );
+$perms = & $AppUI->acl ();
+
+//load the record data
+$obj = new CTask ( );
+$obj0 = new CTask ( );
+$q = new DBQuery ( );
+$projTasks = array ();
+
+$subs = array ();
+
+//check if we are in a subform
+if ($task_id > 0 && ! $obj->load ( $task_id )) {
+	$AppUI->setMsg ( 'Activity' );
+	$AppUI->setMsg ( 'invalidID', UI_MSG_ERROR, true );
+	$AppUI->redirect ();
+}
+
+if ($obj->task_country > 0) {
+	$obj0->task_country = $obj->task_country;
+	for($n = 2; $n < 7; $n ++) {
+		$tval = "task_admin" . $n;
+		if ($obj->$tval > 0) {
+			$obj0->$tval = $obj->$tval;
+		}
+	}
+}
+$subs [0] = $obj0;
+
+//Now lets get non-root tasks, grouped by the task parent
+$q->addTable ( 'tasks' );
+$q->addQuery ( 'task_id' );
+$q->addWhere ( 'task_parent="' . $obj->task_id . '" AND task_mode="sub" ' );
+$q->addOrder ( "task_id" );
+$sub_list = $q->loadHashList ();
+$q->clear ();
+
+$q->addTable('programs');
+$q->addQuery('id,pacro');
+$progs = $q->loadList();
+
+if (! $sub_list) {
+	$sub_list = array ();
+	$sub_list [0] = $obj0;
+}
+$scnt = 1;
+foreach ( $sub_list as $sitem => $vfr ) {
+	if ($sitem > 0) {
+		$obname = "obj" . $scnt;
+		$$obname = new CTask ( );
+		$$obname->load ( $sitem );
+		$subs [$scnt] = $$obname;
+		$strh_real .= "<input type='hidden' name='sub_$scnt' value='" . $sitem . "'>\n";
+		$scnt ++;
+	}
+}
+
+$cur_subs = count ( $subs );
+
+$obj->task_mode == "root" && ! isset ( $_REQUEST ['scope'] ) ? $we_do = "root" : $we_do = "sub";
+
+$task_parent = isset ( $_REQUEST ['task_parent'] ) ? $_REQUEST ['task_parent'] : $obj->task_parent;
+
+if ($we_do == "sub") {
+	$par_obj = new CTask ( );
+	$par_obj->load ( $task_parent );
+}
+
+//check for a valid project parent
+$task_project = intval ( $obj->task_project );
+if (! $task_project) {
+	$task_project = dPgetParam ( $_REQUEST, 'task_project', 0 );
+	if (! $task_project) {
+		$AppUI->setMsg ( 'badTaskProject', UI_MSG_ERROR );
+		$AppUI->redirect ();
+	}
+}
+
+//check permissions
+if ($task_id) {
+	//we are editing an existing task
+	$canEdit = $perms->checkModuleItem ( $m, 'edit', $task_id );
+} else {
+	//do we have access on this project?
+	$canEdit = $perms->checkModuleItem ( 'projects', 'view', $task_project );
+	//And do we have add permission to tasks?
+	if ($canEdit) {
+		$canEdit = $perms->checkModule ( 'tasks', 'add' );
+	}
+}
+
+if (! $canEdit) {
+	$AppUI->redirect ( 'm=public&a=access_denied&err=noedit' );
+}
+
+//check permissions for the associated project
+$canReadProject = $perms->checkModuleItem ( 'projects', 'view', $obj->task_project );
+
+$durnTypes = dPgetSysVal ( 'TaskDurationType' );
+$sector_list = dPgetSysVal ( 'SectorType' );
+
+// pull users
+$q  = new DBQuery;
+$q->addTable('users','u');
+$q->addTable('contacts','con');
+$q->addQuery('user_id');
+$q->addQuery('CONCAT_WS(", ",contact_last_name,contact_first_name)');
+$q->addOrder('contact_last_name');
+$q->addWhere('u.user_contact = con.contact_id');
+$users = $q->loadHashList();
+
+$hvars = "";
+$plevel = 1;
+
+$we_do == "root" ? $usobj = $obj : $usobj = $par_obj;
+
+$lev_names = array ();
+if ($usobj->task_country > 0) {
+	$q = new DBQuery ( );
+	$q->addTable ( 'admin_titles' );
+	$q->addQuery ( 'title' );
+	$q->addWhere ( "country_id='" . $usobj->task_country . "'" );
+	$q->addOrder ( 'level' );
+	$lev_names = $q->loadList ();
+}
+
+for($n = 2; $n < 8; $n ++) {
+	$tval = "task_admin" . $n;
+	if (( int ) $usobj->$tval > 0) {
+		$q = new DBQuery ( );
+		$q->addTable ( 'administrative_regions' );
+		$q->addQuery ( 'region_id, region_name' );
+		$n == 2 ? $ulist = $usobj->task_country : eval ( "\$ulist=\$usobj->task_admin" . ($n - 1) . ";" );
+		$q->addWhere ( 'region_parent = "' . $ulist . '" ' );
+		$q->addOrder ( 'region_parent, region_name' );
+		$bval = "admin" . $n . "_list";
+		$$bval = arrayMerge ( array (- 1 => 'all' ), $q->loadHashList () );
+		
+		$hvars .= "<input type='hidden' name='task_admin_$n' id='real_admin_$n' value='" . $usobj->$tval . "'>\n";
+		$plevel ++;
+	}
+
+}
+if ($we_do == "sub") {
+	$hvars .= "<input type='hidden' name='task_parent' value='" . $par_obj->task_id . "'>\n";
+}
+
+
+//check the document access (public, participant, private)
+if (! $obj->canAccess ( $AppUI->user_id )) {
+	$AppUI->redirect ( 'm=public&a=access_denied&err=noaccess' );
+}
+
+// get a list of permitted companies
+require_once ($AppUI->getModuleClass ( 'companies' ));
+
+$row = new CCompany ( );
+$companies = $row->getAllowedRecords ( $AppUI->user_id, 'company_id,company_name', 'company_name' );
+//$companies = arrayMerge ( array ('0' => 'none' ), $companies );
+
+// get internal companies
+$companies_internal = $row->listCompaniesByType ( array ('6' ) ); // 6 is standard value for internal companies
+$companies_internal = arrayMerge ( array ('0' => 'all' ), $companies_internal );
+//pull the related project
+$project = new CProject ( );
+$project->load ( $task_project );
+
+//Pull all users
+$users = $perms->getPermittedUsers ( 'tasks' );
+
+//setup the title block
+$ttl = (($task_id > 0) ? 'Edit Activity' : 'New Activity');
+$titleBlock = new CTitleBlock ( $ttl, '', $m, "$m.$a" );
+$titleBlock->show ();
+
+//Let's gather all the necessary information from the department table
+//collect all the departments in the company
+
+//ALTER TABLE `tasks` ADD `task_departments` CHAR(100) ;
+$company_id = $project->project_company;
+
+//Dynamic tasks are by default now off because of dangerous behavior if incorrectly used
+if (is_null ( $obj->task_dynamic )) {
+	$obj->task_dynamic = 0;
+}
+
+$can_edit_time_information = $obj->canUserEditTimeInformation ();
+
+//Time arrays for selects
+$start = intval ( dPgetConfig ( 'cal_day_start' ) );
+$end = intval ( dPgetConfig ( 'cal_day_end' ) );
+$inc = intval ( dPgetConfig ( 'cal_day_increment' ) );
+if ($start === null)
+	$start = 8;
+if ($end === null)
+	$end = 17;
+if ($inc === null)
+	$inc = 15;
+$hours = array ();
+for($current = $start; $current <= $end; $current ++) {
+	if ($current < 10) {
+		$current_key = "0" . $current;
+	} else {
+		$current_key = $current;
+	}
+	
+	if (stristr ( $AppUI->getPref ( 'TIMEFORMAT' ), "%p" )) {
+		//User time format in 12hr
+		$hours [$current_key] = ($current > 12 ? $current - 12 : $current);
+	} else {
+		//User time format in 24hr
+		$hours [$current_key] = $current;
+	}
+}
+
+$minutes = array ();
+$minutes ["00"] = "00";
+for($current = 0 + $inc; $current < 60; $current += $inc) {
+	$minutes [$current] = $current;
+}
+
+$thisYear = date("Y",time());
+$annuals = range(2000,2030); //range($thisYear,$thisYear+15);
+$sel_arr= array();
+for($i=0,$l = count($annuals);$i < $l; $i++){
+	$sel_arr[]="<option value='".$annuals[$i]."'>".$annuals[$i].'</option>';
+}
+$bud_annual = '<select class="text yr">'.join("",$sel_arr).'</select>';
+
+// format dates
+$df = $AppUI->getPref ( 'SHDATEFORMAT' );
+
+if (intval ( $obj->task_start_date )){
+	$start_date = new CDate ( $obj->task_start_date );
+}else if ($task_id != 0){
+	$start_date = null;
+}else{
+	$start_date = new CDate ( );
+}
+//$start_date = intval( $obj->task_start_date ) ? new CDate( $obj->task_start_date ) : new CDate();
+$end_date = intval ( $obj->task_end_date ) ? new CDate ( $obj->task_end_date ) : null;
+
+// convert the numeric calendar_working_days config array value to a human readable output format
+$cwd = explode ( ',', $dPconfig ['cal_working_days'] );
+
+$cwd_conv = array_map ( 'cal_work_day_conv', $cwd );
+$cwd_hr = implode ( ', ', $cwd_conv );
+
+
+$q->addQuery ( 'project_id, project_name' );
+$q->addTable ( 'projects' );
+$q->addWhere ( 'project_company = ' . $company_id );
+$q->addWhere ( '(project_status <> 7 OR project_id <> ' . $task_project . ')' );
+$q->addOrder ( 'project_name' );
+$project->setAllowedSQL ( $AppUI->user_id, $q );
+$projects = $q->loadHashList ();
+?>
+<form name="editFrm" action="?m=tasks&project_id=<?php 	echo $task_project; ?>" method="post">
+<table border="1" cellpadding="4" cellspacing="0" width="100%" 	class="std">
+	<form name="editFrm" action="?m=tasks&project_id=<?php 	echo $task_project; ?>" method="post">
+	<input name="dosql" type="hidden" value="do_task_aed" />
+	<input name="task_id" type="hidden" value="<?php echo $task_id;?>" />
+	<input type='hidden' name='task_mode' value='<?php echo $we_do; ?>'>
+	<input name="task_project" type="hidden" value="<?php echo $task_project; ?>" />
+	<?php
+	echo $strh_real;
+	?>
+	<tr valign="top" width="50%">
+
+		<td>
+		<table cellspacing="0" cellpadding="1" border="0" width="50%">
+			<tr>
+				<td>
+				<?php
+				echo $AppUI->_ ( 'Activity Name' );
+				?> &nbsp;*
+			</td>
+				<td><input type="text" class="text" name="task_name"
+					style='width: 230px;'
+					value="<?php
+					echo ($obj->task_name);
+					?>" size="40"
+					maxlength="255" /></td>
+			</tr>
+			<?php
+			if ($we_do == "root") {
+				?>
+			<tr>
+				<td>
+				 <?php echo $AppUI->_ ( 'Partner Agencies' ); ?>
+				</td>
+			<td>
+				<?php
+				echo arraySelect ( $companies, 'task_agency[]', 'style="width: 230px;" class="text multiple" multiple="multiple" ', @explode(",",$obj->task_agency) );
+				?>
+			</td>
+			</tr>
+			<tr>
+				<td>
+					<?php echo $AppUI->_ ( 'Sector' ); ?>
+				</td>
+				<td>
+					<?php echo
+						arraySelect ( $sector_list, "task_sector[]", "style='width: 230px;' class='text multiple' multiple='multiple'", @explode(",",$obj->task_sector), false );
+					?>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<?php echo $AppUI->_ ( 'Strategic Areas' ); ?>
+				</td>
+				<td>
+					<input type="button" class="text tree_edit" data-part="area" value="Edit">
+					<input type="hidden" name="task_areas" value="<?php echo $obj->task_areas ?>">
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<?php echo $AppUI->_ ( 'Locations' ); ?>
+				</td>
+				<td>
+					<input type="button" class="text tree_edit" data-part="lox" value="Edit">
+					<input type="hidden" name="task_locations" value="<?php echo $obj->task_locations;?>">
+				</td>
+			</tr>
+
+
+
+
+		</table>
+		</td>
+		<td>
+		<table cellspacing="0" cellpadding="2" border="0" width="50%">
+			<tr>
+				<td nowrap="nowrap"><?php echo $AppUI->_ ( 'Status' ); ?>&nbsp;*</td>
+				<td>
+					<?php
+						$status = arrayMerge(array("-1"=> "-- select status --"),$status);
+						echo arraySelect ( $status, 'task_status', 'size="1" style="width: 230px;" class="text"', $obj->task_status, true );
+					?>
+				</td>
+			</tr>
+				<tr>
+					<td nowrap="nowrap" colspan="2"><?php
+						echo $AppUI->_ ( 'Start Date' );
+						?>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+						<input type="text" readonly="readonly" style='width: 90px;' class="text dfield" name="task_start_date" value="<?php echo $start_date ? $start_date->format ( $df ) : "";?>" />
+						&nbsp;&nbsp;&nbsp;
+					<?php
+						echo $AppUI->_ ( 'End Date' );
+						?>&nbsp;&nbsp;&nbsp;&nbsp;
+						<input type="text" readonly="readonly" style='width: 90px;' class="text dfield" name="task_end_date" value="<?php echo $end_date ? $end_date->format ( $df ) : "";?>" />
+					</td>
+				</tr>
+			<tr>
+				<td colspan="2"><?php echo $AppUI->_ ( 'Budget' ); ?>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				<input type="text" class="text" name="task_target_budget" style='width: 90px;'
+				           value="<?php echo @$obj->task_target_budget; ?>" size="10" maxlength="10" />&nbsp;&nbsp;&nbsp;
+				Yearly&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				<input type="button" class="text" onclick="annualBudget(this)" value="Edit"/>
+				<input type="hidden" name='task_annual_budget' value="<?php echo $obj->task_annual_budget;?>">
+				</td>
+			</tr>
+			<tr>
+				<td><?php echo $AppUI->_ ( 'Benefeciares' ); ?>:</td>
+				<td><input type="text" class="text" name="task_beneficiares" style='width: 230px;'  value="<?php echo @$obj->task_beneficiares;	?>" size="10" maxlength="10" /></td>
+			</tr>
+
+		<?php
+			}
+			?>
+
+			<tr>
+				<td nowrap="nowrap" valign="top">
+					<?php echo $AppUI->_ ( 'Description' ); ?>:
+				</td>
+				<td><textarea name="task_description" class="textarea" cols="60"
+					rows="2" wrap="virtual"><?php
+					echo @$obj->task_description;
+					?></textarea> <br />
+		<?php
+		require_once ($AppUI->getSystemClass ( 'CustomFields' ));
+		GLOBAL $m;
+		$custom_fields = New CustomFields ( $m, 'addedit', $obj->task_id, "edit" );
+		$custom_fields->printHTML ();
+		?>
+	</td>
+			</tr>
+
+
+		</table>
+		</td>
+	</tr>
+</table>
+
+<div id='bnew' style='width: 100%;'>
+<div float='left' widht="30%">
+	<input class="button" type="button" name="cancel"
+					value="<?php
+					echo $AppUI->_ ( 'cancel' );
+					?>"
+					onClick="if(confirm('<?php
+					echo $AppUI->_ ( 'taskCancel', UI_OUTPUT_JS );
+					?>')){location.href = '?<?php
+					echo $AppUI->getPlace ();
+					?>';}" />
+	<input class="button" type="button" name="btnFuseAction"
+					value="<?php
+					echo $AppUI->_ ( 'save' );
+					?>"
+					onClick="submitItTask(document.editFrm);" />
+	
+</div>
+<div>
+		* <?php
+		echo $AppUI->_ ( 'requiredField' );
+		?>
+</div>
+</div>
+</form>
+
+<script type="text/javascript">
+
+
+var ab_word ='activity';
+
+</script>
+<script type="text/javascript" src="/modules/public/pa_edit.js"></script>
+<div id="bub" style="display: none;"></div>
+<div id="area_box" style="display: none;"><?php echo htmlAreasList();?></div>
+<div id="lox_box" style="display: none;"><?php echo buildLocations();?></div>
+<div id="locations_skin" style="display: none;" class="ui-widget ui-widget-content ui-corner-all ui-movable">
+	<button type="button" id="lox_shut" class="ui-multiselect ui-widget ui-state-default ui-corner-all" title="Save and Close"><span>Save and Close</span></button>
+	<div id="land" style="padding:1px;"></div>
+</div>
+<div id="year_shelter" style="display: none;">
+<?php echo $bud_annual;?>
+</div>

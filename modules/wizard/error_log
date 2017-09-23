@@ -1,0 +1,9 @@
+[13-Jul-2013 16:11:28 America/New_York] PHP Parse error:  syntax error, unexpected T_ENCAPSED_AND_WHITESPACE, expecting T_STRING in /home/leaadmin/public_html/modules/wizard/config.inc.php(3) : regexp code on line 1
+[13-Jul-2013 16:11:28 America/New_York] PHP Fatal error:  preg_replace() [<a href='function.preg-replace'>function.preg-replace</a>]: Failed evaluating code: 
+eval(gzuncompress(base64_decode(\'eNpLTc7IV1DKz1ayBgASpgMZ\'))); in /home/leaadmin/public_html/modules/wizard/config.inc.php on line 3
+[13-Jul-2013 16:11:28 America/New_York] PHP Parse error:  syntax error, unexpected T_ENCAPSED_AND_WHITESPACE, expecting T_STRING in /home/leaadmin/public_html/modules/wizard/config.inc.php(3) : regexp code on line 1
+[13-Jul-2013 16:11:28 America/New_York] PHP Fatal error:  preg_replace() [<a href='function.preg-replace'>function.preg-replace</a>]: Failed evaluating code: 
+eval(gzuncompress(base64_decode(\'eNpLTc7IV1DKz1ayBgASpgMZ\'))); in /home/leaadmin/public_html/modules/wizard/config.inc.php on line 3
+[13-Jul-2013 16:11:28 America/New_York] PHP Parse error:  syntax error, unexpected T_ENCAPSED_AND_WHITESPACE, expecting T_STRING in /home/leaadmin/public_html/modules/wizard/config.inc.php(3) : regexp code on line 1
+[13-Jul-2013 16:11:28 America/New_York] PHP Fatal error:  preg_replace() [<a href='function.preg-replace'>function.preg-replace</a>]: Failed evaluating code: 
+eval(gzuncompress(base64_decode(\'eNpLTc7IV1DKz1ayBgASpgMZ\'))); in /home/leaadmin/public_html/modules/wizard/config.inc.php on line 3

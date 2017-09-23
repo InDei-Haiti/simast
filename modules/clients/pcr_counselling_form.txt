@@ -1,0 +1,53 @@
+Counselling Intake form:
+Date
+Adm no
+DOB
+Code (DASCOP)
+Referral Source
+Location of birth
+Area of residence
+History of HIV Tests
+-Date
+-Test
+-Result
+-Agency
+<?php echo arraySelect( $networkTypes, 'custnet[counselling_standalone]', 'size="1" class="text" ', @$row->counselling_standalone ) ?>
+		 <td align="left">
+            &nbsp;&nbsp;<?php echo arraySelectRadio($boolTypes, "term_equip[term_equip_cable_labeled]", 'onclick=toggleButtons()', $row->term_equip_cable_labeled ? $row->term_equip_cable_labeled : 2, $identifiers ); ?>
+		 </td>
+
+Todays Test
+Client ID
+Mother's year of birth
+When did mother become aware of her status? Before  /  During  /  After pregnancy  (circle one)
+Did mother receive any antenatal care? (Y, N, ND)
+Mother enrolled in a PMTCT program? (Y, N, ND)
+Any illness/STI during pregnancy? (Y, N, ND)
+If Y, describe
+Place of birth home / institution / ND
+Mode of birth NVD / other / ND
+Gestation (months)
+Birth weight (kgs)
+Any breastfeeding?(Y, N, ND)
+If Y, duration exclusive BF?
+If Y, duration of any BF?
+If Y, any breast disease during BF?
+Child perinatal ARV exposure?(Y, N, ND)
+If Y, single dose NVP? (Y, N, ND)
+If NVP given describe when it was given
+Was AZT given? (normally twice daily for 1 week after birth) (Y, N, ND)
+If AZT given describe when & # of doses
+Mother perinatal ARV exposure? (Y, N, ND)
+If Y, single dose NVP? (Y, N, ND)
+If NVP taken describe when it was taken
+Was AZT given? (normally twice daily from 6 months pregnancy) (Y, N, ND)
+If AZT given describe when & # of doses
+Mother in treatment program? (Y, N, ND)
+Mother on ART in pregnancy? (Y, N, ND)	Date began ART
+Most recent maternal CD4 count? (cells/mm3 or ND)  Date of CD4 test
+Complete this section only if child having PCR test or antibody test at 12 or 18 months
+Date PCR test
+Client PCR test code
+PCR test result
+12 month rapid test (+ve, -ve, ND)
+18 month ELISA test
