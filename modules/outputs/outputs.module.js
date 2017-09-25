@@ -2615,13 +2615,14 @@ qlHandler.prototype.run = function(cv,todo){
 qlHandler.prototype.delq = function(cv){
 	if(confirm("You want delete this query ?")){		
 		var $qr=$j("#qsr_"+cv,$j("#qtable")[0]),
-			data=['mode=query&imode=del&stype=',$qr.find("td:eq(2)").text(),
-				'&sid=',parseInt($qr.find("td:eq(0) > div").attr("data-id"))].join("");
+			data=['mode=query&imode=del&stype=',$qr.find("td:eq(1)").text(),
+				'&sid=',parseInt($qr.find("td:eq(0)").attr("data-id"))].join("");
 		$j.ajax({
 			url: "/?m=outputs&suppressHeaders=1",
 			type: 'post',
 			data: data,
 			success: function(data){
+				console.log(data);
 				if(trim(data) == 'ok'){
 					info("Query deleted ",1);
 					$qr.fadeOut('fast',function(){
@@ -2630,7 +2631,10 @@ qlHandler.prototype.delq = function(cv){
 				}else{
 					info("Failed to delete query, try again later",0);
 				}
-			}
+			},
+			error: function (error) {
+                console.log(error);
+            }
 		});
 	}else{
 		return false;
