@@ -800,10 +800,10 @@ $q->addOrder("created desc");
 $q->addOrder('qmode asc');
 $queriez['Stats']=$q->loadList();
 $q->clearQuery();
-$q->addTable('activity_queries','act');
-$q->addOrder("created desc");
-$queriez['ActQr']=$q->loadList();
-$q->clearQuery();
+//$q->addTable('activity_queries','act');
+//$q->addOrder("created desc");
+//$queriez['ActQr']=$q->loadList();
+//$q->clearQuery();
 $q->addQuery('id,title as qname');
 $q->addTable('reports');
 $queriez['Report']=$q->loadList();
@@ -891,7 +891,7 @@ echo '<br/>
                     $edClass='qreditor';
                     $pnameOut='Report';
                 }else{
-                    $pnameOut='Table';
+                    $pnameOut='Table'.$pname;
                 }
                 $qsr.='<tr id="qsr_'.$trid.'" data-showr="'.$sr.'">
                 <!--<td title="Edit" align="center"><div class="'.$edClass.' fa fa-pencil" data-id="'.$row['id'].'" style="color: blue;font-size: large"></div></td>-->';
@@ -930,7 +930,7 @@ echo '<br/>
                 <!-- <img src="/images/delete1.png" weight=16 height=16 border=0 alt="Delete"> -->
                 </span>
                 <span title="'.$AppUI->_('Export').'" style="color: blue;font-size: large" class="exportq fa fa-download" onclick="qurer.run(\''.$trid.'\',\'export\');" ></span>
-                <a href="?m=outputs&rep='.$row['id'].'"><span title="'.$AppUI->_('Edit').'" style="color: blue;font-size: large" class="exportq fa fa-pencil" onclick="qurer.run(\''.$trid.'\',\'export\');" ></span></a>
+                <a href="?m=outputs&rep='.$trid.'"><span title="'.$AppUI->_('Edit').'" style="color: blue;font-size: large" class="exportq fa fa-pencil" onclick="qurer.run(\''.$trid.'\',\'export\');" ></span></a>
                 </td>
                 <!--<td align="center"><div title="'.$AppUI->_('Export').'" style="color: blue;font-size: large" class="exportq fa fa-download" onclick="qurer.run(\''.$trid.'\',\'export\');" ></div></td>-->
                 </tr>';

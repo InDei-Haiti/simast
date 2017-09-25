@@ -2425,6 +2425,8 @@ class Stater {
 				$row.='<tr>'.(!$yearShown[$yearTD]  ?  $yearCode[$yearTD] : '').$rowcode;
 				if($colspans == ''){
 					$xtmp=$this->tcomp['rows'][0]->getRName($param);
+					if($xtmp==-1)
+                        $xtmp = '0';
 					$row.='<td class="rowhead ysub" data-ptitle="'.$xtmp.'" '.$bcolspans.' data-rtitle="'.$xtmp.'" rowspan="@!@'.$rti .'@!@">'.$xtmp.'</td>'."\n";
 				}
 				$yearShown[$yearTD]=true;
