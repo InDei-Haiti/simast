@@ -14,10 +14,10 @@ $dPconfig['dbname'] =  'simast';
 //
 //'kib-now';
 // 'db11-kan';///'kangemi-test'; ///'testkario';//'mukdan';//'kawangware';//'kariobangi';////'mukuru';//'kibera';//'dandora';/////////////////'leatoto'
-//$dPconfig['dbuser'] = 'crowdl5_simast';
+$dPconfig['dbuser'] = 'crowdl5_simast';
+$dPconfig['dbpass'] = 'SImast123';
 $dPconfig['dbuser'] = 'root';
 $dPconfig['dbpass'] = '';
-//$dPconfig['dbpass'] = 'SImast123';
 //$dPconfig['dbuser'] = 'simastadmin';
 //$dPconfig['dbpass'] = 'fasil';
 $dPconfig['dbpersist'] = false;
