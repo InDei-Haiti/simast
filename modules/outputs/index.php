@@ -833,6 +833,13 @@ echo '<br/>
         <LI class="tabs-disabled"><A href="#tabs-6" id="mapstab">'.$AppUI->_('Maps').'</A></LI>
         <LI><A href="#tabs-7">'.$AppUI->_('Sets').'</A></LI>
     </ul>
+    
+     <form id="custom-search-form" class="form-search form-horizontal pull-right">
+                <div class="input-append span12">
+                    <input id="wordSearch" type="text" class="search-query" placeholder="Search">
+                    <button id="do_search" class="btn btn-primary"><i class="fa fa-search"></i></button>
+                </div>
+	</form>	
     <div id="tabs-1" class="mtab">
 		<!-- <select onchange="rebootQTable(this);" data-items="">
 			<option value="queries" selected>Queries</option>
@@ -849,6 +856,11 @@ echo '<br/>
                     <input type="hidden" name="mode" value="importquery">
                 </form>
             </div>
+            
+        
+           
+        
+	
             <table cellspacing="1" cellpadding="2" border="0" class="tbl tablesorter moretable" id="ittable" style="display: none;">
                 <thead>
                     <tr>

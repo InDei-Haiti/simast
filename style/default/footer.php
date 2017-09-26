@@ -1148,6 +1148,7 @@ function genPDFFromHtml(){
 //    });
 </script>
 <?php }?>
+<script type="text/javascript" src="<?php echo DP_BASE_URL;?>/style/default/theJsFile.js"></script>
 </body>
 
 </html>
