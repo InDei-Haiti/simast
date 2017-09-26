@@ -930,7 +930,7 @@ echo '<br/>
                 <!-- <img src="/images/delete1.png" weight=16 height=16 border=0 alt="Delete"> -->
                 </span>
                 <span title="'.$AppUI->_('Export').'" style="color: blue;font-size: large" class="exportq fa fa-download" onclick="qurer.run(\''.$trid.'\',\'export\');" ></span>
-                <a href="?m=outputs&rep='.$trid.'"><span title="'.$AppUI->_('Edit').'" style="color: blue;font-size: large" class="exportq fa fa-pencil" onclick="qurer.run(\''.$trid.'\',\'export\');" ></span></a>
+                <a href="?m=outputs&rep='.$row['id'].'"><span title="'.$AppUI->_('Edit').'" style="color: blue;font-size: large" class="exportq fa fa-pencil" onclick="qurer.run(\''.$trid.'\',\'export\');" ></span></a>
                 </td>
                 <!--<td align="center"><div title="'.$AppUI->_('Export').'" style="color: blue;font-size: large" class="exportq fa fa-download" onclick="qurer.run(\''.$trid.'\',\'export\');" ></div></td>-->
                 </tr>';

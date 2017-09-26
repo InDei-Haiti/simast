@@ -875,7 +875,7 @@ var v = null;
     $(document).ready(function(){
 //    alert("execute");
         $(".tabs-nav .tabs-selected  a").css("border-bottom","4px solid #354c8c");
-        console.log($("#toptab_\\d")); //css("border-bottom","4px solid #354c8c");
+//        console.log($("#toptab_\\d")); //css("border-bottom","4px solid #354c8c");
     });
 
 </script>
@@ -981,64 +981,65 @@ if($m=='outputs' AND isset($_GET['rep'])){
 ?>
 <script type="text/javascript">
     $(document).ready(function(){
-setTimeout(function(){
-     $('a[href="#tabs-1"]').closest("li").removeClass("tabs-selected");
-     $('a[href="#tabs-5"]').closest("li").addClass("tabs-selected");
-     $("#tabs-1").addClass("tabs-hide");
-     $("#tabs-5").removeClass("tabs-hide");
-},2000);
-
- $.post("/?m=outputs&a=reports&suppressHeaders=1&mode=updated",
-    {
-        idRep: "<?php echo $_GET['rep']?>",
-        city: "Duckburg"
-    },function(data,status){
-//        console.log(data);
-        rslt = JSON.parse(data);
-        console.log(rslt);
-        var sec = function getSectionString(sIndex,id,content,types){
-            var sectionTmpl = ["<tr id='sec_"+ sIndex+ "' data-stype='' data-sid='"+ sIndex+ "' class='slink zxrow'><td colspan='2' class='sec_ware'>"+
-                "<div style='float: left;'>Section name&nbsp;</div><div style='float:left;width: 350px;'>"+
-                "<input type='hidden' class='text offview  longwrite ichsection'  name='sec["+ id+ "][name]'><div class='rte_fld'></div>"+
-                "<div style='float: right;'>"+
-                "<span class='fbutton delbutt' onclick='reporter.delSection("+ sIndex+ ",true)' title='Remove Section'></span>"+
-                "<span class='fbutton sceditor' onclick='reporter.editSection("+ sIndex+ ",this)' title='Edit Section'></span>"+
-                "<span class='section_move section_move_up' title='Move UP'></span>"+
-                "<span class='section_move section_move_down' title='Move DOWN'/></span>"+
-                "</div><div class='sec_cont_view'></div><input type='hidden' name='sec["+ sIndex+ "][content]' class='sec_cont_all' id='cnt_id_' value='"+content+"'>"+
-                "<input type='hidden' name='sec["+ sIndex+ "][type]' class='sec_cont_type' id='ctype_id_' value='"+types+"'></td>" +
-                "<td style='width: 120px;'><span class='fbutton delbutt fhref fa fa-trash-o' onclick='reporter.delSection("+sIndex+",true)' title='Remove Section'></span><span class='fbutton sceditor fa fa-pencil' onclick='reporter.editSection("+sIndex+",this)' title='Edit Section'></span><span class='section_move section_move_up fa fa-arrow-up' title='Move UP'></span><span class='section_move section_move_down fa fa-arrow-down' title='Move DOWN'></span>"+
-                "</td></tr>"];
-                return sectionTmpl.join();
-        }
         setTimeout(function(){
-            $("#tabs-5 #rep_name").val(rslt['titre']);
-            $("#tabs-5 #rep_desc").val(rslt['entries']['rep_desc']);
-            $("#tabs-5 #rep_dept").find("option").each(function(i,e){
-                    $(this).removeAttr("selected","selected");
-                    if($(this).attr("value") == rslt['entries']['rep_dept']){
-                        $(this).attr("selected","selected");
-                    }
+             $('a[href="#tabs-1"]').closest("li").removeClass("tabs-selected");
+             $('a[href="#tabs-5"]').closest("li").addClass("tabs-selected");
+             $("#tabs-1").addClass("tabs-hide");
+             $("#tabs-5").removeClass("tabs-hide");
+        },2000);
+
+         $.post("/?m=outputs&a=reports&suppressHeaders=1&mode=updated",
+            {
+                idRep: "<?php echo $_GET['rep']?>",
+                city: "Duckburg"
+            },function(data,status){
+        //        console.log(data);
+                rslt = JSON.parse(data);
+                console.log(rslt);
+                var sec = function getSectionString(sIndex,id,content,types){
+                    var sectionTmpl = ["<tr id='sec_"+ sIndex+ "' data-stype='' data-sid='"+ sIndex+ "' class='slink zxrow'><td colspan='2' class='sec_ware'>"+
+                        "<div style='float: left;'>Section name&nbsp;</div><div style='float:left;width: 350px;'>"+
+                        "<input type='hidden' class='text offview  longwrite ichsection'  name='sec["+ id+ "][name]'><div class='rte_fld'></div>"+
+                        "<div style='float: right;'>"+
+                        "<span class='fbutton delbutt' onclick='reporter.delSection("+ sIndex+ ",true)' title='Remove Section'></span>"+
+                        "<span class='fbutton sceditor' onclick='reporter.editSection("+ sIndex+ ",this)' title='Edit Section'></span>"+
+                        "<span class='section_move section_move_up' title='Move UP'></span>"+
+                        "<span class='section_move section_move_down' title='Move DOWN'/></span>"+
+                        "</div><div class='sec_cont_view'>"+content+"</div><input type='hidden' name='sec["+ sIndex+ "][content]' class='sec_cont_all' id='cnt_id_' value='"+content+"'>"+
+                        "<input type='hidden' name='sec["+ sIndex+ "][type]' class='sec_cont_type' id='ctype_id_' value='"+types+"'></td>" +
+                        "<td style='width: 120px;'><span class='fbutton delbutt fhref fa fa-trash-o' onclick='reporter.delSection("+sIndex+",true)' title='Remove Section'></span><span class='fbutton sceditor fa fa-pencil' onclick='reporter.editSection("+sIndex+",this)' title='Edit Section'></span><span class='section_move section_move_up fa fa-arrow-up' title='Move UP'></span><span class='section_move section_move_down fa fa-arrow-down' title='Move DOWN'></span>"+
+                        "</td></tr>"];
+                        return sectionTmpl.join();
+                }
+
+                setTimeout(function(){
+                    $("#tabs-5 #rep_name").val(rslt['titre']);
+                    $("#tabs-5 #rep_desc").val(rslt['entries']['rep_desc']);
+                    $("#tabs-5 #rep_dept").find("option").each(function(i,e){
+                            $(this).removeAttr("selected","selected");
+                            if($(this).attr("value") == rslt['entries']['rep_dept']){
+                                $(this).attr("selected","selected");
+                            }
+                    });
+                    $("#tabs-5 #rep_start").val(rslt['start_date']);
+                    $("#tabs-5 #rep_end").val(rslt['end_date']);
+
+        //            alert($j(sec(1,1)).find(".breport").html());
+                        $("#second-column").css("display","none");
+                        alert(rslt['entries']['sec'][1]);
+                           var sections = rslt['entries']['sec'];
+                           for(i = 1; i<= Object.keys(sections).length; i++){
+                                $(".breport").append($j(sec(i,i,sections[i]['content'],sections[i]['type'])));
+        //                        $(".breport").find("input[name=sec["+i+"][content]]").attr('value',sections[i]['content']);
+        ////                        $(".breport").find("input[name=sec["+i+"][content]]").val(sections[i]['content']);
+        //                        $(".breport").find("input[name=sec["+i+"][type]]").val(sections[i]['type']);
+        //                        alert(sections[i]['content']);
+                           }
+
+        //                $(".breport").append($j(sec(1,1)));
+
+                },3000);
             });
-            $("#tabs-5 #rep_start").val(rslt['start_date']);
-            $("#tabs-5 #rep_end").val(rslt['end_date']);
-
-//            alert($j(sec(1,1)).find(".breport").html());
-
-                alert(rslt['entries']['sec'][1]);
-                   var sections = rslt['entries']['sec'];
-                   for(i = 1; i<= Object.keys(sections).length; i++){
-                        $(".breport").append($j(sec(i,i,sections[i]['content'],sections[i]['type'])));
-//                        $(".breport").find("input[name=sec["+i+"][content]]").attr('value',sections[i]['content']);
-////                        $(".breport").find("input[name=sec["+i+"][content]]").val(sections[i]['content']);
-//                        $(".breport").find("input[name=sec["+i+"][type]]").val(sections[i]['type']);
-//                        alert(sections[i]['content']);
-                   }
-
-//                $(".breport").append($j(sec(1,1)));
-                $("#second-column").css("display","none");
-        },3000);
-    });
 
 
 //        if($("#qtable")){

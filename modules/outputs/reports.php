@@ -338,6 +338,7 @@ if ($_POST ['mode'] == 'save' || $_POST ['mode'] == 'update') {
 			$q->setLimit(1);
 			$rdata = $q->loadList();
 //			echo json_encode($_POST['idRep']);return;
+//			echo json_encode($rdata);return;
 			$rdata = $rdata [0];
 			$entries = array();
 			if (count($rdata) > 0) {
