@@ -22,6 +22,28 @@ $hashList = $q->loadList();
 
 <!--Copying highCharts library in codes-->
 <!--<script src="https://code.highcharts.com/highcharts.js"></script>-->
+<style>
+    .title[title]{
+        position:relative;
+    }
+    .title[title]:after{
+        content:attr(title);
+        color:#fff;
+        background:#333;
+        background:rgba(51,51,51,0.75);
+        padding:5px;
+        position:absolute;
+        left:-9999px;
+        opacity:0;
+        bottom:100%;
+        white-space:nowrap;
+        -webkit-transition:0.25s linear opacity;
+    }
+    .title[title]:hover:after{
+        left:5px;
+        opacity:1;
+    }
+</style>
 <script src="<?php echo DP_BASE_URL?>/style/default/highcharts.js"></script>
 <script src="<?php echo DP_BASE_URL?>/style/default/exporting.js"></script>
 <!--<script src="https://code.highcharts.com/modules/exporting.js"></script>-->
@@ -381,7 +403,7 @@ $hashList = $q->loadList();
                                 }
                                 if($grapher['type']=='TABLE'){
                                     $graph_data = gzdecode($grapher['data_item']);
-                                    echo '<div id="table-'.$i.'-'.$index.'-1" class="card resizable" style="width: 600px;height:400px;resize: both;overflow-y: scroll;">';
+                                    echo '<div id="table-'.$i.'-'.$index.'-1" class="card resizable title" style="width: 600px;height:400px;resize: both;overflow-y: scroll;" title="'.$grapher['describe'].'">';echo $grapher['describe'];
                                     eval("echo $graph_data;");
                                     echo '</div>';
 

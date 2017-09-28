@@ -106,10 +106,11 @@ if ($_POST ['mode'] == 'save' || $_POST ['mode'] == 'update') {
 			$q->addTable('reports');
 			$q->addWhere('id="' . $rid . '"');
 			$datab = $q->loadResult();
-			$sql = 'select title,end_date, start_date,entries from reports where id="' . $rid . '"';
+			$sql = 'select title,end_date,start_date,entries from reports where id="' . $rid . '"';
 			$res = mysql_query($sql);
 			if ($res) {
 				$datas = mysql_fetch_assoc($res);
+				//echo $datab;
 				eval ('$bdd=' . gzdecode($datab) . ';');
 				eval ('$bde=' . gzdecode($datas ["entries"]) . ';');
 				$datas ["backdoor"] = $bdd;
@@ -122,6 +123,36 @@ if ($_POST ['mode'] == 'save' || $_POST ['mode'] == 'update') {
 				return;
 			}
 			break;
+
+        case 'entries':
+            require_once $AppUI->getSystemClass('systemImport');
+            $rid = ( int )($_GET ['dbrid']);
+            $df = $AppUI->getPref('SHDATEFORMAT');
+            $q = new DBQuery ();
+            $q->addQuery('backdoor');
+            $q->addTable('reports');
+            $q->addWhere('id="' . $rid . '"');
+            $datab = $q->loadResult();
+            $sql = 'select entries from reports where id="' . $rid . '"';
+            $res = mysql_query($sql);
+            if ($res) {
+                $datas = mysql_fetch_assoc($res);
+                //echo $datab;
+                //eval ('$bdd=' . gzdecode($datab) . ';');
+                eval ('$bde=' . gzdecode($datas ["entries"]) . ';');
+                //$datas ["backdoor"] = $bdd;
+                $datas ["entries"] = $bde;
+                echo '<pre>';
+                var_dump($datas ["entries"]);
+                echo '</pre>';
+                /*$sdate = new CDate ($datas ["start_date"]);
+                $edate = new CDate ($datas ["end_date"]);
+                $datas ['start_date'] = ($sdate->getYear() > 0 ? $sdate->format($df) : '');
+                $datas ['end_date'] = ($edate->getYear() > 0 ? $edate->format($df) : '');*/
+                //echo json_encode($datas);
+                return;
+            }
+            break;
 
 		case '2pdf':
 			$zkey = trim($_GET['zkey']);

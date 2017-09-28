@@ -983,7 +983,8 @@ ul#box-home li {
 }
 
 .fbox, .fbox2 {
-    background-color: #08245B;
+    /*background-color: #08245B;*/
+    background-color: #354c8c;;
     color: #fff;
     font-size: 7pt;
     border: 2px solid #799DFF;
@@ -1671,19 +1672,38 @@ div#shadow{
 }
 
 #graph_tab_holder{
-	width: 16px;
+	/*width: 16px;
 	height: 16px;
 	background: url("images/chart.png") no-repeat;
 	margin: 3px;	
-	display:none;
+	display:none;*/
+
+    margin: 3px;
+    margin-left: 0px;
+    display:none;
+}
+
+#pick_graph{
+    display: block;
+    width: 16px;
+    height: 16px;
+    /*background: url("images/table.png") no-repeat;*/
 }
 
 #stat_tab_holder{
+    /*width: 16px;
+    height: 16px;
+    background: url("images/table.png") no-repeat;*/
+    margin: 3px;
+    margin-left: 0px;
+    display:none;
+}
+
+#pick_table{
+    display: block;
     width: 16px;
     height: 16px;
-    background: url("images/table.png") no-repeat;
-    margin: 3px;
-    display:none;
+    /*background: url("images/table.png") no-repeat;*/
 }
 
 #tthome{

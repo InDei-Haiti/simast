@@ -8,7 +8,7 @@
 $dPconfig['dbtype'] = 'mysql';
 $dPconfig['dbhost'] = 'localhost';
 $dPconfig['dbname'] =  'simast';
-// $dPconfig['dbname'] =  'crowdl5_simast';
+$dPconfig['dbname'] =  'crowdl5_simast';
 //$dPconfig['dbname'] =  'leaadmin_kario';
 // 'kib-now';'rtt2';
 //

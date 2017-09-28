@@ -2080,29 +2080,29 @@ class Wizard {
 									$q->addWhere('id='.$drow['ref']);
 									$valt = $q->loadResult();
 								}else{
-									if(isset($localflds[$dfld]["sysv"]) && $localflds[$dfld]["sysv"]==="SysDepartment"){
-										if(strlen($drow[$dfld])<2){
-											$drow[$dfld] = '0'.$drow[$dfld];
-											$sqlup = 'UPDATE `'.$this->tableName.'` SET `'.$dfld.'`="'.$drow[$dfld].'" WHERE id='.$drow['id'];
-											db_exec($sqlup);
-										}
-									}else
-										
-									if(isset($localflds[$dfld]["sysv"]) && $localflds[$dfld]["sysv"]==="SysCommunes"){
-										if(strlen($drow[$dfld])<6){
-											$drow[$dfld] = '0'.$drow[$dfld];
-											$sqlup = 'UPDATE `'.$this->tableName.'` SET `'.$dfld.'`="'.$drow[$dfld].'" WHERE id='.$drow['id'];
-											db_exec($sqlup);
-										}
-									}
-									
-									if(isset($localflds[$dfld]["sysv"]) && $localflds[$dfld]["sysv"]==="SysCommunalSection"){
-										if(strlen($drow[$dfld])<8){
-											$drow[$dfld] = '0'.$drow[$dfld];
-											$sqlup = 'UPDATE `'.$this->tableName.'` SET `'.$dfld.'`="'.$drow[$dfld].'" WHERE id='.$drow['id'];
-											db_exec($sqlup);
-										}
-									}
+                                    /*if(isset($localflds[$dfld]["sysv"]) && $localflds[$dfld]["sysv"]==="SysDepartment"){
+                                        if(strlen($drow[$dfld])<2){
+                                            $drow[$dfld] = '0'.$drow[$dfld];
+                                            $sqlup = 'UPDATE `'.$this->tableName.'` SET `'.$dfld.'`="'.$drow[$dfld].'" WHERE id='.$drow['id'];
+                                            db_exec($sqlup);
+                                        }
+                                    }else
+
+                                    if(isset($localflds[$dfld]["sysv"]) && $localflds[$dfld]["sysv"]==="SysCommunes"){
+                                        if(strlen($drow[$dfld])<6){
+                                            $drow[$dfld] = '0'.$drow[$dfld];
+                                            $sqlup = 'UPDATE `'.$this->tableName.'` SET `'.$dfld.'`="'.$drow[$dfld].'" WHERE id='.$drow['id'];
+                                            db_exec($sqlup);
+                                        }
+                                    }
+
+                                    if(isset($localflds[$dfld]["sysv"]) && $localflds[$dfld]["sysv"]==="SysCommunalSection"){
+                                        if(strlen($drow[$dfld])<8){
+                                            $drow[$dfld] = '0'.$drow[$dfld];
+                                            $sqlup = 'UPDATE `'.$this->tableName.'` SET `'.$dfld.'`="'.$drow[$dfld].'" WHERE id='.$drow['id'];
+                                            db_exec($sqlup);
+                                        }
+                                    }*/
 									$valt = $this->printFieldValue($localflds[$dfld], $drow[$dfld]);
 									
 									

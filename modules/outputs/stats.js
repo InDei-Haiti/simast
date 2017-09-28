@@ -947,7 +947,15 @@ sFrames.prototype.run = function(){
 				    $j("#tthome").html(msg);
 				    msg=null;
 					if (!$j("#tthome").find("table").hasClass("empty")) {
-						$j("#stat_tab_holder").clone(true).addClass("stabh_vis").prependTo("#tthome").show();
+						//$j("#stat_tab_holder").clone(true).addClass("stabh_vis").prependTo("#tthome").show();
+						$stat_tab = $j("#stat_tab_holder").clone(true);
+                        /*$stat_tab.append(
+							'<table>\n' +
+                            '            <tr><td><span id="pick_table" class="fa fa-table" style="color: #354c8c" title="Pick whole Statistic table"></span></td><td><span class="fa fa-file-text" style="color: #354c8c" onclick="popupDescStats()" title="Description"></span></td></tr>\n' +
+                            '        </table>'
+						);*/
+                        $stat_tab.find("#pick_table").addClass("stabh_vis");
+                        $stat_tab.prependTo("#tthome").show();
 						reporter.reget();
 						$j(".stab_let").attr("disabled", false);
 						grapher.init();
@@ -1050,7 +1058,7 @@ buttons.push({
 
     }
 });
-buttons.push({
+/*buttons.push({
     text: "Add Table To Dashboard",
     onclick: function(){
         //alert(urlData);
@@ -1072,7 +1080,24 @@ buttons.push({
         });
 
     }
-});
+});*/
+function addTableToDashboard(){
+    var $statTable = $j("#tthome").find("table");
+    $statTable = JSON.stringify('<table cellpadding="2" cellspacing="1" border="0" class="tbl sttable">'+$statTable.html()+'</table>');
+
+    gpgr.chooseSet(urlData, 'TABLE', null, project);
+    $j.get("/?m=outputs&mode=getSet&suppressHeaders=1", function (msg) {
+        if (msg && msg !== 'fail') {
+            msg = $j.parseJSON(msg);
+            $j('#chooseset').empty();
+            $j('#chooseset').append('<option value=""></option>');
+            $.each(msg, function(iii,e){
+                $j('#chooseset').append('<option value="'+e.id+'">'+e.setname+'</option>');
+            });
+        }
+    });
+
+}
 var grapher = (function(my){
 	var dataset = [], cols = [], rows = [], $table, boxes, rowb = [], colb = [], vstate = false, palettes=[], currentPalette=0,pgData,colorLock=false;
 	var dataSend = function(){

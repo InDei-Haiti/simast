@@ -318,8 +318,8 @@ if($_POST['mode']=='save'){
         $_POST['data_item'] = file_get_contents($baseDir . '/files/tmp/' . $_SESSION ['fileNameCshBack'] . '.tss');
     }
     //INSERT INTO `dashboard_grapher`(`id`, `set_id`, `project_id`, `type`, `query_save`, `data_item`)
-    $sql = "INSERT INTO dashboard_grapher(`set_id`, project_id, `type`, query_save, data_item) VALUES 
-    (".$_POST['setid'].",".$_POST['project'].",'".$_POST['type']."',null,'".mysql_real_escape_string(gzencode(var_export($_POST['data_item'],true), 9, FORCE_GZIP))."')";
+    $sql = "INSERT INTO dashboard_grapher(`set_id`, project_id, `type`, query_save, data_item, descbribe) VALUES 
+    (".$_POST['setid'].",".$_POST['project'].",'".$_POST['type']."',null,'".mysql_real_escape_string(gzencode(var_export($_POST['data_item'],true), 9, FORCE_GZIP))."', '".$_POST['descbribe']."')";
     //echo $sql;
     $zid = 0;
     $res = db_exec($sql);
@@ -930,7 +930,7 @@ echo '<br/>
                 <!-- <img src="/images/delete1.png" weight=16 height=16 border=0 alt="Delete"> -->
                 </span>
                 <span title="'.$AppUI->_('Export').'" style="color: blue;font-size: large" class="exportq fa fa-download" onclick="qurer.run(\''.$trid.'\',\'export\');" ></span>
-                <a href="?m=outputs&rep='.$trid.'"><span title="'.$AppUI->_('Edit').'" style="color: blue;font-size: large" class="exportq fa fa-pencil" onclick="qurer.run(\''.$trid.'\',\'export\');" ></span></a>
+                <span title="'.$AppUI->_('Edit').'" style="color: blue;font-size: large" class="qreditor fa fa-pencil" data-id="'.$row['id'].'"></span>
                 </td>
                 <!--<td align="center"><div title="'.$AppUI->_('Export').'" style="color: blue;font-size: large" class="exportq fa fa-download" onclick="qurer.run(\''.$trid.'\',\'export\');" ></div></td>-->
                 </tr>';
@@ -1098,6 +1098,16 @@ if($lpo === true) {
             <tr>
                 <td>Description</td>
                 <td><textarea id='fdesc' style='width:90%'></textarea></td>
+            </tr>
+        </table>
+    </div>
+    <div id="dbtabdesc" title="Stats Description" style="display: none">
+        <table style="width:100%">
+            <tr>
+                <td><label>Description</label></td>
+            </tr>
+            <tr>
+                <td><textarea type='text' id='tabdesc' style='width:100%'></textarea></td>
             </tr>
         </table>
     </div>
@@ -1459,13 +1469,28 @@ echo '</table>';
 echo '</div>';
 
 echo '<div id="dbset" title="Choose set" style="display: none">
-    <select id="chooseset" style="width: 50%">
-        <option value=""></option>';
-        foreach ($all as $i=>$set){
-            echo '<option value="'.$set['id'].'">'.$set['setname'].'</option>';
-        }
-echo '</select>
-</div>';
+            <table style="width:100%">
+                <tr>
+                    <td><label>Select Set</label></td>
+                </tr>
+                <tr>
+                    <td>
+                        <select id="chooseset" style="width: 50%">
+                                <option value=""></option>';
+                                foreach ($all as $i=>$set){
+                                    echo '<option value="'.$set['id'].'">'.$set['setname'].'</option>';
+                                }
+                        echo  '</select>
+                    </td>
+                </tr>
+                <tr>
+                    <td><label>Description</label></td>
+                </tr>
+                <tr>
+                    <td><textarea id="desc_dash_item" style="width:100%"></textarea></td>
+                </tr>
+            </table>
+      </div>';
 
 
 $tpl = new Templater($baseDir.'/modules/outputs/report.tpl');

@@ -173,7 +173,8 @@ echo '<div id="tabs-4" class="mtab">
 
 			</form>
 		</div><br>
-		<div id="stat_tab_holder" title="Pick whole Statistic table" data-rep_item="stat" class="ianchor"></div>
+		<div id="stat_tab_holder" title="Pick whole Statistic table" data-rep_item="stat" class="ianchor">
+		</div>
 		<span id="tthome">
 		'.$thtml.'
 		</span>
@@ -181,6 +182,7 @@ echo '<div id="tabs-4" class="mtab">
 	</p>
 </div>
 </div>
+
 <form method="post" action="/?m=outputs&suppressHeaders=1&a=calc" style="width: 50px;float:left;" name="stsave">
 <input type="hidden" name="mode" value="save">
 </form>';
