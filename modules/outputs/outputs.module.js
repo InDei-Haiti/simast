@@ -1344,13 +1344,15 @@ var pager = function(){
             buttons: {
                 "Save": function(){
                     		setid = $j('#chooseset').val();
-                    		descbribe = $j('#desc_dash_item').val();
+                    		describe = $j('#desc_dash_item').val();
 							$j.ajax({
 								type: "post",
-								data: urlData+'&mode=grapher_save&type='+type+'&data_item='+JSON.stringify(data_item)+'&setid='+setid+'&descbribe='+descbribe+'&project='+project,
+								data: urlData+'&mode=grapher_save&type='+type+'&data_item='+JSON.stringify(data_item)+'&setid='+setid+'&describe='+describe+'&project='+project,
 								url: "/?m=outputs&&suppressHeaders=1",
 								success: function(msg){
-									alert(msg)/*.delay(2000).fadeOut(3000)*/;
+                                    alert(msg);
+                                    $dbox.dialog( "close" );
+									//alert(msg)/*.delay(2000).fadeOut(3000)*/;
 								}
 							});
                 },
