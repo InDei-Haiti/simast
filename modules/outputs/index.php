@@ -396,9 +396,7 @@ if($_POST['mode']=='save'){
 				$sql = 'SELECT DISTINCT('.$field.') FROM '.$querysaveaj;
 				$resdis = db_exec($sql);
 				while ( $rowdatadis = db_fetch_assoc( $resdis ) ) {
-				    echo $rowdatadis[$tab[1]];
-                    $textVal = $wz->getValues($fldinfo['type'],$fldinfo['sysv'],$rowdatadis[$tab[1]]);
-                    echo $textVal;
+				    $textVal = $wz->getValues($fldinfo['type'],$fldinfo['sysv'],$rowdatadis[$tab[1]]);
                     $textVal = strval($textVal);
                     $textVal = preg_replace('/\\\\/', '', $textVal);
                     //$textVal = json_encode($textVal);
