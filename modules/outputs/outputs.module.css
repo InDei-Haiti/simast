@@ -1058,14 +1058,20 @@ ul.rcgetter {
 
 div#fsrc {
     border: 3px solid #96A19F;
-    height: 100px;
+    min-height: 550px;
     margin: 15px;
     padding: 10px;
     text-align: center;
-    width: 840px;
-    overflow: auto;
+    width: 180px;
+    /*overflow: auto;*/
+    float:left;
 }
 
+/*Ajout directive pour boxz*/
+#boxz{
+    margin-top:15px;
+}
+/*Ajout directive pour boxz*/
 div.dgetter {
     border: 3px solid #96A19F !important;
     text-align: center;
@@ -1108,7 +1114,7 @@ div.dgetter {
 }
 
 .bbox {
-    width: 95%;
+    /*width: 95%;*/
     margin-bottom: 20px;
     float: left;
 }

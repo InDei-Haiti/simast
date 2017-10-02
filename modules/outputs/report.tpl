@@ -109,7 +109,7 @@
                 <ul id="box-home" style="list-style: none; float: left;"></ul>
             </div>
         </div>
-        <div class="bbox">
+        <div class="bbox" id="boxz">
             <div id="fsrcr" class="dgetter"><span class="areaName">Rows</span>
                 <ul id="rbox" class="accepter rcgetter"></ul>
             </div>
@@ -170,17 +170,17 @@
                     </tr>
                 </table>
                 <ul class="statcolx">
-                    <li><input type="button" class="button stab_let" value="Go" disabled="disabled"
+                    <li><input type="button" class="button ce pi ahr stab_let" value="Go" disabled="disabled"
                                onclick="stater.run();" id="launchbut">&nbsp;&nbsp;&nbsp;</li>
-                    <li><input type="button" class="button stab_let purestat" value="Pop Out"
+                    <li><input type="button" class="button ce pi ahr stab_let purestat" value="Pop Out"
                                onclick="popTable('tthome');" disabled="disabled"></li>
-                    <li><input type="submit" class="button stab_let purestat" value="Export " disabled="disabled"
+                    <li><input type="submit" class="button ce pi ahr stab_let purestat" value="Export " disabled="disabled"
                                onclick="document.stsave.submit();"></li>
-                    <li><input type="submit" class="button stab_let" value="Save Query" disabled="disabled"
+                    <li><input type="submit" class="button ce pi ahr stab_let" value="Save Query" disabled="disabled"
                                onclick="stater.saveDialog();"></li>
-                    <li><input type="button" class="button stab_let" value="Clear" onclick="stater.pclean();"
+                    <li><input type="button" class="button ce pi ahr stab_let" value="Clear" onclick="stater.pclean();"
                                id="bclean"></li>
-                    <li><input type="button" class="button stab_let" value="Chart" onclick="grapher.start();"
+                    <li><input type="button" class="button ce pi ahr stab_let" value="Chart" onclick="grapher.start();"
                                id="gr_but"></li>
                     <li>
                         <div id="chart_pref">
