@@ -318,15 +318,16 @@ if($_POST['mode']=='save'){
         $_POST['data_item'] = file_get_contents($baseDir . '/files/tmp/' . $_SESSION ['fileNameCshBack'] . '.tss');
     }
     //INSERT INTO `dashboard_grapher`(`id`, `set_id`, `project_id`, `type`, `query_save`, `data_item`)
-    $sql = "INSERT INTO dashboard_grapher(`set_id`, project_id, `type`, query_save, data_item, descbribe) VALUES 
-    (".$_POST['setid'].",".$_POST['project'].",'".$_POST['type']."',null,'".mysql_real_escape_string(gzencode(var_export($_POST['data_item'],true), 9, FORCE_GZIP))."', '".$_POST['descbribe']."')";
+    $describe = $_POST['describe'];
+    $sql = "INSERT INTO dashboard_grapher(`set_id`, project_id, `type`, query_save, data_item, description) VALUES 
+    (".$_POST['setid'].",".$_POST['project'].",'".$_POST['type']."',null,'".mysql_real_escape_string(gzencode(var_export($_POST['data_item'],true), 9, FORCE_GZIP))."', '".$describe."')";
     //echo $sql;
     $zid = 0;
     $res = db_exec($sql);
     if($res)
         $zid = db_insert_id();
     if (!($zid > 0)) {
-        $zid = 'fail';
+        $zid = 'insert fail';
     }else{
         echo "insert successfully";
     }

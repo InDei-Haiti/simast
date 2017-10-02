@@ -1038,7 +1038,7 @@ chartz.prototype.doSave = function(pdata){
 }
 var buttons = Highcharts.getOptions().exporting.buttons.contextButton.menuItems;
 
-buttons.push({
+/*buttons.push({
     text: "Add Graph To Dashboard",
     onclick: function(){
         //alert(urlData);
@@ -1057,7 +1057,7 @@ buttons.push({
         });
 
     }
-});
+});*/
 /*buttons.push({
     text: "Add Table To Dashboard",
     onclick: function(){
@@ -1098,6 +1098,23 @@ function addTableToDashboard(){
     });
 
 }
+/*function addTableToDashboard(){
+    var $statTable = $j("#tthome").find("table");
+    $statTable = JSON.stringify('<table cellpadding="2" cellspacing="1" border="0" class="tbl sttable">'+$statTable.html()+'</table>');
+
+    gpgr.chooseSet(urlData, 'TABLE', null, project);
+    $j.get("/?m=outputs&mode=getSet&suppressHeaders=1", function (msg) {
+        if (msg && msg !== 'fail') {
+            msg = $j.parseJSON(msg);
+            $j('#chooseset').empty();
+            $j('#chooseset').append('<option value=""></option>');
+            $.each(msg, function(iii,e){
+                $j('#chooseset').append('<option value="'+e.id+'">'+e.setname+'</option>');
+            });
+        }
+    });
+
+}*/
 var grapher = (function(my){
 	var dataset = [], cols = [], rows = [], $table, boxes, rowb = [], colb = [], vstate = false, palettes=[], currentPalette=0,pgData,colorLock=false;
 	var dataSend = function(){
