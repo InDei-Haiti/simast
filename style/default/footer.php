@@ -838,6 +838,7 @@ var v = null;
 			$j("#tfilter").show(); */
 		</script>
 <script type="text/javascript" src="modules/outputs/progressBar.js"></script>
+<script src="<?php echo DP_BASE_URL?>/modules/wizard/filter.js"></script>
 <?php
 
 }

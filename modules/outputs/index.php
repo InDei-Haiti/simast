@@ -841,6 +841,44 @@ echo '<br/>
                 </div>
 	</form>	
     <div id="tabs-1" class="mtab">
+    <div align="left" style="background:white;margin-top:2px;padding: 10px"><form id="filterform" name="filterform" action="/index.php?m=projects&amp;a=view&amp;project_id=367&amp;tab=6" method="get">
+					<fieldset id="filters" style="margin-left:-7px; width: 88%" class="collapsible  header_collapsible">
+	    	<legend onclick="if($(\'#filterstab\').is(\':hidden\')){$(\'#filterstab\').show();document.getElementById(\'filters\').classList.remove(\'collapsed\');}else{$(\'#filterstab\').hide();document.getElementById(\'filters\').classList.add(\'collapsed\');}" style="color: #08245b;"><b>Filtres</b></legend>
+					<table id="filterstab" style="display: block;"><tbody><tr><td colspan="4">
+					&nbsp;Add filter: <select id="select_field" onchange="setTableFilter()"><option></option><option value="entry_date">Creation date</option><option value="last_update_date">Dernier update</option><option value="user_creator">Creation User</option><option value="user_last_update">Last User Update</option><option value="fld_0">Département</option><option value="fld_1">Commune</option><option value="fld_2">Section Comunnale</option><option value="fld_3">Milieu de residence</option><option value="fld_4">Ville / Quartier</option><option value="fld_5">clé</option><option value="fld_6">Identifiant</option><option value="fld_7">Habitation/Localité/quartier</option><option value="fld_8">Participation du ménage a l\'enquete</option><option value="fld_9">Latitude</option><option value="fld_10">Longitude</option><option value="fld_11">Altitude</option><option value="fld_12">Accuracy</option><option value="fld_13">Chef de Ménage</option><option value="fld_14">Téléphone1</option><option value="fld_15">Vulnerability group</option><option value="fld_16">Information complete</option><option value="fld_17">Weighted sum of deprivations</option><option value="fld_18">Haiti\'s deprivations and Vulnerab</option><option value="fld_19">Food Insecurity</option><option value="fld_20">Rank of households</option><option value="fld_21">Kore Lavi</option></select></td></tr></tbody></table></fieldset><fieldset id="options" style="margin-left: -7px; width: 88%" class="collapsible  header_collapsible">
+					<legend onclick="if($(\'#optionstab\').is(\':hidden\')){
+						$(\'#optionstab\').show();document.getElementById(\'options\').classList.remove(\'collapsed\');
+	                 }else{
+			           $(\'#optionstab\').hide();document.getElementById(\'options\').classList.add(\'collapsed\');
+	                 }" style="color: #08245b;"><b>Options</b></legend>
+			                 <table id="optionstab" style="display: block;">
+			                 <tbody>
+			                 
+							<tr>
+								<td style="width:1%;margin: 0;padding: 0;border: 0;outline: 0;font-size: 100%;vertical-align: baseline;background: transparent;">
+									<label for="available_columns">Available Columns</label>
+									<br>
+									<select id="available_columns" multiple="multiple" size="10" style="min-width:150px"><option value="entry_date">Creation date</option><option value="last_update_date">Dernier update</option><option value="user_creator">Creation User</option><option value="user_last_update">Last User Update</option><option value="fld_2">Section Comunnale</option><option value="fld_5">clé</option><option value="fld_6">Identifiant</option><option value="fld_7">Habitation/Localité/quartier</option><option value="fld_8">Participation du ménage a l\'enquete</option><option value="fld_9">Latitude</option><option value="fld_10">Longitude</option><option value="fld_11">Altitude</option><option value="fld_12">Accuracy</option><option value="fld_14">Téléphone1</option><option value="fld_16">Information complete</option><option value="fld_17">Weighted sum of deprivations</option></select>
+								</td>
+								<td style="width:1%;margin: 0;padding: 5px;border: 0;outline: 0;font-size: 100%;background: transparent;" align="center">
+									<input type="button" value="→" onclick="addRemoveOption(\'available_columns\',\'selected_columns\')"><br><br>
+									<input type="button" value="←" onclick="addRemoveOption(\'selected_columns\',\'available_columns\')">
+								</td>
+								<td style="width:1%;margin: 0;padding: 0;border: 0;outline: 0;font-size: 100%;vertical-align: baseline;background: transparent;">
+									<label for="selected_columns">Selected Columns</label>
+									<br>
+									<select id="selected_columns" multiple="multiple" name="selected_columns[]" size="10" style="min-width:150px"><option value="fld_0">Département</option><option value="fld_1">Commune</option><option value="fld_3">Milieu de residence</option><option value="fld_4">Ville / Quartier</option><option value="fld_13">Chef de Ménage</option><option value="fld_15">Vulnerability group</option><option value="fld_18">Haiti\'s deprivations and Vulnerab</option><option value="fld_19">Food Insecurity</option><option value="fld_20">Rank of households</option><option value="fld_21">Kore Lavi</option></select>
+								</td>
+								<td style="margin: 0;padding: 5px;border: 0;outline: 0;font-size: 100%;background: transparent;">
+									<input type="button" id="btns_up" value="↑" onclick="moveUpDown(\'selected_columns\',\'Up\')"><br><br>
+									<input type="button" value="↓" onclick="moveUpDown(\'selected_columns\',\'Down\')">
+								</td>
+							</tr>
+						</tbody>
+				   </table>
+			</fieldset><input type="button" class="ce pi ahr" value="Importer" onclick="dialogNewClient(91);">  <input type="button" class="ce pi ahr" value="Ajouter Nouveau" onclick="window.location=\'./index.php?m=wizard&amp;a=form_useed&amp;fid=91&amp;todo=addedit\'"><input id="search" type="hidden" name="search" style="margin-left:10px;" placeholder="Rechercher">
+	            	<input type="button" class="ce pi ahr" value="Clear" onclick="window.location=\'/index.php?m=projects&amp;a=view&amp;project_id=367&amp;tab=6\'">
+	                <input type="button" class="ce pi ahr" value="Apply" id="submitButton" onclick=" window.location.href = joinList(arrayUnique(linkToArray(window.location.href).concat(serialize(document.filterform)))); "> <span style="color:#04B404">Filter on</span></form></div>
 		<!-- <select onchange="rebootQTable(this);" data-items="">
 			<option value="queries" selected>Queries</option>
 			<option value="items">Report Items</option>

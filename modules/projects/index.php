@@ -379,6 +379,7 @@ if ($oldtemplate) {
 	//require_once(DP_BASE_DIR . '/modules/projects/vw_idx_proposed.php');
 	?>
     <br/>
+	
 <div class="card">
     <!--<div class="block-header">
         <h2 style="border-bottom: 1px solid #d0d0d0;padding-bottom: 10px">Projects</h2>

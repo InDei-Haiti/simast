@@ -119,7 +119,7 @@ var trRows;
 function setTableFilter(){
 	//var trRows;
 	console.log(trRows);
-	var filterstab = document.getElementById('filterstab')
+	var filterstab = document.getElementById('filterstab');
 	var val = document.getElementById('select_field').value;
 	console.log(val);
 	if(val!="---" && trRows[val])
