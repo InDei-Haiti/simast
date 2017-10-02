@@ -396,7 +396,13 @@ if($_POST['mode']=='save'){
 				$sql = 'SELECT DISTINCT('.$field.') FROM '.$querysaveaj;
 				$resdis = db_exec($sql);
 				while ( $rowdatadis = db_fetch_assoc( $resdis ) ) {
-					$allfldq[$keyn]['value'][$rowdatadis[$tab[1]]] = $wz->getValues($fldinfo['type'],$fldinfo['sysv'],$rowdatadis[$tab[1]]);
+				    $textVal = $wz->getValues($fldinfo['type'],$fldinfo['sysv'],$rowdatadis[$tab[1]]);
+                    $textVal = strval($textVal);
+                    $textVal = preg_replace('/\\\\/', '', $textVal);
+                    //$textVal = json_encode($textVal);
+                    $forStore = str_replace('"', '', $forStore);
+                    $textVal = str_replace('"', '', $textVal);
+					$allfldq[$keyn]['value'][$rowdatadis[$tab[1]]] = $textVal;
 				}
 			}
 		}
@@ -420,12 +426,13 @@ if($_POST['mode']=='save'){
 					//$forStore = $wz->getValues($fldinfo['type'],$fldinfo['sysv'],$forStore);
 					$forStore = $fldinfo['value'][$forStore];
 				}
-				/*if($key=='wform_81_fld_63')
+				/*if($key=='wform_81_fld_24')
 				    echo strval($forStore).' ';*/
 				$forStore = strval($forStore);
 				if($forStore=='0')
                     $forStore = '-1';
-				$forStore = json_encode($forStore);
+                $forStore = utf8_encode($forStore);
+				//$forStore = json_encode($forStore);
 				$forStore = str_replace('"', '', $forStore);
 				$nfei->store ($forStore);
 			}

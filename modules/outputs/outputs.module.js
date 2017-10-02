@@ -4072,5 +4072,3 @@ function populateSection(commune,section){
 		
 	}
 }
-
-

@@ -1098,11 +1098,8 @@ function addTableToDashboard(){
     });
 
 }
-/*function addTableToDashboard(){
-    var $statTable = $j("#tthome").find("table");
-    $statTable = JSON.stringify('<table cellpadding="2" cellspacing="1" border="0" class="tbl sttable">'+$statTable.html()+'</table>');
-
-    gpgr.chooseSet(urlData, 'TABLE', null, project);
+function addGraphToDashboard(){
+    gpgr.chooseSet(urlData, 'GRAPH', graph_data, project);
     $j.get("/?m=outputs&mode=getSet&suppressHeaders=1", function (msg) {
         if (msg && msg !== 'fail') {
             msg = $j.parseJSON(msg);
@@ -1114,7 +1111,7 @@ function addTableToDashboard(){
         }
     });
 
-}*/
+}
 var grapher = (function(my){
 	var dataset = [], cols = [], rows = [], $table, boxes, rowb = [], colb = [], vstate = false, palettes=[], currentPalette=0,pgData,colorLock=false;
 	var dataSend = function(){
