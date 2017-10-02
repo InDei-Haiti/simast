@@ -220,7 +220,7 @@
         <ul style="list-style-type: none;margin: 0px !important;    -webkit-padding-start: 0px !important;">
             <li style="display: inline-block;margin:0px;border: 1px solid #eceeef !important;padding:5px;width: 50px;height: 30px"><span id="pick_graph" class="fa fa-bar-chart" style="color: #354c8c" title="Pick whole Statistic table"></span></li>
             <!--<li style="display: inline-block;margin-left:-3px;border: 1px solid #eceeef;border-left:none;padding:5px;width: 50px;height: 30px"><span class="fa fa-file-text" style="color: #354c8c" onclick="popupDescStats()" title="Description"></span></li>-->
-            <li style="display: inline-block;margin-left:-3px;border: 1px solid #eceeef;border-left:none;padding:5px;width: 50px;height: 30px" onclick="addTableToDashboard()"><span class="fa fa-dashboard" style="color: #354c8c" title="Add to Dashboard"></span></li>
+            <li style="display: inline-block;margin-left:-3px;border: 1px solid #eceeef;border-left:none;padding:5px;width: 50px;height: 30px" onclick="addGraphToDashboard()"><span class="fa fa-dashboard" style="color: #354c8c" title="Add to Dashboard"></span></li>
         </ul>
     </div>
     <div id="graph_home">

@@ -657,6 +657,8 @@ function resultBuilder($qmode) {
                 $forStorewjson = $tempforStore = preg_replace('/\\\\/', '', $forStore);
 				$forStore = json_encode($forStore);
 				$forStore = str_replace('"', '', $forStore);
+				/*if($hcode=='wform_81_fld_24')
+				echo $forStorewjson;*/
 				if($hcodeArray['sysv'] != 'SysCommunalSection'){
 					$forStore = stripslashes($forStore);
 					$forStore = stripslashes($forStore);
