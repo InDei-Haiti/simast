@@ -1058,12 +1058,12 @@ ul.rcgetter {
 
 div#fsrc {
     border: 3px solid #96A19F;
-    min-height: 550px;
+    min-height: 460px;
     margin: 15px;
     padding: 10px;
     text-align: center;
     width: 180px;
-    /*overflow: auto;*/
+    overflow: auto;
     float:left;
 }
 
@@ -1391,11 +1391,19 @@ div#shadow{
 
 .statcolx{
 	float: left;
-	margin: 2px !important;
+    margin-left: -650px;
+    margin-top: 190px;
 	padding-left: 15px !important;
 	position: relative;
 	top: 15px;
 	list-style: none;
+}
+
+ul.statcolx li{
+    display: inline-block;
+    float:left;
+    margin-left: 7px;
+
 }
 
 .bfg{
