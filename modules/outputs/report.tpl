@@ -194,7 +194,7 @@
                                 <option value="geoChart">Geo Chart</option>
                             </select><br>
                             <span style="width: 100%;float:left;">
-                                <input type="button" value="Show" class="text" onclick="grapher.build()">
+                                <input type="button" value="Show" class="button ce pi ahr text" onclick="grapher.build()">
                                 <div class="chrt_load"></div>
                             </span>
                         </div>

@@ -986,8 +986,8 @@ ul#box-home li {
     /*background-color: #08245B;*/
     background-color: #354c8c;;
     color: #fff;
-    font-size: 7pt;
-    border: 2px solid #799DFF;
+    /*font-size: 7pt;*/
+    /*border: 2px solid #799DFF;*/
 }
 
 .fbox {
@@ -1057,7 +1057,8 @@ ul.rcgetter {
 }
 
 div#fsrc {
-    border: 3px solid #96A19F;
+    border: 1px solid #354c8c;
+    /*border: 3px solid #96A19F;*/
     min-height: 460px;
     margin: 15px;
     padding: 10px;
@@ -1073,7 +1074,8 @@ div#fsrc {
 }
 /*Ajout directive pour boxz*/
 div.dgetter {
-    border: 3px solid #96A19F !important;
+    /*border: 3px solid #96A19F !important;*/
+    border: 1px solid #354c8c;
     text-align: center;
     height: 155px;
     width: 180px;
@@ -1124,7 +1126,8 @@ div.dgetter {
 }
 
 .bigger {
-    border: 3px solid #96A19F;
+    /*border: 3px solid #96A19F;*/
+    border: 1px solid #354c8c;
     float: left;
     height: 250px;
     margin: 30px 1px 1px 30px;
