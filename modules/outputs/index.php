@@ -341,27 +341,43 @@ if($_POST['mode']=='save'){
 	$cols = $calcs['col'];
 	$querysaveaj = $calcs['querysave'];
 	$svals = magic_json_decode($_POST['calcs2'],true);
-
-	$allfld = arrayMerge($rows, $cols);
+    //var_dump($rows);
+    //var_dump($cols);
+	//$allfld = arrayMerge($rows, $cols);
+	//var_dump($allfld);
 	$allfld = $rows;
-	foreach ($cols as $val){
+    foreach ($cols as $val){
 		$allfld[] = $val;
 	}
+    $range = array();
+    $svals['range'] = array_filter($svals['range'], function($value) { return $value !== null; });
+
 	$colsvals = $svals['cols'];
 	$rowsvals = $svals['rows'];
 	foreach ($allfld as $i => $v){
 		for ($x = 0;$x<count($colsvals);$x++){
+		    //echo $svals['cols'][$x][id];
 			if($colsvals[$x]['field']==$v){
+			    //echo strval($i);
 				$colsvals[$x]['id']= strval($i);
+                foreach ($svals['range'] as $val){
+                    if($val['fld']==$v)
+                        $range[$i] = $val;
+                }
 			}
 		}
 		for ($x = 0;$x<count($rowsvals);$x++){
 			if($rowsvals[$x]['field']==$v){
 				$rowsvals[$x]['id']= strval($i);
+                foreach ($svals['range'] as $val){
+                    if($val['fld']==$v)
+                        $range[$i] = $val;
+                }
 			}
 		}
 	}
-	$svals['cols'] = $colsvals;
+    $svals['range'] = $range;
+    $svals['cols'] = $colsvals;
 	$svals['rows'] = $rowsvals;
 	//var_dump($allfld);
 	require_once('result.func.php');

@@ -1893,7 +1893,7 @@ div#shadow{
 
 #graph_home{
     width:1000px;
-    height: 800px;
+    /*height: 800px;*/
 	/*padding: 5px;*/
 	margin: 3px;
 	float:left;

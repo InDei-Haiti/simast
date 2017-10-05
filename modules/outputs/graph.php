@@ -211,7 +211,7 @@
  		break;
  	case 'lines':
  		$margin=false; 		
- 		$exePart='$Test->drawLineGraph($DataSet->GetData(),$DataSet->GetDataDescription());   
+ 		$exePart='$Test->drawLineGraph($DataSet->GetData(),$DataSet->GetDataDescription());
  				$Test->drawPlotGraph($DataSet->GetData(),$DataSet->GetDataDescription(),3,2);';   //NO TRANSPARENCY 255,255,255'
  		//$titlePos=array(600, 244);
  		//$titlePos2=array(800,258);

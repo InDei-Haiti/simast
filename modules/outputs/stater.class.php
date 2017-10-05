@@ -127,8 +127,7 @@ class Stater {
 
 	function __construct($li, &$pack){//  $fr,$all,$cols,$sts){ 'id',$svals['list'],$svals['cols'],$svals['stots']);
 		global $_SESSION,$dateDetail,$tcols,$extracola,$baseDir;
-
-		$dateDetail=array('rows'=>false,'cols'=>false);
+        $dateDetail=array('rows'=>false,'cols'=>false);
 
 		$possibleMethds=array('summ','merge');
 
@@ -1995,7 +1994,7 @@ class Stater {
 		($tcols-1) > 0 ? $ntrows=($tcols-1) : $ntrows=1;
 		}
 		if($dateDetail['cols'] !== false && $this->allDates['cols'] !== true){
-			if(is_array($this->tcomp['cols'][$dateDetail['cols']])){
+		    if(is_array($this->tcomp['cols'][$dateDetail['cols']])){
 				$colGroupMode=$this->tcomp['cols'][$dateDetail['cols']]['test']->testYear();
 				$extracola=true;
 			}else{
@@ -2013,7 +2012,7 @@ class Stater {
 			$ntcols=$trows;
 		}
 		if($tcols == 1 && $trows >= 1){
-			$addnum=(count($this->finalrow)+2);
+		    $addnum=(count($this->finalrow)+2);
 			$addd='<th colspan="#@!NTCOLS!@#" >&nbsp;</th></tr><tr>';
 		}else{
 			$addd='';
@@ -2030,9 +2029,8 @@ class Stater {
 		}else{
 			$utrc=$trows;
 		}
-		
 		if(count($this->levcols) < count($this->cols)){//if(count($this->levcols) < $tcols ){
-			$html='<table class="empty"><tr><td style="font-weight:bolder;font-size: 14pt;">No data to display '.count($this->cols).'</td></tr></table>';
+			$html='<table class="empty"><tr><td style="font-weight:bolder;font-size: 14pt;">No data to display '.count($this->levcols).' '.count($this->cols).'</td></tr></table>';
 			DiskStatCache($html);
 			return ;
 		}
@@ -2066,7 +2064,6 @@ class Stater {
 				}
 				$ni=0;
 				$cntc=$levax[($ci-1)][$rx];
-
 				foreach ( $ht  as $hit => &$khead ) {
 					if(isset($khead['val']['parid'])){
 						$lcolFakes =  &$this->colFakes[$ci][$khead['val']['parid']];
