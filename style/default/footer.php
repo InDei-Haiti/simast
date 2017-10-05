@@ -838,6 +838,24 @@ var v = null;
 			$j("#tfilter").show(); */
 		</script>
 <script type="text/javascript" src="modules/outputs/progressBar.js"></script>
+<script type="text/javascript">
+    function miness(){
+        if($("#rbox").children().length > 0){
+            $("#rbox li div.kill_area").html('<i class="fa fa-close" style="font-size:24px;color:red"></i>');
+            $("li.ui-state-disabled").css("background-image","");
+        }
+
+        if($("#cbox").children().length > 0){
+            $("#cbox li div.kill_area").html('<i class="fa fa-close" style="font-size:24px;color:red"></i>');
+            $("li.ui-state-disabled").css("background-image","");
+        }
+        setTimeout(miness,500);
+    }
+
+    $(document).ready(function(){
+        miness();
+    });
+</script>
 <?php
 
 }
@@ -1063,6 +1081,7 @@ if($m="projects" AND $a = "view"){?>
     <script>
         $(document).ready(function(){
                 $("#mholder").css("overflow-x","scroll");
+
         });
 </script>
 <?php }
