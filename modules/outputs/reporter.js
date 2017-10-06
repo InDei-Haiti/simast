@@ -1,6 +1,7 @@
 var statTableHtmlData;
 var itemClick;
 var imgBase64;
+var statsdesc;
 var editorOptions = {
     width:240,
     height:35,
@@ -310,9 +311,13 @@ var reporter = (function (my) {
         loadSrc = $xrow.parent().find("tr").index($xrow);
         e.stopPropagation();
         $j("#tabs").toTab(4);
-        $j.getJSON("?m=outputs&a=reports&mode=loadinfo&suppressHeaders=1", {
+        $j.get("?m=outputs&a=reports&mode=loadinfo&suppressHeaders=1", {
             "dbrid":rid
-        }, function (rdata) {
+        }, function (rdata,status,xhr) {
+            console.log(status);
+            //console.log(rdata);
+            rdata = JSON.parse(rdata);
+            console.log(rdata);
             cleanTabStat(true);
             sIndex = 0;
             inBays = [];
@@ -328,17 +333,22 @@ var reporter = (function (my) {
 
             startAddPoint = "origin";
             var entries = rdata.entries, secs = entries.sec, bdata = rdata.backdoor, $srow, second = false;
-
             for (var colm in bdata.columns) {
                 if (bdata.columns.hasOwnProperty(colm)) {
                     $cbrbody = $j(".breport:eq(" + colm + ") > tbody");
+                    console.log(bdata.columns[colm]);
                     for (var i = 0, l = bdata.columns[colm].length; i < l; i++) {
-
                         var cursec = bdata.columns[colm][i],
                             pprow = secs[cursec], vcont;
-
+                        if(pprow.type === -1){
+                            continue;
+                        }
+                        pprow_name = "";
+                        if(pprow.hasOwnProperty('name')) {
+                            pprow_name = pprow.name;
+                        }
                         if (bdata.types[i] === 'text') {
-                            tempAreaText = pprow.name;
+                            tempAreaText = pprow_name;
                             vcont = pprow.content;
                         } else {
                             //vcont = sdbox[pprow.content].n;
@@ -347,8 +357,14 @@ var reporter = (function (my) {
                         }
                         buildSection2();
                         var $pcell = $j(".slink:last", $cbrbody).attr("data-stype", pprow.type);
-                        $pcell.find(".rte_fld").html(pprow.name)
-                            .prev("input:hidden").val(pprow.name).end()
+                        console.log(cursec);
+                        console.log(pprow_name);
+                        console.log(pprow);
+
+                        /*console.log($pcell.find(".rte_fld").html()
+                            .prev("input:hidden"));*/
+                        $pcell.find(".rte_fld").html(pprow_name)
+                            .prev("input:hidden").val(pprow_name).end()
                             .end()
                             .find(".sec_cont_view").html(vcont)
                             .next("input").val(pprow.content).end()
@@ -1069,4 +1085,27 @@ var reporter = (function (my) {
 
     }
 }(reporter));
+function popupDescStats(){
+    $j('#tabdesc').val(statsdesc);
+    $dbtabdesc = $j("#dbtabdesc");
+    $dbtabdesc.dialog({
+        modal: true,
+        resize: "auto",
+        resizable: false,
+        autoOpen: true,
+        buttons: {
+            "Save": function(){
+                statsdesc = $j('#tabdesc').val();
+                $dbtabdesc.dialog( "close" );
+            },
+            "Cancel": function() {
+                $dbtabdesc.dialog( "close" );
+            }
+        },
+        close: function() {
+            $dbtabdesc.dialog( "close" );
+        }
+    }).prev(".ui-dialog-titlebar").css("background","#aed0ea").css("border","1px solid #aed0ea");
+}
 reporter.initMaps();
+

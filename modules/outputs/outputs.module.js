@@ -1321,8 +1321,8 @@ var pager = function(){
 
 			    		document.savemefile.submit();
 			        },
-			        Cancel: function() {
-			          this.dialog( "close" );
+			        "Cancel": function() {
+                        $dbox.dialog( "close" );
 			        }
 			      },
 		      close: function() {
@@ -1344,12 +1344,15 @@ var pager = function(){
             buttons: {
                 "Save": function(){
                     		setid = $j('#chooseset').val();
+                    		describe = $j('#desc_dash_item').val();
 							$j.ajax({
 								type: "post",
-								data: urlData+'&mode=grapher_save&type='+type+'&data_item='+JSON.stringify(data_item)+'&setid='+setid+'&project='+project,
+								data: urlData+'&mode=grapher_save&type='+type+'&data_item='+JSON.stringify(data_item)+'&setid='+setid+'&describe='+describe+'&project='+project,
 								url: "/?m=outputs&&suppressHeaders=1",
 								success: function(msg){
-									alert(msg)/*.delay(2000).fadeOut(3000)*/;
+                                    alert(msg);
+                                    $dbox.dialog( "close" );
+									//alert(msg)/*.delay(2000).fadeOut(3000)*/;
 								}
 							});
                 },
@@ -2615,13 +2618,14 @@ qlHandler.prototype.run = function(cv,todo){
 qlHandler.prototype.delq = function(cv){
 	if(confirm("You want delete this query ?")){		
 		var $qr=$j("#qsr_"+cv,$j("#qtable")[0]),
-			data=['mode=query&imode=del&stype=',$qr.find("td:eq(2)").text(),
-				'&sid=',parseInt($qr.find("td:eq(0) > div").attr("data-id"))].join("");
+			data=['mode=query&imode=del&stype=',$qr.find("td:eq(1)").text(),
+				'&sid=',parseInt($qr.find("td:eq(0)").attr("data-id"))].join("");
 		$j.ajax({
 			url: "/?m=outputs&suppressHeaders=1",
 			type: 'post',
 			data: data,
 			success: function(data){
+				console.log(data);
 				if(trim(data) == 'ok'){
 					info("Query deleted ",1);
 					$qr.fadeOut('fast',function(){
@@ -2630,7 +2634,10 @@ qlHandler.prototype.delq = function(cv){
 				}else{
 					info("Failed to delete query, try again later",0);
 				}
-			}
+			},
+			error: function (error) {
+                console.log(error);
+            }
 		});
 	}else{
 		return false;

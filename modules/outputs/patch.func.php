@@ -303,14 +303,16 @@ function proceedQueryStuff(){
 	$qsid=(int)$_POST['sid'];
 	$qrstype=strtolower($_POST['stype']);
 	//check if we are dealing with report items
-	if(strstr($qrstype,'report')){
+    //echo $qsid.' |||| '.$qrstype.' ||||';
+	/*if(strstr($qrstype,'report')){
 		if($imode === 'del'){
-			$sql = 'delete from report_items where id="'.$qsid.'" limit 1 ';
+			$sql = 'delete from reports where id='.$qsid.'';
 			$res = mysql_query($sql);
+			echo $sql;
 			echo $res === false ? 'fail' : 'ok';
 		}
 		return;
-	}
+	}*/
 	//echo $imode.' ||||';
 	switch (trim($imode)) {	
 		case 'save' :
@@ -376,11 +378,13 @@ function proceedQueryStuff(){
 			}
 			break;
 		case 'del':
-			//echo $qsid.' |||| '.$qrstype.' ||||';
+
+
 			if($qsid > 0){
 				if($qrstype === 'table'){
 					$sql='delete from queries where id="'.$qsid.'" limit 1';
-					$res=mysql_query($sql);
+					echo $sql;
+					$res=db_exec($sql);
 				}elseif ($qrstype === 'stats' || $qrstype === 'chart'){
 					$q = new DBQuery();
 					$q->addQuery('qs.id,qs.visible');
@@ -390,17 +394,22 @@ function proceedQueryStuff(){
 					$bqid=$q->loadList();
 					$bqid=$bqid[0];
 					if($bqid['visible'] == '0'){
-						$sql='delete from queries where id="'.$bqid['id'].'" limit 1';
-						$res=mysql_query($sql);
+						$sql='delete from queries where id='.$bqid['id'].' limit 1';
+						$res = db_exec($sql);
 					}
 					$sql='delete from stat_queries where id="'.$qsid.'" limit 1';
-					$res=mysql_query($sql);
+					$res = db_exec($sql);
 				}elseif($qrstype === 'report'){
 					if(is_numeric($qsid)){
-						$sql='delete from reports where id="'.$qsid.'" LIMIT 1';
-						$res=mysql_query($sql);
+						$sql='delete from reports where id='.$qsid.' LIMIT 1';
+						$res=db_exec($sql);
 					}
-				}
+				}elseif($qrstype === 'report item'){
+                    if(is_numeric($qsid)){
+                        $sql='delete from report_items where id='.$qsid.' LIMIT 1';
+                        $res=db_exec($sql);
+                    }
+                }
 
 
 				if(!$res){

@@ -109,7 +109,7 @@
                 <ul id="box-home" style="list-style: none; float: left;"></ul>
             </div>
         </div>
-        <div class="bbox">
+        <div class="bbox" id="boxz">
             <div id="fsrcr" class="dgetter"><span class="areaName">Rows</span>
                 <ul id="rbox" class="accepter rcgetter"></ul>
             </div>
@@ -170,22 +170,22 @@
                     </tr>
                 </table>
                 <ul class="statcolx">
-                    <li><input type="button" class="button stab_let" value="Go" disabled="disabled"
+                    <li><input type="button" class="button ce pi ahr stab_let" value="Go" disabled="disabled"
                                onclick="stater.run();" id="launchbut">&nbsp;&nbsp;&nbsp;</li>
-                    <li><input type="button" class="button stab_let purestat" value="Pop Out"
+                    <li><input type="button" class="button ce pi ahr stab_let purestat" value="Pop Out"
                                onclick="popTable('tthome');" disabled="disabled"></li>
-                    <li><input type="submit" class="button stab_let purestat" value="Export " disabled="disabled"
+                    <li><input type="submit" class="button ce pi ahr stab_let purestat" value="Export " disabled="disabled"
                                onclick="document.stsave.submit();"></li>
-                    <li><input type="submit" class="button stab_let" value="Save Query" disabled="disabled"
+                    <li><input type="submit" class="button ce pi ahr stab_let" value="Save Query" disabled="disabled"
                                onclick="stater.saveDialog();"></li>
-                    <li><input type="button" class="button stab_let" value="Clear" onclick="stater.pclean();"
+                    <li><input type="button" class="button ce pi ahr stab_let" value="Clear" onclick="stater.pclean();"
                                id="bclean"></li>
-                    <li><input type="button" class="button stab_let" value="Chart" onclick="grapher.start();"
+                    <li><input type="button" class="button ce pi ahr stab_let" value="Chart" onclick="grapher.start();"
                                id="gr_but"></li>
                     <li>
                         <div id="chart_pref">
                             <div id="dx_kill" onclick="grapher.hideOpts();">X</div>
-                            <select id="chart_type" class="text" onchange="grapher.pieOpts()">
+                            <select id="chart_type" class="form-control" style="width:300px" onchange="grapher.pieOpts()">
                                 <option value="bars">Bars</option>
                                 <option value="pbars">Percent Bars</option>
                                 <option value="sbars">Stocked Bars</option>
@@ -194,7 +194,7 @@
                                 <option value="geoChart">Geo Chart</option>
                             </select><br>
                             <span style="width: 100%;float:left;">
-                                <input type="button" value="Show" class="text" onclick="grapher.build()">
+                                <input type="button" value="Show" class="button ce pi ahr text" onclick="grapher.build()">
                                 <div class="chrt_load"></div>
                             </span>
                         </div>
@@ -205,16 +205,27 @@
         </div>
         </form>
     </div>
-    <br>
-    <div id="stat_tab_holder" title="Pick whole Statistic table" data-rep_item="stat" class="ianchor"></div>
+    <br/>
+    <div id="stat_tab_holder" data-rep_item="stat" class="ianchor">
+        <ul style="list-style-type: none;margin: 0px !important;    -webkit-padding-start: 0px !important;">
+            <li style="display: inline-block;margin:0px;border: 1px solid #eceeef !important;padding:5px;width: 50px;height: 30px"><span id="pick_table" class="fa fa-table" style="color: #354c8c" title="Pick whole Statistic table"></span></li>
+            <!--<li style="display: inline-block;margin-left:-3px;border: 1px solid #eceeef;border-left:none;padding:5px;width: 50px;height: 30px"><span class="fa fa-file-text" style="color: #354c8c" onclick="popupDescStats()" title="Description"></span></li>-->
+            <li style="display: inline-block;margin-left:-3px;border: 1px solid #eceeef;border-left:none;padding:5px;width: 50px;height: 30px" onclick="addTableToDashboard()"><span class="fa fa-dashboard" style="color: #354c8c" title="Add to Dashboard"></span></li>
+        </ul>
+    </div>
     <span id="tthome">
     @@thtml@@
     </span>
-    <div id="graph_tab_holder" title="Pick whole Statistic table" data-rep_item="graph" class="ianchor"></div>
+    <div id="graph_tab_holder" title="Pick whole Statistic graph" data-rep_item="graph" class="ianchor">
+        <ul style="list-style-type: none;margin: 0px !important;    -webkit-padding-start: 0px !important;">
+            <li style="display: inline-block;margin:0px;border: 1px solid #eceeef !important;padding:5px;width: 50px;height: 30px"><span id="pick_graph" class="fa fa-bar-chart" style="color: #354c8c" title="Pick whole Statistic table"></span></li>
+            <!--<li style="display: inline-block;margin-left:-3px;border: 1px solid #eceeef;border-left:none;padding:5px;width: 50px;height: 30px"><span class="fa fa-file-text" style="color: #354c8c" onclick="popupDescStats()" title="Description"></span></li>-->
+            <li style="display: inline-block;margin-left:-3px;border: 1px solid #eceeef;border-left:none;padding:5px;width: 50px;height: 30px" onclick="addGraphToDashboard()"><span class="fa fa-dashboard" style="color: #354c8c" title="Add to Dashboard"></span></li>
+        </ul>
+    </div>
     <div id="graph_home">
 
     </div>
-
     </p>
 </div>
 </div>

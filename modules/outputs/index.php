@@ -318,15 +318,16 @@ if($_POST['mode']=='save'){
         $_POST['data_item'] = file_get_contents($baseDir . '/files/tmp/' . $_SESSION ['fileNameCshBack'] . '.tss');
     }
     //INSERT INTO `dashboard_grapher`(`id`, `set_id`, `project_id`, `type`, `query_save`, `data_item`)
-    $sql = "INSERT INTO dashboard_grapher(`set_id`, project_id, `type`, query_save, data_item) VALUES 
-    (".$_POST['setid'].",".$_POST['project'].",'".$_POST['type']."',null,'".mysql_real_escape_string(gzencode(var_export($_POST['data_item'],true), 9, FORCE_GZIP))."')";
+    $describe = $_POST['describe'];
+    $sql = "INSERT INTO dashboard_grapher(`set_id`, project_id, `type`, query_save, data_item, description) VALUES 
+    (".$_POST['setid'].",".$_POST['project'].",'".$_POST['type']."',null,'".mysql_real_escape_string(gzencode(var_export($_POST['data_item'],true), 9, FORCE_GZIP))."', '".$describe."')";
     //echo $sql;
     $zid = 0;
     $res = db_exec($sql);
     if($res)
         $zid = db_insert_id();
     if (!($zid > 0)) {
-        $zid = 'fail';
+        $zid = 'insert fail';
     }else{
         echo "insert successfully";
     }
@@ -340,27 +341,43 @@ if($_POST['mode']=='save'){
 	$cols = $calcs['col'];
 	$querysaveaj = $calcs['querysave'];
 	$svals = magic_json_decode($_POST['calcs2'],true);
-
-	$allfld = arrayMerge($rows, $cols);
+    //var_dump($rows);
+    //var_dump($cols);
+	//$allfld = arrayMerge($rows, $cols);
+	//var_dump($allfld);
 	$allfld = $rows;
-	foreach ($cols as $val){
+    foreach ($cols as $val){
 		$allfld[] = $val;
 	}
+    $range = array();
+    $svals['range'] = array_filter($svals['range'], function($value) { return $value !== null; });
+
 	$colsvals = $svals['cols'];
 	$rowsvals = $svals['rows'];
 	foreach ($allfld as $i => $v){
 		for ($x = 0;$x<count($colsvals);$x++){
+		    //echo $svals['cols'][$x][id];
 			if($colsvals[$x]['field']==$v){
+			    //echo strval($i);
 				$colsvals[$x]['id']= strval($i);
+                foreach ($svals['range'] as $val){
+                    if($val['fld']==$v)
+                        $range[$i] = $val;
+                }
 			}
 		}
 		for ($x = 0;$x<count($rowsvals);$x++){
 			if($rowsvals[$x]['field']==$v){
 				$rowsvals[$x]['id']= strval($i);
+                foreach ($svals['range'] as $val){
+                    if($val['fld']==$v)
+                        $range[$i] = $val;
+                }
 			}
 		}
 	}
-	$svals['cols'] = $colsvals;
+    $svals['range'] = $range;
+    $svals['cols'] = $colsvals;
 	$svals['rows'] = $rowsvals;
 	//var_dump($allfld);
 	require_once('result.func.php');
@@ -395,7 +412,13 @@ if($_POST['mode']=='save'){
 				$sql = 'SELECT DISTINCT('.$field.') FROM '.$querysaveaj;
 				$resdis = db_exec($sql);
 				while ( $rowdatadis = db_fetch_assoc( $resdis ) ) {
-					$allfldq[$keyn]['value'][$rowdatadis[$tab[1]]] = $wz->getValues($fldinfo['type'],$fldinfo['sysv'],$rowdatadis[$tab[1]]);
+				    $textVal = $wz->getValues($fldinfo['type'],$fldinfo['sysv'],$rowdatadis[$tab[1]]);
+                    $textVal = strval($textVal);
+                    $textVal = preg_replace('/\\\\/', '', $textVal);
+                    //$textVal = json_encode($textVal);
+                    $forStore = str_replace('"', '', $forStore);
+                    $textVal = str_replace('"', '', $textVal);
+					$allfldq[$keyn]['value'][$rowdatadis[$tab[1]]] = $textVal;
 				}
 			}
 		}
@@ -419,12 +442,13 @@ if($_POST['mode']=='save'){
 					//$forStore = $wz->getValues($fldinfo['type'],$fldinfo['sysv'],$forStore);
 					$forStore = $fldinfo['value'][$forStore];
 				}
-				/*if($key=='wform_81_fld_63')
+				/*if($key=='wform_81_fld_24')
 				    echo strval($forStore).' ';*/
 				$forStore = strval($forStore);
 				if($forStore=='0')
                     $forStore = '-1';
-				$forStore = json_encode($forStore);
+                $forStore = utf8_encode($forStore);
+				//$forStore = json_encode($forStore);
 				$forStore = str_replace('"', '', $forStore);
 				$nfei->store ($forStore);
 			}
@@ -800,10 +824,10 @@ $q->addOrder("created desc");
 $q->addOrder('qmode asc');
 $queriez['Stats']=$q->loadList();
 $q->clearQuery();
-$q->addTable('activity_queries','act');
-$q->addOrder("created desc");
-$queriez['ActQr']=$q->loadList();
-$q->clearQuery();
+//$q->addTable('activity_queries','act');
+//$q->addOrder("created desc");
+//$queriez['ActQr']=$q->loadList();
+//$q->clearQuery();
 $q->addQuery('id,title as qname');
 $q->addTable('reports');
 $queriez['Report']=$q->loadList();
@@ -891,7 +915,7 @@ echo '<br/>
                     $edClass='qreditor';
                     $pnameOut='Report';
                 }else{
-                    $pnameOut='Table';
+                    $pnameOut='Table'.$pname;
                 }
                 $qsr.='<tr id="qsr_'.$trid.'" data-showr="'.$sr.'">
                 <!--<td title="Edit" align="center"><div class="'.$edClass.' fa fa-pencil" data-id="'.$row['id'].'" style="color: blue;font-size: large"></div></td>-->';
@@ -930,7 +954,7 @@ echo '<br/>
                 <!-- <img src="/images/delete1.png" weight=16 height=16 border=0 alt="Delete"> -->
                 </span>
                 <span title="'.$AppUI->_('Export').'" style="color: blue;font-size: large" class="exportq fa fa-download" onclick="qurer.run(\''.$trid.'\',\'export\');" ></span>
-                <a href="?m=outputs&rep='.$row['id'].'"><span title="'.$AppUI->_('Edit').'" style="color: blue;font-size: large" class="exportq fa fa-pencil" onclick="qurer.run(\''.$trid.'\',\'export\');" ></span></a>
+                <span title="'.$AppUI->_('Edit').'" style="color: blue;font-size: large" class="qreditor fa fa-pencil" data-id="'.$row['id'].'"></span>
                 </td>
                 <!--<td align="center"><div title="'.$AppUI->_('Export').'" style="color: blue;font-size: large" class="exportq fa fa-download" onclick="qurer.run(\''.$trid.'\',\'export\');" ></div></td>-->
                 </tr>';
@@ -1098,6 +1122,16 @@ if($lpo === true) {
             <tr>
                 <td>Description</td>
                 <td><textarea id='fdesc' style='width:90%'></textarea></td>
+            </tr>
+        </table>
+    </div>
+    <div id="dbtabdesc" title="Stats Description" style="display: none">
+        <table style="width:100%">
+            <tr>
+                <td><label>Description</label></td>
+            </tr>
+            <tr>
+                <td><textarea type='text' id='tabdesc' style='width:100%'></textarea></td>
             </tr>
         </table>
     </div>
@@ -1459,13 +1493,28 @@ echo '</table>';
 echo '</div>';
 
 echo '<div id="dbset" title="Choose set" style="display: none">
-    <select id="chooseset" style="width: 50%">
-        <option value=""></option>';
-        foreach ($all as $i=>$set){
-            echo '<option value="'.$set['id'].'">'.$set['setname'].'</option>';
-        }
-echo '</select>
-</div>';
+            <table style="width:100%">
+                <tr>
+                    <td><label>Select Set</label></td>
+                </tr>
+                <tr>
+                    <td>
+                        <select id="chooseset" style="width: 50%">
+                                <option value=""></option>';
+                                foreach ($all as $i=>$set){
+                                    echo '<option value="'.$set['id'].'">'.$set['setname'].'</option>';
+                                }
+                        echo  '</select>
+                    </td>
+                </tr>
+                <tr>
+                    <td><label>Description</label></td>
+                </tr>
+                <tr>
+                    <td><textarea id="desc_dash_item" style="width:100%"></textarea></td>
+                </tr>
+            </table>
+      </div>';
 
 
 $tpl = new Templater($baseDir.'/modules/outputs/report.tpl');

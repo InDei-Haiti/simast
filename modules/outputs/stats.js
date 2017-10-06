@@ -4,7 +4,7 @@ var map;
 var sFrames = function (){
 	this.$bh=$j("#shome");
 	this.cols=[];this.rows=[];this.$rbox;this.$cbox;this.ctt=$j("#cbox");this.rtt=$j("#rbox");
-	this.periods=[];this.leader;this.ntype;this.ltext;
+	this.periods=[];this.leader;this.ntype;this.nfld;this.ltext;
 	this.times = ['none','All','weekly','monthly','quarterly','annually'];this.$gbox=$j("#gbox");
 	this.lf;this.launch=false;this.title;this.dobc= new RegExp("dob",'ig');	
 	this.ddvi = $j("<div class='kill_area' title='Delete'></div>");
@@ -33,7 +33,7 @@ sFrames.prototype.init = function(){
 	}
 	var $hapt =$j("#box-home");
 	for(var i=0,fl=fields.length;i < fl; i++){
-		$j(['<li class=" ui-corner-tr" ><div class="ulit fbox">',fields[i].parent,' : ',fields[i].title,'</div></li>'].join(""))
+		$j(['<li class="refulli ui-corner-tr" ><div class="ulit fbox">',fields[i].parent,' : ',fields[i].title,'</div></li>'].join(""))
 			.attr("data-hid",fields[i].id)
 			.attr("data-type",fields[i].type)
 			.attr("data-field",fields[i].field)
@@ -519,7 +519,8 @@ sFrames.prototype.fillRange = function(nl){
 	if(!self.ranges[nl]){
 		self.ranges[nl] = {
 			type: self.ntype,
-			title: self.title
+			title: self.title,
+			fld: self.nfld
 		};		
 	}	
 	if(!self.ranges[nl].val){
@@ -578,6 +579,7 @@ sFrames.prototype.Leader = function(obj){
 	
 	$j("#bclean").show();
 	self.ntype = $nl.attr("data-type");
+    self.nfld= 'wform_'+$nl.attr("data-form")+'.'+$nl.attr("data-field");
 	self.ltext = $nl.text();
 	self.title = $nl.text();
 	pluse =  (typeof plus[nlead] === "object");
@@ -719,7 +721,8 @@ sFrames.prototype.Leader = function(obj){
 			if (abort === false) {
 				self.ranges[self.lf] = {
 					type: self.ntype,
-					title: self.title
+					title: self.title,
+					fld: self.nfld
 				};
 				if (ncase) {
 					self.ranges[self.lf]['val'] = [];
@@ -761,8 +764,10 @@ sFrames.prototype.addRow = function(pid,cold,cvo){
 			"<td><input class='nto fcheck text' type='text' size='5' value='",cvo.e,"'>",
 			"<td><input class='nname fcheck binput text' type='text' size='5' value='",cvo.n,"'></td>",
 			"<td>",				
-				"<span class='fbutton addbutt' onclick='stater.addRow(",cl,",false);' title='Add'></span>",
-				"<span class='fbutton delbutt' onclick='stater.delRow(",cl,");' title='Delete'></span>",
+				//"<span class='fbutton addbutt' onclick='stater.addRow(",cl,",false);' title='Add'></span>",
+				"<span class='fa fa-plus' style='color: #354c8c' onclick='stater.addRow(",cl,",false);' title='Add'></span>",
+				//"<span class='fbutton delbutt' onclick='stater.delRow(",cl,");' title='Delete'></span>",
+				"<span class='fa fa-remove' style='color: red' onclick='stater.delRow(",cl,");' title='Delete'></span>",
 			"</td></tr>"].join("");
 	if (cl > 0 && !cold) {
 		$j(tst).insertAfter($j("#piod_" + pid));
@@ -938,6 +943,7 @@ sFrames.prototype.run = function(){
 		querysave = $j('#querysave').val();
 		data = {row:rows_fld,col:cols_fld,querysave:querysave};
 		urlData = 'mode=btable&calcs=' + JSON.stringify(data)+'&calcs2=' + JSON.stringify(self.collector());
+		console.log(urlData);
 		$j.ajax({
 			type: "post",
 			data: urlData,
@@ -947,7 +953,15 @@ sFrames.prototype.run = function(){
 				    $j("#tthome").html(msg);
 				    msg=null;
 					if (!$j("#tthome").find("table").hasClass("empty")) {
-						$j("#stat_tab_holder").clone(true).addClass("stabh_vis").prependTo("#tthome").show();
+						//$j("#stat_tab_holder").clone(true).addClass("stabh_vis").prependTo("#tthome").show();
+						$stat_tab = $j("#stat_tab_holder").clone(true);
+                        /*$stat_tab.append(
+							'<table>\n' +
+                            '            <tr><td><span id="pick_table" class="fa fa-table" style="color: #354c8c" title="Pick whole Statistic table"></span></td><td><span class="fa fa-file-text" style="color: #354c8c" onclick="popupDescStats()" title="Description"></span></td></tr>\n' +
+                            '        </table>'
+						);*/
+                        $stat_tab.find("#pick_table").addClass("stabh_vis");
+                        $stat_tab.prependTo("#tthome").show();
 						reporter.reget();
 						$j(".stab_let").attr("disabled", false);
 						grapher.init();
@@ -1030,7 +1044,7 @@ chartz.prototype.doSave = function(pdata){
 }
 var buttons = Highcharts.getOptions().exporting.buttons.contextButton.menuItems;
 
-buttons.push({
+/*buttons.push({
     text: "Add Graph To Dashboard",
     onclick: function(){
         //alert(urlData);
@@ -1049,8 +1063,8 @@ buttons.push({
         });
 
     }
-});
-buttons.push({
+});*/
+/*buttons.push({
     text: "Add Table To Dashboard",
     onclick: function(){
         //alert(urlData);
@@ -1072,7 +1086,38 @@ buttons.push({
         });
 
     }
-});
+});*/
+function addTableToDashboard(){
+    var $statTable = $j("#tthome").find("table");
+    $statTable = JSON.stringify('<table cellpadding="2" cellspacing="1" border="0" class="tbl sttable">'+$statTable.html()+'</table>');
+
+    gpgr.chooseSet(urlData, 'TABLE', null, project);
+    $j.get("/?m=outputs&mode=getSet&suppressHeaders=1", function (msg) {
+        if (msg && msg !== 'fail') {
+            msg = $j.parseJSON(msg);
+            $j('#chooseset').empty();
+            $j('#chooseset').append('<option value=""></option>');
+            $.each(msg, function(iii,e){
+                $j('#chooseset').append('<option value="'+e.id+'">'+e.setname+'</option>');
+            });
+        }
+    });
+
+}
+function addGraphToDashboard(){
+    gpgr.chooseSet(urlData, 'GRAPH', graph_data, project);
+    $j.get("/?m=outputs&mode=getSet&suppressHeaders=1", function (msg) {
+        if (msg && msg !== 'fail') {
+            msg = $j.parseJSON(msg);
+            $j('#chooseset').empty();
+            $j('#chooseset').append('<option value=""></option>');
+            $.each(msg, function(iii,e){
+                $j('#chooseset').append('<option value="'+e.id+'">'+e.setname+'</option>');
+            });
+        }
+    });
+
+}
 var grapher = (function(my){
 	var dataset = [], cols = [], rows = [], $table, boxes, rowb = [], colb = [], vstate = false, palettes=[], currentPalette=0,pgData,colorLock=false;
 	var dataSend = function(){
@@ -1459,6 +1504,58 @@ var grapher = (function(my){
         });
     };
 
+    var columns = function(seriesv,title) {
+    	console.log(seriesv);
+        return /*$j('#graph_home').*/Highcharts.chart('graph_home', {
+            chart: {
+                type: 'column',
+                options3d: {
+                    enabled: true,
+                    alpha: 15,
+                    beta: 15,
+                    depth: 50,
+                    viewDistance: 25
+                }
+            },
+            title: {
+                text: title
+            },
+            xAxis: {
+                type: 'category'
+            },
+            yAxis: {
+                title: {
+                    text: ''
+                }
+
+            },
+            legend: {
+                enabled: false
+            },
+            plotOptions: {
+                column: {
+                    depth: 25
+                },
+                series: {
+                    borderWidth: 0,
+                    dataLabels: {
+                        enabled: true,
+                        format: '{point.y}'
+                    }
+                }
+            },
+            tooltip: {
+                /*headerFormat: '<span style="font-size:11px">{series.name}</span><br>',*/
+                pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y}</b><br/>'
+            },
+            series: [{
+                name: 'Brands',
+                colorByPoint: true,
+                data: seriesv
+            }]
+		});
+    };
+
     var lines = function(categoriesv,seriesv,title){
         return /*$j('#graph_home').*/Highcharts.chart('graph_home', {
             title: {
@@ -1627,33 +1724,22 @@ var grapher = (function(my){
 				//$j("#graph_home").html(pgData[1]);
 				var rstr = [],$ghome=$j("#graph_home");
 				masterdata = $j.parseJSON(pgData[1]['dset']);
+				console.log(masterdata);
 				var options = null;
 				var data = null;
-				//var chart = null;
-                console.log($j.parseJSON(pgData[0]));
-				console.log($j.parseJSON(pgData[1]));
 				type = pgData[1]['cmode'];
 				graph_data = {};
 				if(pgData[1]['cmode']=='bars' || pgData[1]['cmode']=='pbars' || pgData[1]['cmode']=='sbars' ){
 					categories = [];
-					/*if($j('#col_big:visible').length > 0){
-						if($j('#col_big').val()=='xcall'){
-                            for (idx = 0; idx < masterdata.cols[0].length; idx++) {
-                                categories.push(masterdata.cols[0][idx][1]);
-                            }
-						}
-					}else {
-                        for (idx = 0; idx < masterdata.cols[1].length; idx++) {
-                            categories.push(masterdata.cols[1][idx][1]);
-                        }
-                    }*/
                     if($j('#col_big:visible').length > 0){
+                    	console.log("col_big:visible");
                         if($j('#col_big').val()=='xcall'){
                             for (idx = 0; idx < masterdata.rows.length; idx++) {
                                 categories.push(masterdata.rows[idx][1]);
                             }
                         }
                     }else {
+                    	console.log("No...");
                         for (idx = 0; idx < masterdata.rows.length; idx++) {
                             categories.push(masterdata.rows[idx][1]);
                         }
@@ -1662,49 +1748,42 @@ var grapher = (function(my){
                     console.log(categories);
 					categories.reverse();
 					series = [];
-					/*for(idx=0;idx<masterdata.data.length;idx++){
-						itemseries = [];
-						for(idy=0;idy<categories.length;idy++){
-                            if($j("#sperc-rows").is(":checked") || $j("#sperc-cols").is(":checked")){
-                                itemseries.push(parseFloat(masterdata.data[idx][idy]));
-                            }else{
-                                itemseries.push(parseInt(masterdata.data[idx][idy]));
+					console.log(masterdata.cols[1].length);
+					if(masterdata.cols[1].length>0){
+                        for (idx = 0; idx < masterdata.cols[1].length; idx++) {
+                            itemseries = [];
+                            for(idy=0;idy<masterdata.data.length;idy++){
+                                if($j("#sperc-rows").is(":checked") || $j("#sperc-cols").is(":checked")) {
+                                    itemseries.push(parseFloat(masterdata.data[idy][idx]));
+                                }else{
+                                    itemseries.push(parseInt(masterdata.data[idy][idx]));
+                                }
                             }
-						}
-                        itemseries.reverse();
-						series.push({name:masterdata.rows[idx][1],data:itemseries});
-					}*/
-					/*for(idx=0;idx<categories.length;idx++){
+                            itemseries.reverse();
+                            series.push({name:masterdata.cols[1][idx][1],data:itemseries});
+                        }
+					}else{
                         itemseries = [];
-						for(idy=0;idy<masterdata.data.length;idy++){
-                            if($j("#sperc-rows").is(":checked") || $j("#sperc-cols").is(":checked")){
-                                itemseries.push(parseFloat(masterdata.data[idy][idx]));
-                            }else{
-                                itemseries.push(parseInt(masterdata.data[idy][idx]));
-                            }
-						}
-
-                        series.push({name:categories[idx],data:itemseries});
-					}*/
-                    for (idx = 0; idx < masterdata.cols[1].length; idx++) {
-                        itemseries = [];
-                        for(idy=0;idy<masterdata.data.length;idy++){
+                        for(idy=0;idy<categories.length;idy++){
                             if($j("#sperc-rows").is(":checked") || $j("#sperc-cols").is(":checked")) {
                                 itemseries.push(parseFloat(masterdata.data[idy][idx]));
                             }else{
-                                itemseries.push(parseInt(masterdata.data[idy][idx]));
+                                series.push({name:categories[idy],y:parseInt(masterdata.data[idy][0])});
                             }
                         }
-                        itemseries.reverse();
-                        series.push({name:masterdata.cols[1][idx][1],data:itemseries});
-                    }
+                        categories=null;
+					}
+
 
 					console.log("Series");
 					console.log(series)
                     series.reverse();
-
-                    if(pgData[1]['cmode']=='bars')
-                        chart = bars(categories,series,title);
+                    //chart = bars(categories,series,title);
+                    if(pgData[1]['cmode']=='bars') {
+                    	if(categories!=null)
+                        	chart = bars(categories, series, title);
+                    	else chart = columns(series, title);
+                    }
 
                     if(pgData[1]['cmode']=='sbars')
                         chart = sbars(categories,series,title);
@@ -1730,17 +1809,6 @@ var grapher = (function(my){
 							categories.push(masterdata.cols[1][idx][1]);
 						}
                         categories.reverse();
-                       /* series.push({data:masterdata.data[parseInt($('#pieChoke').val())]});*/
-                        /*for(idx=0;idx<masterdata.data.length;idx++){
-                            if (parseInt($('#pieChoke').val()) == idx) {
-								itemseries = [];
-								for(idy=0;idy<categories.length;idy++){
-                                    itemseries.push(parseFloat(masterdata.data[idx][idy]));
-                                }
-                                series.push({name:masterdata.rows[idx][1],data:itemseries});
-                            }
-
-                        }*/
                         tempseries = {name: 'Brands',data:[]};
                         for(idx=0;idx<masterdata.data.length;idx++) {
                             if (parseInt($('#pieChoke').val()) == idx) {
@@ -1756,26 +1824,6 @@ var grapher = (function(my){
                             categories.push(masterdata.rows[idx][1]);
                         }
                         categories.reverse();
-                        /*series = [];
-                        tempseries = {name: 'Brands',data:[]};
-                        for(idx=0;idx<masterdata.data.length;idx++) {
-                            if (parseInt($('#pieChoke').val()) == idx) {
-                                for(idy=0;idy<masterdata.data[idx].length;idy++) {
-                                    tempseries['data'].push({name: masterdata.cols[1][idx][1],y: parseFloat(masterdata.data[idx][idy])});
-                                }
-                            }
-                        }
-                        series.push(tempseries);
-                        console.log(series);*/
-                        //series = [];
-                        /*for(idx=0;idx<masterdata.data.length;idx++){
-                            itemseries = [];
-                            for(idy=0;idy<categories.length;idy++){
-                                itemseries.push(parseFloat(masterdata.data[idx][idy]));
-                            }
-                            itemseries.reverse();
-                            series.push({name:masterdata.rows[idx][1],data:itemseries});
-                        }*/
                         for (idx = 0; idx < masterdata.cols[1].length; idx++) {
                             itemseries = [];
                             for(idy=0;idy<masterdata.data.length;idy++){

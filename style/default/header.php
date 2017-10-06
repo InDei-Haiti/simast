@@ -52,6 +52,7 @@ else
 	<script type="text/javascript" src="./js/base.min.js"></script>	 -->
 	<?php @$AppUI->loadCSS(); ?>
 	<!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script> -->
+<!--<link href="./style/<?php /*echo $uistyle;*/?>/sweetalert.css" rel="stylesheet">-->
 <script type="text/javascript"
 	src="/style/<?php echo $uistyle;?>/html2canvas.js"></script>
     <!--<script type="text/javascript"

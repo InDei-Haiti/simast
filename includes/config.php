@@ -7,8 +7,8 @@
 
 $dPconfig['dbtype'] = 'mysql';
 $dPconfig['dbhost'] = 'localhost';
-$dPconfig['dbname'] =  'simast';
-// $dPconfig['dbname'] =  'crowdl5_simast';
+//$dPconfig['dbname'] =  'simast';
+$dPconfig['dbname'] =  'crowdl5_simast';
 //$dPconfig['dbname'] =  'leaadmin_kario';
 // 'kib-now';'rtt2';
 //
@@ -16,8 +16,10 @@ $dPconfig['dbname'] =  'simast';
 // 'db11-kan';///'kangemi-test'; ///'testkario';//'mukdan';//'kawangware';//'kariobangi';////'mukuru';//'kibera';//'dandora';/////////////////'leatoto'
 //$dPconfig['dbuser'] = 'crowdl5_simast';
 //$dPconfig['dbpass'] = 'SImast123';
-$dPconfig['dbuser'] = 'simastadmin';
-$dPconfig['dbpass'] = 'fasil';
+$dPconfig['dbuser'] = 'root';
+$dPconfig['dbpass'] = '';
+//$dPconfig['dbuser'] = 'simastadmin';
+//$dPconfig['dbpass'] = 'fasil';
 $dPconfig['dbpersist'] = false;
 $dPconfig['root_dir'] = $baseDir;
 $dPconfig['base_url'] = $baseUrl;
