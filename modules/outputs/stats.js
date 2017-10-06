@@ -764,8 +764,10 @@ sFrames.prototype.addRow = function(pid,cold,cvo){
 			"<td><input class='nto fcheck text' type='text' size='5' value='",cvo.e,"'>",
 			"<td><input class='nname fcheck binput text' type='text' size='5' value='",cvo.n,"'></td>",
 			"<td>",				
-				"<span class='fbutton addbutt' onclick='stater.addRow(",cl,",false);' title='Add'></span>",
-				"<span class='fbutton delbutt' onclick='stater.delRow(",cl,");' title='Delete'></span>",
+				//"<span class='fbutton addbutt' onclick='stater.addRow(",cl,",false);' title='Add'></span>",
+				"<span class='fa fa-plus' style='color: #354c8c' onclick='stater.addRow(",cl,",false);' title='Add'></span>",
+				//"<span class='fbutton delbutt' onclick='stater.delRow(",cl,");' title='Delete'></span>",
+				"<span class='fa fa-remove' style='color: red' onclick='stater.delRow(",cl,");' title='Delete'></span>",
 			"</td></tr>"].join("");
 	if (cl > 0 && !cold) {
 		$j(tst).insertAfter($j("#piod_" + pid));

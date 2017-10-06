@@ -2890,7 +2890,7 @@ ol#rules{
 .refulli{
     width: 160px;
     margin: 0;
-    height: 40px;
+    height: 35px;
     line-height: normal;
     font-size: 1.4em;
     color: #fff;
@@ -2901,19 +2901,20 @@ ol#rules{
     */
     text-align: center;
     background: rgb(53, 76, 140);
-    background: -moz-linear-gradient(top,  rgb(78,82,91) 0%, rgb(57,61,68) 100%);
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgb(78,82,91)), color-stop(100%,rgb(57,61,68)));
-    background: -webkit-linear-gradient(top,  rgb(78,82,91) 0%,rgb(57,61,68) 100%);
-    background: -o-linear-gradient(top,  rgb(78,82,91) 0%,rgb(57,61,68) 100%);
-    background: -ms-linear-gradient(top,  rgb(78,82,91) 0%,rgb(57,61,68) 100%);
-    background: linear-gradient(to bottom, rgb(53, 76, 140) 0%,#9f86ff 100%);
+    /*background: -moz-linear-gradient(top,  rgb(78,82,91) 0%, rgb(57,61,68) 100%);*/
+    /*background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgb(78,82,91)), color-stop(100%,rgb(57,61,68)));*/
+    /*background: -webkit-linear-gradient(top,  rgb(78,82,91) 0%,rgb(57,61,68) 100%);*/
+    /*background: -o-linear-gradient(top,  rgb(78,82,91) 0%,rgb(57,61,68) 100%);*/
+    /*background: -ms-linear-gradient(top,  rgb(78,82,91) 0%,rgb(57,61,68) 100%);*/
+    /*background: linear-gradient(to bottom, rgb(53, 76, 140) 0%,#9f86ff 100%);*/
     border-top: 1px solid rgba(255,255,255,.2);
     border-bottom: 1px solid rgba(0,0,0,.5);
     /*text-shadow: -1px -1px 0px rgba(0,0,0,.5);*/
-    font-size: 12px;
+    font-size: 11px;
     position: relative;
     cursor: pointer;
     /*border-radius: 18px 18px 18px 18px;*/
+    vertical-align: middle;
 }
 
 
