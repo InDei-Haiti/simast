@@ -33,7 +33,7 @@ sFrames.prototype.init = function(){
 	}
 	var $hapt =$j("#box-home");
 	for(var i=0,fl=fields.length;i < fl; i++){
-		$j(['<li class=" ui-corner-tr" ><div class="ulit fbox">',fields[i].parent,' : ',fields[i].title,'</div></li>'].join(""))
+		$j(['<li class="refulli ui-corner-tr" ><div class="ulit fbox">',fields[i].parent,' : ',fields[i].title,'</div></li>'].join(""))
 			.attr("data-hid",fields[i].id)
 			.attr("data-type",fields[i].type)
 			.attr("data-field",fields[i].field)
