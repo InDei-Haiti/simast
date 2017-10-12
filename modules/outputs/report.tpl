@@ -30,10 +30,10 @@
                                     <td>Description:</td>
                                     <td><input type="text" name="rep_desc" class="text" id="rep_desc" size="50"></td>
                                 </tr>
-                                <tr>
+                                <!--<tr>
 				    <td>Department:</td>
 				    <td>@@dept_selector@@</td>
-                                </tr>
+                                </tr>-->
                                 
                                 <tr>
                                     <td>Start Date:</td>
@@ -42,6 +42,11 @@
                                 <tr>
                                     <td>End Date:</td>
                                     <td>@@cal_end@@</td>
+                                </tr>
+
+                                <tr>
+                                    <td></td>
+                                    <td><input type="button" class="text button ce pi ahr"  value="Save" onclick="reporter.saveReport($('#saving'),false)"></td>
                                 </tr>
                             </table>
                             <!-- Second Column&nbsp;<input type="checkbox" id="scol_view"> -->
@@ -84,7 +89,7 @@
                                 </tbody>
 
                             </table>
-                            <input type="button" class="text button ce pi ahr"  value="Save" onclick="reporter.saveReport(this,false)">
+                            <input id="saving" type="button" class="text button ce pi ahr"  value="Save" onclick="reporter.saveReport(this,false)">
                             <input type="button" class="text uniClone button ce pi ahr" style="float: right;"
                               onclick="reporter.newSectionPre($('#vrai'),false,true)"
                               value="Add Section" style="float:left;">

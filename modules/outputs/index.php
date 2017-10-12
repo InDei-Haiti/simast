@@ -1031,7 +1031,7 @@ echo '<br/>
 //echo '<div class="list" id="tasks" style="height: 90px"></div>';
 
 echo '<h3 style="padding: 5px;">&emsp;&emsp;'.$AppUI->_('Forms').'<div id="imgloader" style="display:none;width:25px;height:25px"><img src="/modules/outputs/images/ajax-loader.gif"/></div></h3>';
-echo '<div  id="forms" style="height:300px;">
+echo '<div  id="forms" style="height:auto !important;min-height: 500px">
 						
 		</div>';
 

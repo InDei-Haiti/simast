@@ -106,7 +106,7 @@ if ($_POST ['mode'] == 'save' || $_POST ['mode'] == 'update') {
 			$q->addTable('reports');
 			$q->addWhere('id="' . $rid . '"');
 			$datab = $q->loadResult();
-			$sql = 'select title,end_date,start_date,entries from reports where id="' . $rid . '"';
+			$sql = 'select title,rep_desc,end_date,start_date,entries from reports where id="' . $rid . '"';
 			$res = mysql_query($sql);
 			if ($res) {
 				$datas = mysql_fetch_assoc($res);

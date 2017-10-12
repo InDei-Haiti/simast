@@ -314,8 +314,8 @@ var reporter = (function (my) {
         $j.get("?m=outputs&a=reports&mode=loadinfo&suppressHeaders=1", {
             "dbrid":rid
         }, function (rdata,status,xhr) {
-            console.log(status);
-            //console.log(rdata);
+            // console.log(status);
+            console.log(rdata);
             rdata = JSON.parse(rdata);
             console.log(rdata);
             cleanTabStat(true);
@@ -401,8 +401,20 @@ var reporter = (function (my) {
             //$j("#tabs").toTab(4);
             $j("#rep_name").val(rdata.title);
             $j("#rep_dept").val(rdata.rep_dept);
-            $j("#rep_start").val(rdata.start_date);
-            $j("#rep_end").val(rdata.end_date);
+            $j("#rep_desc").val(rdata.rep_desc);
+            if(rdata.start_date == ""){
+                $j("#rep_start").val("0000-00-00");
+            }else{
+                $j("#rep_start").val(rdata.start_date);
+            }
+
+            if(rdata.end_date == ""){
+                $j("#rep_end").val("0000-00-00");
+            }else{
+                $j("#rep_end").val(rdata.end_date);
+            }
+
+
             refreshRowSet();
             $j("tr", $cbrbody).show();
         });
@@ -771,6 +783,8 @@ var reporter = (function (my) {
                 $j(".sec_app").live("click", function () {
                     var $xbox = $j(this).closest(".zxrow"), back = $xbox.data("old-content");
                     if ($j(this).hasClass("do_cancel")) {
+                        var test = $(".table_edit_cell tbody tr:eq(0) td:eq(1)").html();
+                        console.log(test);
                         $xbox.html(back);
                     } else {
                         var sok = true, sltype, content, vcontent, sname;
@@ -975,7 +989,7 @@ var reporter = (function (my) {
                 strpre.push("indb=" + indb + "&");
             }
             strpre.unshift("mode=" + postAction + "&");				//sdbox.push(dBox);
-            alert(postAction);
+            // alert(postAction);
             $j.ajax({
                 url:'?m=outputs&a=reports&suppressHeaders=1',
                 data:strpre.join("") + "bps=" + encodeURIComponent(JSON.stringify(dfp)), //dfp.join(""),
@@ -987,6 +1001,7 @@ var reporter = (function (my) {
                                 buildingSample = false;
                                 $rlbody.find("tr.emptydb").remove().end();
                                 msg = (postAction == 'update' ? indb : msg);
+                                console.log(entries);
                                 chface.add2Table({
                                     id:(msg ? parseInt(msg) : 0),
                                     name:entries.rep_name,
