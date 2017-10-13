@@ -855,6 +855,18 @@ var v = null;
     $(document).ready(function(){
         miness();
     });
+    dxsave
+
+    $(document).ready(function(){
+        $("#dxsave,#saving").click(function(){
+            setTimeout(function(){
+                 $('a[href="#tabs-1"]').closest("li").addClass("tabs-selected");
+                 $('a[href="#tabs-5"]').closest("li").removeClass("tabs-selected");
+                 $("#tabs-1").removeClass("tabs-hide");
+                 $("#tabs-5").addClass("tabs-hide");
+            },500);
+        });
+    });
 </script>
 <?php
 

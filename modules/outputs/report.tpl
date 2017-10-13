@@ -46,7 +46,7 @@
 
                                 <tr>
                                     <td></td>
-                                    <td><input type="button" class="text button ce pi ahr"  value="Save" onclick="reporter.saveReport($('#saving'),false)"></td>
+                                    <td><input id="dxsave" type="button" class="text button ce pi ahr"  value="Save" onclick="reporter.saveReport($('#saving'),false)"></td>
                                 </tr>
                             </table>
                             <!-- Second Column&nbsp;<input type="checkbox" id="scol_view"> -->
