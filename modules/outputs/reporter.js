@@ -478,6 +478,7 @@ var reporter = (function (my) {
             }
             curChoice = lthis.tagName.toLowerCase();
             choice_det = $j(lthis).attr("data-rep_item");
+            console.log(ndtitle+": "+choice_det);
             if (curChoice == "td") {
                 choice_det = 'cell';
                 $j(lthis).addClass("cseled");
