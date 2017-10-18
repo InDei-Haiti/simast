@@ -435,25 +435,21 @@ var charter = (function (my) {
 						if(fields.section){
 							$.each(fields.section, function(key,val){
 								var classname = key;
-								var li = '<tr><td valign="top" colspan="2"><strong>'+val['name']+'</strong>></td></tr>';
+								var li = '<tr><td valign="top" colspan="2"><strong>'+val['name']+'</strong></td></tr>';
 								var ftext = 'fields';
 								var ntext = 'name';
 							     li += '<tr><td colspan="2"  align="left" style="width:30%;margin:15px;background:transparent" valign="middle" class="hilite"><input type="hidden" class="jcheck" name="wform_'+msg[i].id+'['+ntext+']" value="'+key+'">'+'<table  class="std" border="1" cellpadding="3" cellspacing="0" style="background:transparent;margin-left:20px;list-style:none;border-collapse: collapse;border-color: #a5cbf7;">';
 							     
 							     $.each(val['fields'], function(keyf,valf){
 							    	 li +=  '<tr><td align="left" style="width:40%;margin:15px;background:transparent" valign="middle" class="hilite"><label><input type="checkbox" class="jcheck" name="wform_'+msg[i].id+'['+ftext+'][]" value="'+keyf+'">'+keyf+' '+valf['title']+'&nbsp;</label></td><td>'
-							    	 
-							    	 
 							    	 if(valf['type']==='date'){
 											var idstart = key+'_'+keyf+"_start";
 											var idend = key+'_'+keyf+"_end";
 											var keyname = key+'.'+keyf;
 											li += '&emsp;Start Date :&nbsp<span style="white-space:nowrap;flaot:left">';
-										
 											li += '<input type="date" id="'+idstart+'" class="text spCals  hasDatepick" name="beginner" value="" size="10" >';
 											//<img src="images/calendar.png" alt="Popup" class="trigger datepick-trigger">
 											li += '</span>';
-											
 											li += '&emsp;End Date :&nbsp<span style="white-space:nowrap;flaot:left">';
 											li += '<input type="date" id="'+idend+'" class="text spCals  hasDatepick" name="beginner" value="" size="10" >';
 											//<img src="images/calendar.png" alt="Popup" class="trigger datepick-trigger">

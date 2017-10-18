@@ -478,7 +478,7 @@ var reporter = (function (my) {
             }
             curChoice = lthis.tagName.toLowerCase();
             choice_det = $j(lthis).attr("data-rep_item");
-            console.log(ndtitle+": "+choice_det);
+            console.log(ndtitle+": "+choice_det+" "+curChoice);
             if (curChoice == "td") {
                 choice_det = 'cell';
                 $j(lthis).addClass("cseled");
@@ -488,7 +488,7 @@ var reporter = (function (my) {
             else {
                 var rtabd = form2object("sendAll"); // result table form data
                 rcell = findMaxKey(rows);//amnt(rows);
-                if (curChoice === "div" && choice_det === 'stat') {
+                if (curChoice === "span" && choice_det === 'stat') {
                     // we got selected stat table
                     var spiv = ['cols', 'rows'], stxt = [];
                     for (var si = 0, sl = spiv.length; si < sl; si++) {
@@ -517,7 +517,7 @@ var reporter = (function (my) {
                     };
 
                 }
-                else if (curChoice === 'div' && choice_det === 'graph') {
+                else if (curChoice === 'span' && choice_det === 'graph') {
                     //we have selected graph
                     var graphData = grapher.emulSend(true);
                     rows[rcell] = {
