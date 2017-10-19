@@ -2421,7 +2421,7 @@ saveClass.prototype.add2Table = function(rdata){
 		"data-showr": rdata.brest
 	})
 		//.append(["<!--<td title='Edit' align='center'><div data-id='",rdata.id,"' class='",( ztype ),"'></div></td>-->"].join(""))
-		.append(["<td ",(tvn.n ===true? 'class="moreview"' : "") ," data-text='",rdata.name,"' data-id='"+rdata.id+"' ><span class='fhref flink' onclick='qurer.run(\"",nl,"\",\"", qurerAction ,"\");' >", tvn.s ,"</span></td>"].join(""))
+		.append(["<td ",(tvn.n ===true? 'class="moreview"' : "") ," data-text='",rdata.name,"' title = '"+rdata.name+"'  data-id='"+rdata.id+"' ><span class='fhref flink' onclick='qurer.run(\"",nl,"\",\"", qurerAction ,"\");' >", tvn.s ,"</span></td>"].join(""))
 		.append("<td align='center'>"+(rdata.hasOwnProperty("type") ? rdata.type : "&nbsp;")+"</td>")
 		.append("<td align='center'>"+(rdata.hasOwnProperty("itemType") ? rdata.itemType : "&nbsp;")+"</td>") //added for report items extra column
 		.append(["<td ",(tvd.n ===true? 'class="moreview"' : "")  ," data-text='",rdata.desc,"'>",'<input type="hidden" id="start_',nl,'" value="',self.viewDate(rdata.sdate),'">', '<input type="hidden" id="end_', nl, '" value="', self.viewDate(rdata.edate)+ '">', tvd.s ,"</td>"].join(""))
