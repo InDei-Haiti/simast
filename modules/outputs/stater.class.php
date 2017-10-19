@@ -2448,7 +2448,7 @@ class Stater {
 					$uval=count($bblock['list']);
 					$th=array(
 					'text' => '<td class="vdata">'.$uval.'</td><td class="summr">'.$uval.'</td>'."\n"
-					.($this->sperc_rows == true ? '<td class="perc">'.round((($uval*100)/$this->gtotal)).'%</td>' : '')
+					.($this->sperc_rows == true ? '<td class="perc">'.round((($uval*100)/$this->gtotal),2).'%</td>' : '')
 					.($this->srecords == true ? '<td class="summr">'.$this->recordCount[$bi].'</td>' : ''),
 					'total'=> $uval,
 					'pureRows'=>1);
@@ -2938,7 +2938,7 @@ class Stater {
 				$html[1].='<td>'.$td.'</td>'."\n\t";
 				$cellset ['body'][] ='<td>'.$td.'</td>'."\n\t";
 				if(is_numeric($td) && $td > 0 ){
-					$localPercent=round((($td*100)/$this->gtotal));
+					$localPercent=round((($td*100)/$this->gtotal),2);
 					$row_tot+=$td;
 					for($v=0;$v < $rcn;$v++){
 						$ltots[$v]+=$td;
@@ -2966,7 +2966,7 @@ class Stater {
 							$this->brokenCols[]=$ax;
 						}
 					}else{
-						$localPercent=round((($tht*100)/$this->gtotal));
+						$localPercent=round((($tht*100)/$this->gtotal),2);
 					}
 					if($this->stots_cols){
 						$html[1].='<td>'.$tht.'</td>'."\n\t";
@@ -2985,7 +2985,7 @@ class Stater {
 		if(!($tcols == 0 && $trows > 1)){
 			$html[1].='<td class="summr">'.$row_tot.'</td>';
 			$cellset['body'][]='<td class="summr">'.$row_tot.'</td>';
-			$html[0].=($this->sperc_rows === true ? '<td class="perc">'.(round((($row_tot*100)/$this->gtotal))).'%</td>': '')
+			$html[0].=($this->sperc_rows === true ? '<td class="perc">'.(round((($row_tot*100)/$this->gtotal),2)).'%</td>': '')
 			.($this->srecords === true ? '<td class="summr">&nbsp;</td>': '');
 		}
 		if($this->gtotal == 0){
@@ -2994,7 +2994,7 @@ class Stater {
 		if ($tcols > 0 && $trows ==0) {
 			$percent='100';
 		}else{
-			$percent=round((($row_tot*100)/$this->gtotal));
+			$percent=round((($row_tot*100)/$this->gtotal),2);
 		}
 		$tcode = ($this->sperc_rows === true ? '<td class="perc">'.$percent.'%</td>' : '')
 		.($this->srecords === true ? '<td class="summr">&nbsp;</td>' : '')
