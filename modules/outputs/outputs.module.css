@@ -1653,8 +1653,10 @@ ul.statcolx li{
 }
 
 #reportBag{
-	border: 2px solid #96a19f;
-	padding : 3px;
+    border: 2px solid #96a19f;
+    padding: 3px;
+    overflow-y: scroll;
+    height: 300px;
 }
 .inbbuts, .inbbuts > .fbutton{
 	float:none !important;
