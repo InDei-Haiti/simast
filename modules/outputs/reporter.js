@@ -315,7 +315,7 @@ var reporter = (function (my) {
             "dbrid":rid
         }, function (rdata,status,xhr) {
             // console.log(status);
-            console.log(rdata);
+            //console.log(rdata);
             rdata = JSON.parse(rdata);
             console.log(rdata);
             cleanTabStat(true);
@@ -336,10 +336,16 @@ var reporter = (function (my) {
             for (var colm in bdata.columns) {
                 if (bdata.columns.hasOwnProperty(colm)) {
                     $cbrbody = $j(".breport:eq(" + colm + ") > tbody");
-                    console.log(bdata.columns[colm]);
+                    //console.log(bdata.columns[colm]);
                     for (var i = 0, l = bdata.columns[colm].length; i < l; i++) {
                         var cursec = bdata.columns[colm][i],
                             pprow = secs[cursec], vcont;
+                        if(pprow==null){
+                            continue;
+                        }
+                        console.log(cursec);
+                        console.log(secs);
+                        console.log(pprow);
                         if(pprow.type === -1){
                             continue;
                         }
