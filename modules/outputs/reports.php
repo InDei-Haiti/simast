@@ -307,7 +307,7 @@ if ($_POST ['mode'] == 'save' || $_POST ['mode'] == 'update') {
 			if ($res) {
 				$new_id = mysql_insert_id();
 			}
-			echo mysql_errno().':'.mysql_error();
+			//echo mysql_errno().':'.mysql_error();
 			echo $new_id;
 			break;
 		case 'get_item_list':
