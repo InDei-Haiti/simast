@@ -1,7 +1,13 @@
 <?php
 global $AppUI, $baseDir;
 //require_once ($baseDir . '/modules/outputs/php_json.class.php');
-
+$is_superAdmin = false;
+$roles = $perms->getUserRoles($AppUI->user_id);
+foreach ($roles as $role){
+    if($role['value']=='super_admin'){
+        $is_superAdmin = true;
+    }
+}
 function findItembyT($t){
 	$sql = 'select * from report_items';
 	$res = mysql_query($sql);
@@ -322,7 +328,9 @@ if ($_POST ['mode'] == 'save' || $_POST ['mode'] == 'update') {
 					$items[$row['itype']][$row['id']] = $row['idata'];
 				}
 			}
-			echo json_encode($items);
+			if($is_superAdmin)
+			    echo json_encode($items);
+			else echo null;
 			break;
 		case 'item_view':
 			$itemID = intval($_GET['iid']);

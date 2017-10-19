@@ -603,6 +603,7 @@ var reporter = (function (my) {
                         if (parseInt(msg) > 0) {
                             //request fresh list of items
                             refreshItemsList();
+                            swal("Report item saved", "", "success");
                             info("Report item saved", 1);
                         } else {
                             info("Failed to save report item", 0);

@@ -46,10 +46,11 @@ function info(msg,context){
 		break;
 	}
 	//<div id="msg_note_box"><div class="note_msg ci_sprite"></div><span></span></div>
+    $j("#msg_note_box_container").show();
 	if($j("#msg_note_box").length == 0){
 		$j("<div/>",{id: "msg_note_box"})
 			.append('<div class="note_msg ci_sprite"></div><span></span>')
-			.appendTo(document.body);
+			.appendTo($j("#msg_note_box_container"));
 	}
 
 	$j("#msg_note_box").find(".note_msg").attr("class","note_msg ci_sprite "+iclass)
