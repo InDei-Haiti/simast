@@ -3042,7 +3042,7 @@ class Stater {
 				    $perscsym = '';
 				    $temptd = $td;
 				    if(($this->sperc_cols || $this->sperc_rows) && is_numeric($td)) {
-                        $td = round((($td * 100) / array_sum($utar)));
+                        $td = round((($td * 100) / array_sum($utar)),2);
                         $perscsym = '%';
                     }
 					$html.='<td class="vdata '.($fk === true ? 'fk' : '').'">'.$td.$perscsym.'</td>'."\n\t";
@@ -3098,7 +3098,7 @@ class Stater {
 			$this->gtotal=1;
 		}
 		if($this->sperc_rows === TRUE){
-			$dnum=round((($row_tot*100)/array_sum($utar)));
+			$dnum=round((($row_tot*100)/array_sum($utar)),2);
 			$html.='<td class="perc">'.$dnum.'%</td>' ;
 			$cellset[]='<td class="perc">'.$dnum.'%</td>';
 			++$cells;
