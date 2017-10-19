@@ -312,10 +312,12 @@ if ($_POST ['mode'] == 'save' || $_POST ['mode'] == 'update') {
 			break;
 		case 'get_item_list':
             $is_superAdmin = false;
+            $perms =& $AppUI->acl();
             $roles = $perms->getUserRoles($AppUI->user_id);
             foreach ($roles as $role){
                 if($role['value']=='super_admin'){
                     $is_superAdmin = true;
+                    echo 'yes';
                 }
             }
 			$sql = 'select * from report_items order by itype';
@@ -329,7 +331,7 @@ if ($_POST ['mode'] == 'save' || $_POST ['mode'] == 'update') {
 					$items[$row['itype']][$row['id']] = $row['idata'];
 				}
 			}
-			if(!$is_superAdmin)
+			if($is_superAdmin)
 			    echo json_encode($items);
 			else echo null;
 			break;
