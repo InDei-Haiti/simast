@@ -791,51 +791,60 @@ var reporter = (function (my) {
                     var $xbox = $j(this).closest(".zxrow"), back = $xbox.data("old-content");
                     if ($j(this).hasClass("do_cancel")) {
                         var test = $(".table_edit_cell tbody tr:eq(0) td:eq(1)").html();
+                        test_2 = $(".table_edit_cell tbody tr:eq(0) td:eq(1) input").val();
                         console.log(test);
+                        console.log(test_2);
                         $xbox.html(back);
                     } else {
-                        var sok = true, sltype, content, vcontent, sname;
-                        //We go save this section
-                        $j(this).closest(".table_edit_cell").find("tr").each(function (row) {
-                            var $tdcell = $j("td:eq(1)", this);
-                            if (row === 0) {// name of section
-                                sname = $j("input", $tdcell).val();
-                            } else if (row === 1) {// type of section
-                                sltype = $j("select", $tdcell).val();
-                            } else if (row === 2) { // for text is text-content, for others - id of picked item
-                                if (sltype === 'text') {
+                        test_2 = $(".table_edit_cell tbody tr:eq(0) td:eq(1) input").val();
+                        console.log(test_2);
 
-                                    /*content = CKEDITOR.instances[$tdcell.find('textarea').attr('id')].getData();
-                                    vcontent = content;*/
-                                    //CKEDITOR.replace($tdcell.find('textarea').attr('id'));
-                                    //console.log(CKEDITOR.instances[$tdcell.find('textarea').attr('id')].getData());
-                                    //content = $tdcell.find('textarea');
-                                    console.log($tdcell.find('textarea').attr('id'));
-                                    var $tobj = $j(".cleditorMain > iframe", $tdcell);
-                                    content = $tobj[0].contentDocument.body.innerHTML;
-                                    vcontent = content;
-                                } else {
-                                    content = $j(".repits", this).val();
-                                    vcontent = $j(".repits option:selected").text();
-                                    if (content == '-1') {
-                                        alert("Please select report item, or remove section");
-                                        sok = false;
+                        if(test_2 === ''){
+                            alert("Il faut un titre pour chaque section");
+                        }else{
+                            var sok = true, sltype, content, vcontent, sname;
+                            //We go save this section
+                            $j(this).closest(".table_edit_cell").find("tr").each(function (row) {
+                                var $tdcell = $j("td:eq(1)", this);
+                                if (row === 0) {// name of section
+                                    sname = $j("input", $tdcell).val();
+                                } else if (row === 1) {// type of section
+                                    sltype = $j("select", $tdcell).val();
+                                } else if (row === 2) { // for text is text-content, for others - id of picked item
+                                    if (sltype === 'text') {
+
+                                        /*content = CKEDITOR.instances[$tdcell.find('textarea').attr('id')].getData();
+                                         vcontent = content;*/
+                                        //CKEDITOR.replace($tdcell.find('textarea').attr('id'));
+                                        //console.log(CKEDITOR.instances[$tdcell.find('textarea').attr('id')].getData());
+                                        //content = $tdcell.find('textarea');
+                                        console.log($tdcell.find('textarea').attr('id'));
+                                        var $tobj = $j(".cleditorMain > iframe", $tdcell);
+                                        content = $tobj[0].contentDocument.body.innerHTML;
+                                        vcontent = content;
+                                    } else {
+                                        content = $j(".repits", this).val();
+                                        vcontent = $j(".repits option:selected").text();
+                                        if (content == '-1') {
+                                            alert("Please select report item, or remove section");
+                                            sok = false;
+                                        }
                                     }
                                 }
+                            });
+                            if (sok === true) {
+                                var $pcell = $j(this).closest(".slink").attr("data-stype", sltype),
+                                    pdata = $pcell.data("old-content");
+                                $pcell.empty().append(pdata)
+                                    .find(".rte_fld").html(sname)
+                                    .prev("input:hidden").val(sname).end()
+                                    .end()
+                                    .find(".sec_cont_view").html(vcontent)
+                                    .next("input").val(content).end()
+                                    .end()
+                                    .find(".sec_cont_type").val(sltype);
+                                textStore = '';
                             }
-                        });
-                        if (sok === true) {
-                            var $pcell = $j(this).closest(".slink").attr("data-stype", sltype),
-                                pdata = $pcell.data("old-content");
-                            $pcell.empty().append(pdata)
-                                .find(".rte_fld").html(sname)
-                                .prev("input:hidden").val(sname).end()
-                                .end()
-                                .find(".sec_cont_view").html(vcontent)
-                                .next("input").val(content).end()
-                                .end()
-                                .find(".sec_cont_type").val(sltype);
-                            textStore = '';
                         }
                     }
                 });
