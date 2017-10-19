@@ -301,6 +301,7 @@ if ($_POST ['mode'] == 'save' || $_POST ['mode'] == 'update') {
 			
 			//$_SESSION ['fileNameCshfBack']
 			//var_dump($_POST);
+            $html = mysql_real_escape_string($html);
 			$sql = 'insert into report_items (title,itype,idata,html) values ("%s","%s","%s",\'%s\')';
 			$res = mysql_query(sprintf($sql, $idata['n'], $idata['c'], mysql_real_escape_string(json_encode($idata)),$html));
 			if ($res) {
