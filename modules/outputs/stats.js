@@ -1361,7 +1361,8 @@ var grapher = (function(my){
 	};
 
 	var bars = function(categoriesv,seriesv,title){
-		return /*$j('#graph_home').*/Highcharts.chart('graph_home', {
+
+		chartOption = {
 			chart: {
 				type: 'bar'
 			},
@@ -1390,170 +1391,181 @@ var grapher = (function(my){
 			plotOptions: {
 				bar: {
 					dataLabels: {
-						enabled: true
+						enabled: true,
+						format: '{y} %',
+						valueDecimals: 2
 					}
 				}
 			},
 			legend: {
 				/*layout: 'vertical',
-				align: 'right',
-				verticalAlign: 'top',
-				x: -40,
-				y: 80,
-				floating: true,
-				borderWidth: 1,
-				backgroundColor: ((Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'),
-				shadow: true*/
-                /*reversed: true*/
+				 align: 'right',
+				 verticalAlign: 'top',
+				 x: -40,
+				 y: 80,
+				 floating: true,
+				 borderWidth: 1,
+				 backgroundColor: ((Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'),
+				 shadow: true*/
+				/*reversed: true*/
 			},
 			credits: {
 				enabled: false
 			},
 			series: seriesv
-		});
+		};
+		if($j("#sperc-rows").is(":checked") || $j("#sperc-cols").is(":checked")) {
+			chartOption['tooltip'] = {
+				pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y:.2f}%</b><br/>',
+					shared: true
+			}
+		}
+		return /*$j('#graph_home').*/Highcharts.chart('graph_home', chartOption);
 	};
 
     var sbars = function(categoriesv,seriesv,title){
-        return /*$j('#graph_home').*/Highcharts.chart('graph_home', {
-            chart: {
-                type: 'bar'
-            },
-            title: {
-                text: title
-            },
-            subtitle: {
-                text: ''
-            },
-            xAxis: {
-                categories: categoriesv,
-                title: {
-                    text: null
-                }
-            },
-            yAxis: {
-                min: 0,
-                title: {
-                    text: 'Population (millions)',
-                    align: 'high'
-                },
-                labels: {
-                    overflow: 'justify'
-                }
-            },
-            tooltip: {
-                valueSuffix: ' millions'
-            },
-            plotOptions: {
-                series: {
-                	stacking: 'normal'
+		chartOption = {
+			chart: {
+				type: 'bar'
+			},
+			title: {
+				text: title
+			},
+			subtitle: {
+				text: ''
+			},
+			xAxis: {
+				categories: categoriesv,
+				title: {
+					text: null
 				}
-            },
-            legend: {
-                reversed: true
-            },
-            credits: {
-                enabled: false
-            },
-            series: seriesv
-        });
+			},
+			yAxis: {
+				min: 0,
+				title: {
+					text: 'Population (millions)',
+					align: 'high'
+				},
+				labels: {
+					overflow: 'justify'
+				}
+			},
+			tooltip: {
+				valueSuffix: ' millions'
+			},
+			plotOptions: {
+				series: {
+					stacking: 'normal'
+				}
+			},
+			legend: {
+				reversed: true
+			},
+			credits: {
+				enabled: false
+			},
+			series: seriesv
+		};
+        return /*$j('#graph_home').*/Highcharts.chart('graph_home', chartOption);
     };
 
     var pbars = function(categoriesv,seriesv,title){
-        return /*$j('#graph_home').*/Highcharts.chart('graph_home', {
-            chart: {
-                type: 'bar'
-            },
-            title: {
-                text: title
-            },
-            subtitle: {
-                text: ''
-            },
-            xAxis: {
-                categories: categoriesv,
-                title: {
-                    text: null
-                }
-            },
-            yAxis: {
-                min: 0,
-                title: {
-                    text: 'Population (millions)',
-                    align: 'high'
-                },
-                labels: {
-                    overflow: 'justify'
-                }
-            },
-            tooltip: {
-                pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ({point.percentage:.0f}%)<br/>',
-                shared: true
-            },
-            plotOptions: {
-                series: {
-                    stacking: 'percent'
-                }
-            },
-            legend: {
-                reversed: true
-            },
-            credits: {
-                enabled: false
-            },
-            series: seriesv
-        });
+		chartOption = {
+			chart: {
+				type: 'bar'
+			},
+			title: {
+				text: title
+			},
+			subtitle: {
+				text: ''
+			},
+			xAxis: {
+				categories: categoriesv,
+				title: {
+					text: null
+				}
+			},
+			yAxis: {
+				min: 0,
+				title: {
+					text: 'Population (millions)',
+					align: 'high'
+				},
+				labels: {
+					overflow: 'justify'
+				}
+			},
+			tooltip: {
+				pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ({point.percentage:.2f}%)<br/>',
+				shared: true
+			},
+			plotOptions: {
+				series: {
+					stacking: 'percent'
+				}
+			},
+			legend: {
+				reversed: true
+			},
+			credits: {
+				enabled: false
+			},
+			series: seriesv
+		};
+        return /*$j('#graph_home').*/Highcharts.chart('graph_home', chartOption);
     };
 
     var columns = function(seriesv,title) {
-    	console.log(seriesv);
-        return /*$j('#graph_home').*/Highcharts.chart('graph_home', {
-            chart: {
-                type: 'column',
-                options3d: {
-                    enabled: true,
-                    alpha: 15,
-                    beta: 15,
-                    depth: 50,
-                    viewDistance: 25
-                }
-            },
-            title: {
-                text: title
-            },
-            xAxis: {
-                type: 'category'
-            },
-            yAxis: {
-                title: {
-                    text: ''
-                }
+    	chartOption = {
+			chart: {
+				type: 'column',
+				options3d: {
+					enabled: true,
+					alpha: 15,
+					beta: 15,
+					depth: 50,
+					viewDistance: 25
+				}
+			},
+			title: {
+				text: title
+			},
+			xAxis: {
+				type: 'category'
+			},
+			yAxis: {
+				title: {
+					text: ''
+				}
 
-            },
-            legend: {
-                enabled: false
-            },
-            plotOptions: {
-                column: {
-                    depth: 25
-                },
-                series: {
-                    borderWidth: 0,
-                    dataLabels: {
-                        enabled: true,
-                        format: '{point.y}'
-                    }
-                }
-            },
-            tooltip: {
-                /*headerFormat: '<span style="font-size:11px">{series.name}</span><br>',*/
-                pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y}</b><br/>'
-            },
-            series: [{
-                name: 'Brands',
-                colorByPoint: true,
-                data: seriesv
-            }]
-		});
+			},
+			legend: {
+				enabled: false
+			},
+			plotOptions: {
+				column: {
+					depth: 25
+				},
+				series: {
+					borderWidth: 0,
+					dataLabels: {
+						enabled: true,
+						format: '{point.y}'
+					}
+				}
+			},
+			tooltip: {
+				/*headerFormat: '<span style="font-size:11px">{series.name}</span><br>',*/
+				pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y}</b><br/>'
+			},
+			series: [{
+				name: 'Brands',
+				colorByPoint: true,
+				data: seriesv
+			}]
+		};
+        return /*$j('#graph_home').*/Highcharts.chart('graph_home', chartOption);
     };
 
     var lines = function(categoriesv,seriesv,title){
@@ -1606,59 +1618,61 @@ var grapher = (function(my){
     };
 
     var line = function(categoriesv,seriesv,title){
-        return /*$j('#graph_home').*/Highcharts.chart('graph_home', {
-            chart: {
-                plotBackgroundColor: null,
-                plotBorderWidth: null,
-                plotShadow: false,
-                type: 'pie'
-            },
-            title: {
-                text: title
-            },
-            tooltip: {
-                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-            },
-            plotOptions: {
-                pie: {
-                    allowPointSelect: true,
-                    cursor: 'pointer',
-                    dataLabels: {
-                        enabled: false
-                    },
-                    showInLegend: true
-                }
-            },
-            series: seriesv
-        });
+		chartOption = {
+			chart: {
+				plotBackgroundColor: null,
+				plotBorderWidth: null,
+				plotShadow: false,
+				type: 'pie'
+			},
+			title: {
+				text: title
+			},
+			tooltip: {
+				pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+			},
+			plotOptions: {
+				pie: {
+					allowPointSelect: true,
+					cursor: 'pointer',
+					dataLabels: {
+						enabled: false
+					},
+					showInLegend: true
+				}
+			},
+			series: seriesv
+		};
+        return /*$j('#graph_home').*/Highcharts.chart('graph_home', chartOption);
     };
 
     var pie = function(seriesv,title){
-        return /*$j('#graph_home').*/Highcharts.chart('graph_home', {
-            chart: {
-                plotBackgroundColor: null,
-                plotBorderWidth: null,
-                plotShadow: false,
-                type: 'pie'
-            },
-            title: {
-                text: title
-            },
-            tooltip: {
-                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-            },
-            plotOptions: {
-                pie: {
-                    allowPointSelect: true,
-                    cursor: 'pointer',
-                    dataLabels: {
-                        enabled: false
-                    },
-                    showInLegend: true
-                }
-            },
-            series: seriesv
-        });
+		chartOption = {
+			chart: {
+				plotBackgroundColor: null,
+				plotBorderWidth: null,
+				plotShadow: false,
+				type: 'pie'
+			},
+			title: {
+				text: title
+			},
+			tooltip: {
+				pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+			},
+			plotOptions: {
+				pie: {
+					allowPointSelect: true,
+					cursor: 'pointer',
+					dataLabels: {
+						enabled: false
+					},
+					showInLegend: true
+				}
+			},
+			series: seriesv
+		}
+        return /*$j('#graph_home').*/Highcharts.chart('graph_home', chartOption);
     };
 
 	function prepareForSend(plain){
