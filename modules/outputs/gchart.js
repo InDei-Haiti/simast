@@ -181,6 +181,7 @@ var charter = (function (my) {
                     if(msg[i].activity){
                     	icon = '<input type="checkbox" name="activity" value="1" class="jcheck">';
                     }
+
 					var li = '<li>'+icon+msg[i].title;
 					// creation du tableau panel pour chaque formulaire
 					li += '<table id="panel'+msg[i].id+'" class="std" border="1" cellpadding="3" cellspacing="0" style="background:transparent;display:none;margin-left:20px;list-style:none;border-collapse: collapse;border-color: #a5cbf7;"></table>';
@@ -190,19 +191,35 @@ var charter = (function (my) {
 						uuid = 'key_ui';
 					else
 						uuid = null;*/
+					console.log(fields);
 					if(fields){
+						var optLst = '';
 						/*if(uuid != null)
 							$j("#panel"+msg[i].id).append('<tr style="padding:5px"><td><label><input type="checkbox" class="jcheck" name="form[wform_'+msg[i].id+'][]" value="'+uuid+'"/>Key</label></td><td></td></tr>');*/
                         //var vlit = '<tr style="padding:5px"><td align="left" style="width:30%;margin:15px;background:transparent" valign="middle" class="hilite"><label><input type="checkbox" class="jcheck" name="form['+tablename+'][]" value="'+key+'"/>'/*+key+'- '*/+val.title+'</label>'+tempval+'</td><td>';
 
+						var li_z = '<tr>' +
+							'<td colspan="2"><select style="width: 250px;display:inline-block;float:left;margin-left:20px;" id="slectOrdre" class="form-control">' +
+							'<option>---SELECT---</option>'+
+							'<option>ASC</option>' +
+							'<option>DESC</option>' +
+							'</select>' +
+							'<select id="slectChamps"  style="display:inline-block;float:left;margin-left:20px;">' +
+							'<option>---SELECT---</option>' +
+							'</select>' +
+							'<input style="width: 300px;display:inline-block;float:left;margin-left:20px;" id="lmnt" type="number" min="0" class="form-control" value=""></td>' +
+							'</tr>';
+						// $j("#ulforms").append(li_z);
+						$j("#panel"+msg[i].id).append(li_z);
                         $.each(fields.fields, function(key,val){
+							optLst+='<option value="'+key+'">' +val.title+
+								'</option>';
 							tempval = '<span class="title">'+val.title+'</span>';
 							if(val.title.length>50){
 								val.title = val.title.substring(0, 49)+'...';
 							}else{
 								tempval = '';
 							}
-							
 							var vli = '<tr style="padding:5px"><td align="left" style="width:30%;margin:15px;background:transparent" valign="middle" class="hilite"><label><input type="checkbox" class="jcheck" name="form['+tablename+'][]" value="'+key+'"/>'/*+key+'- '*/+val.title+'</label>'+tempval+'</td><td>';
 							if(val.type==='entry_date' || val.type==='date'){
 								var idstart = 'wform_'+msg[i].id+'_'+key+"_start";
@@ -554,6 +571,7 @@ var charter = (function (my) {
 							});
 						}
 						//$('.multiple').multiple();
+						$j('#slectChamps').append(optLst);
 					}
 					
 					

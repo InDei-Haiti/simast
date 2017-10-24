@@ -341,7 +341,7 @@ var pager = function(){
 					id: 1,//hid,
 					title: "Text",//$j(cthis).text(),
 					type: "string",self.colType(hid),
-					parent: 'None'$j(cthis).attr("data-part")					
+					parent: 'None',$j(cthis).attr("data-part")					
 				});
 			}else{
 				$j("#shome").html("<span class='note'>Cannot build stat table from multiple forms</span>");

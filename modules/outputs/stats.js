@@ -1513,6 +1513,13 @@ var grapher = (function(my){
 			},
 			series: seriesv
 		};
+
+		if($j("#sperc-rows").is(":checked") || $j("#sperc-cols").is(":checked")) {
+			chartOption['tooltip'] = {
+				pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y:.2f}%</b><br/>',
+				shared: true
+			}
+		}
         return /*$j('#graph_home').*/Highcharts.chart('graph_home', chartOption);
     };
 
