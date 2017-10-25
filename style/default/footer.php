@@ -839,6 +839,22 @@ var v = null;
 		</script>
 <script type="text/javascript" src="modules/outputs/progressBar.js"></script>
 <script type="text/javascript">
+    function cmSelector(){
+        if($(".wform_81_fld_0") !== undefined || $(".wform_81_fld_0") !== null){
+            var depId = $(".wform_81_fld_0").val();
+            $(".wform_81_fld_1 option").each(function(){
+                var compDepID = $(this).val();
+//                alert($(this).html));
+                if(depId == compDepID.substring(0,2)){
+                    $(this).attr("disabled","disabled");
+                }
+            });
+
+        }
+
+        setTimeout(cmSelector,500);
+    }
+
     function miness(){
         if($("#rbox").children().length > 0){
             $("#rbox li div.kill_area").html('<i class="fa fa-close" style="font-size:24px;color:red"></i>');
@@ -854,8 +870,9 @@ var v = null;
 
     $(document).ready(function(){
         miness();
+        cmSelector();
     });
-    dxsave
+
 
     $(document).ready(function(){
         $("#dxsave,#saving").click(function(){
@@ -868,6 +885,7 @@ var v = null;
         });
     });
 </script>
+
 <?php
 
 }

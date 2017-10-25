@@ -1142,7 +1142,7 @@ var wzrd = (function (my) {
 			var lis = $("#"+idli+" li");
 			idli1 = idli+"-"+lis.length+'-select';
 			console.log(idli1);
-			$j('#'+idli).append('<li class="prow"><div class="fbutton BDdelRow"></div><select class="fieldForm" onchange="self12.populateSelectField(this,\''+idli1+'\')"><option value="">Choose Form</option></select>&emsp;<select class="fieldField" id="'+idli1+'" style="width:150px"><option value="">Choose Field</option></select></li>');
+			$j('#'+idli).append('<li class="prow"><div class="fbutton BDdelRow"></div><select class="fieldForm" onchange="self12.populateSelectField(this,\''+idli1+'\')"><option value="">Choose Form</option></select>&emsp;<select class="fieldField" id="'+idli1+'" style="width:150px"><option value="-1">Choose Field</option></select></li>');
 			$('.fieldForm').each(function() {
 				if($j(this).find("option").length<2){
 					$selectEl = $j(this);
@@ -1156,7 +1156,7 @@ var wzrd = (function (my) {
 		createBigDataMapping: function ($frow,idli){
 			idli1 = 'idli-'+idli+'-select';
 			self12 = this;
-			$frow.append('<br/><br/><div class="inc" style="cursor:pointer;" onclick="self12.addField(\'idli-'+idli+'\')">+ Add Field</div><br/><br/> <ul id="idli-'+idli+'" style="list-style: none;"><li class="prow"><div class="fbutton BDdelRow"></div><select class="fieldForm" onchange="self12.populateSelectField(this,\''+idli1+'\')"><option value="">Choose Form</option></select>&emsp;<select class="fieldField" id="'+idli1+'" style="width:150px"><option value="">Choose Field</option></select></li></ul><br/><br/>');
+			$frow.append('<br/><br/><div class="inc" style="cursor:pointer;" onclick="self12.addField(\'idli-'+idli+'\')">+ Add Field</div><br/><br/> <ul id="idli-'+idli+'" style="list-style: none;"><li class="prow"><div class="fbutton BDdelRow"></div><select class="fieldForm" onchange="self12.populateSelectField(this,\''+idli1+'\')"><option value="">Choose Form</option></select>&emsp;<select class="fieldField" id="'+idli1+'" style="width:150px"><option value="-1">Choose Field</option></select></li></ul><br/><br/>');
 		},
 		editBigDataMapping: function ($frow,idli){
 			idli1 = 'idli-'+idli+'-select';

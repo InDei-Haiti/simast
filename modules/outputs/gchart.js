@@ -572,6 +572,7 @@ var charter = (function (my) {
 						}
 						//$('.multiple').multiple();
 						$j('#slectChamps').append(optLst);
+
 					}
 					
 					
@@ -619,7 +620,9 @@ var charter = (function (my) {
 			$('#imgloader').hide();
 		}).fail(function() {
 			$('#imgloader').hide();
-		});	
+		});
+
+		
 	}
 
 	/**
