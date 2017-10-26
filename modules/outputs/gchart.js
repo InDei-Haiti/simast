@@ -154,6 +154,12 @@ var charter = (function (my) {
 	     } 
 		$j('#where').val(JSON.stringify(where));
 	}
+	function pushOrderBy(order){
+        $j('#orderby').val(order);
+	}
+    function removeOrderBy(){
+        $j('#orderby').val("");
+    }
 	function loadForms(project_id){
 		
 		$('#imgloader').show();
@@ -164,6 +170,7 @@ var charter = (function (my) {
 				where = {};
 				$j("#forms").empty();
 				$j("#forms").append('<input type="hidden" name="where" id="where"/>');
+				$j("#forms").append('<input type="hidden" name="orderby" id="orderby"/>');
 				$j("#forms").append("<ul id='ulforms' style='list-style:none;margin:0;margin-left:-40px'></ul>");
                 $.each(msg, function(i){
 					var tablename;
@@ -199,16 +206,29 @@ var charter = (function (my) {
                         //var vlit = '<tr style="padding:5px"><td align="left" style="width:30%;margin:15px;background:transparent" valign="middle" class="hilite"><label><input type="checkbox" class="jcheck" name="form['+tablename+'][]" value="'+key+'"/>'/*+key+'- '*/+val.title+'</label>'+tempval+'</td><td>';
 
 						var li_z = '<tr>' +
-							'<td colspan="2"><select style="width: 250px;display:inline-block;float:left;margin-left:20px;" id="slectOrdre" class="form-control">' +
-							'<option>---SELECT---</option>'+
-							'<option>ASC</option>' +
-							'<option>DESC</option>' +
+							'<td colspan="2"><select style="width: 250px;display:inline-block;float:left;margin-left:20px;" id="slectOrdre_'+i+'" class="form-control">' +
+							'<option value="ASC">ASC</option>' +
+							'<option value="DESC">DESC</option>' +
 							'</select>' +
-							'<select id="slectChamps"  style="display:inline-block;float:left;margin-left:20px;">' +
-							'<option>---SELECT---</option>' +
+							'<select id="slectChamps_'+i+'"  style="display:inline-block;float:left;margin-left:20px;">' +
+							'<option value="-1">---SELECT---</option>' +
 							'</select>' +
-							'<input style="width: 300px;display:inline-block;float:left;margin-left:20px;" id="lmnt" type="number" min="0" class="form-control" value=""></td>' +
+							'<input style="width: 300px;display:inline-block;float:left;margin-left:20px;" id="lmnt_'+i+'" type="number" min="1" class="form-control" value="" placeholder="LIMIT"></td>' +
 							'</tr>';
+                        $j('#slectChamps_'+i).live("change",function() {
+                            if ($j(this).val() === '-1') {
+								removeOrderBy();
+                            }else{
+                            	pushOrderBy($j(this).val()+" "+$j('#slectOrdre_'+i).val());
+							}
+                        });
+                        /*$j('#lmnt_'+i).live("change",function() {
+                            if ($j(this).val() === '-1') {
+                                removeOrderBy();
+                            }else{
+                                pushOrderBy("ORDER BY "+$j(this).val()+" "+$j('#slectOrdre_'+i));
+                            }
+                        });*/
 						// $j("#ulforms").append(li_z);
 						$j("#panel"+msg[i].id).append(li_z);
                         $.each(fields.fields, function(key,val){
@@ -571,7 +591,7 @@ var charter = (function (my) {
 							});
 						}
 						//$('.multiple').multiple();
-						$j('#slectChamps').append(optLst);
+						$j('#slectChamps_'+i).append(optLst);
 
 					}
 					

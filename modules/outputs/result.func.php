@@ -138,7 +138,9 @@ function resultBuilder($qmode) {
 					}
 				}
 			}
-				
+			//orderby
+            if(isset($_POST['orderby']) && !empty($_POST['orderby']))
+			    $q->addOrder($_POST['orderby']);
 			//$tablename[] = $table;
             if($table != 'tasks'){
                 $tableau = explode("_", $table);
