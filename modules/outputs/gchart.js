@@ -154,9 +154,15 @@ var charter = (function (my) {
 	     } 
 		$j('#where').val(JSON.stringify(where));
 	}
-	function pushOrderBy(order){
-        $j('#orderby').val(order);
+	function pushLimit(limit){
+        $j('#limit').val(limit);
 	}
+    function removeLimit(){
+        $j('#limit').val("");
+    }
+    function pushOrderBy(order){
+        $j('#orderby').val(order);
+    }
     function removeOrderBy(){
         $j('#orderby').val("");
     }
@@ -171,6 +177,7 @@ var charter = (function (my) {
 				$j("#forms").empty();
 				$j("#forms").append('<input type="hidden" name="where" id="where"/>');
 				$j("#forms").append('<input type="hidden" name="orderby" id="orderby"/>');
+				$j("#forms").append('<input type="hidden" name="limit" id="limit"/>');
 				$j("#forms").append("<ul id='ulforms' style='list-style:none;margin:0;margin-left:-40px'></ul>");
                 $.each(msg, function(i){
 					var tablename;
@@ -217,18 +224,18 @@ var charter = (function (my) {
 							'</tr>';
                         $j('#slectChamps_'+i).live("change",function() {
                             if ($j(this).val() === '-1') {
-								removeOrderBy();
-                            }else{
-                            	pushOrderBy($j(this).val()+" "+$j('#slectOrdre_'+i).val());
-							}
-                        });
-                        /*$j('#lmnt_'+i).live("change",function() {
-                            if ($j(this).val() === '-1') {
                                 removeOrderBy();
                             }else{
-                                pushOrderBy("ORDER BY "+$j(this).val()+" "+$j('#slectOrdre_'+i));
+                                pushOrderBy($j(this).val()+" "+$j('#slectOrdre_'+i).val());
+							}
+                        });
+                        $j('#lmnt_'+i).live("change",function() {
+                            if ($j(this).val().trim() === '-1') {
+                                removeLimit();
+                            }else{
+                                pushLimit($j(this).val());
                             }
-                        });*/
+                        });
 						// $j("#ulforms").append(li_z);
 						$j("#panel"+msg[i].id).append(li_z);
                         $.each(fields.fields, function(key,val){
