@@ -17,5 +17,10 @@ if (!file_exists( $inc )) {
 if ($hid != 'help.toc') {
 	echo '<a href="?m=help&dialog=1">' . $AppUI->_( 'index' ) . '</a>';
 }
+?>
+<div class="card">
+<?php
 readfile( $inc );
 ?>
+</div>
+
