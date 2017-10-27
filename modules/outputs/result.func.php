@@ -141,6 +141,7 @@ function resultBuilder($qmode) {
 			//orderby
             if(isset($_POST['orderby']) && !empty($_POST['orderby']))
 			    $q->addOrder($_POST['orderby']);
+
 			//$tablename[] = $table;
             if($table != 'tasks'){
                 $tableau = explode("_", $table);
@@ -372,9 +373,12 @@ function resultBuilder($qmode) {
 		if (! $epp) {
 			$epp = 100;
 		}
-		
-		$count_request = $qcount->loadResult();
-		
+		//echo '<pre>';
+		//var_dump($_POST);
+        //echo '</pre>';
+		if(isset($_POST['limit']) && !empty($_POST['limit']))
+            $count_request = $_POST['limit'];
+		else $count_request = $qcount->loadResult();
 		$count = $count_request;
 		$start = $page * $epp - $epp;
 		// $end = $start + $epp;
