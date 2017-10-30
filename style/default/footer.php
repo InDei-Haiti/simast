@@ -885,7 +885,7 @@ var v = null;
         });
     });
 </script>
-
+<script type="text/javascript" src="<?php echo DP_BASE_URL;?>/modules/outputs/output_Js_script_RPA.js"></script>
 <?php
 
 }
@@ -998,6 +998,7 @@ if($m=='system' || $m == 'wizard'){
 ?>
 <script type="text/javascript" src="<?php echo DP_BASE_URL;?>/style/default/jquery-1.10.2.min.js"></script>
 <script type="text/javascript" src="<?php echo DP_BASE_URL;?>/style/default/bootstrap.min.js"></script>
+
 <script type="text/javascript">
   $(document).ready(function(){
 //        $("div#tabs ul.nav.nav-tabs").removeClass("tabs-nav");

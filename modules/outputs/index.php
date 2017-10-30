@@ -873,6 +873,19 @@ echo '<br/>
                     <input type="hidden" name="mode" value="importquery">
                 </form>
             </div>
+            
+            
+            
+            
+            <!--Haiti-->
+            <div align="left" style="background:white;margin-top:2px;padding: 10px"><form id="filterform" name="filterform" action="" method="get">
+					<fieldset id="filters" style="margin-left:-7px; width: 88%" class="collapsible collapsed header_collapsible">
+	    	<legend onclick="if($(\'#filterstab\').is(\':hidden\')){$(\'#filterstab\').show();document.getElementById(\'filters\').classList.remove(\'collapsed\');}else{$(\'#filterstab\').hide();document.getElementById(\'filters\').classList.add(\'collapsed\');}" style="color: #08245b;width: 800px;"><b>Filtres</b></legend>
+					<table id="filterstab" style="display: none;"><tbody><tr><td colspan="4">
+					&nbsp;Add filter: <select id="select_field" onchange="setTableFilter_output()"><option></option></select></td></tr></tbody></table></fieldset><fieldset id="options" style="margin-left: -7px; width: 88%" class="collapsible collapsed header_collapsible">
+			</fieldset>
+	                <input type="button" class="ce pi ahr" value="Apply" id="submitButton" onclick=" window.location.href = joinList(arrayUnique(linkToArray(window.location.href).concat(serialize(document.filterform)))); "></form></div>
+            <!--Haiti-->
             <table cellspacing="1" cellpadding="2" border="0" class="tbl tablesorter moretable" id="ittable" style="display: none;">
                 <thead>
                     <tr>
