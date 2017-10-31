@@ -391,7 +391,7 @@ if($_POST['mode']=='save'){
 	}
 	$query = join(',', $query);
 	$sql = 'SELECT '.$query.' FROM '.$querysaveaj;
-	//echo $sql;
+	//echo $sql.'<br/>';
 	$res = db_exec($sql);
 	if($res){
 		$_request = 0;
@@ -1000,7 +1000,7 @@ echo '<br/>
             $htmljoin = '<input type="hidden" id="join_query" name="join_query" value="'.$join_query.'">';
         }
         if($querysave){
-            $htmlquerysave = '<input type="text" id="querysave" name="querysave" value="'.$querysave.'">';
+            $htmlquerysave = '<input type="hidden" id="querysave" name="querysave" value="'.$querysave.'">';
         }
         echo '<div id="tabs-2" class="mtab" >';
         echo '<form method="POST" action="?m=outputs" id="sendAll" name="xform" onsubmit="return false;">';
