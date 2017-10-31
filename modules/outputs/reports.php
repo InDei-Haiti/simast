@@ -406,6 +406,28 @@ if ($_POST ['mode'] == 'save' || $_POST ['mode'] == 'update') {
 			echo "Fails";
 			return;
 			break;
+		case "forfilter":
+			$queriez=array();
+			$q= new DBQuery();
+			$q->addTable("queries");
+			$q->addWhere('visible="1"');
+			$q->addOrder("created desc");
+			$queriez['Table'] = $q->loadList();
+			$q->clearQuery();
+			$q->addTable('stat_queries','sqs');
+			$q->addOrder("created desc");
+			$q->addOrder('qmode asc');
+			$queriez['Stats']=$q->loadList();
+			$q->clearQuery();
+			//$q->addTable('activity_queries','act');
+			//$q->addOrder("created desc");
+			//$queriez['ActQr']=$q->loadList();
+			//$q->clearQuery();
+			$q->addQuery('id,title as qname');
+			$q->addTable('reports');
+			$queriez['Report']=$q->loadList();
+			echo json_encode($queriez);
+			break;
 		default:
 			break;
 //}elseif($_GET['mode'] === 'item_import'){}
