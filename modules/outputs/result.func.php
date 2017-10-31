@@ -450,7 +450,7 @@ function resultBuilder($qmode) {
         <input type="hidden" name="beneficieries"/>
         <input type="hidden" name="amount"/>
         <input type="hidden" name="token" value="'.$token.'"/>
-        <input type="hidden" name="querysave" value="'.$querysaveall.'">
+        <input type="text" name="querysave" value="'.$querysaveall.'">
 		<input type="button" class="ce pi ahr button adcbutt" value="Save To File" onclick="gpgr.saveToFile()"  class="button adcbutt">
 		</form></div>';
 		$tfhtml = '<ul>';

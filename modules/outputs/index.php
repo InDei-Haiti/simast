@@ -340,6 +340,7 @@ if($_POST['mode']=='save'){
 	$rows = $calcs['row'];
 	$cols = $calcs['col'];
 	$querysaveaj = $calcs['querysave'];
+	//echo $querysaveaj.'<br/>';
 	$svals = magic_json_decode($_POST['calcs2'],true);
     //var_dump($rows);
     //var_dump($cols);
@@ -986,7 +987,7 @@ echo '<br/>
             $htmljoin = '<input type="hidden" id="join_query" name="join_query" value="'.$join_query.'">';
         }
         if($querysave){
-            $htmlquerysave = '<input type="hidden" id="querysave" name="querysave" value="'.$querysave.'">';
+            $htmlquerysave = '<input type="text" id="querysave" name="querysave" value="'.$querysave.'">';
         }
         echo '<div id="tabs-2" class="mtab" >';
         echo '<form method="POST" action="?m=outputs" id="sendAll" name="xform" onsubmit="return false;">';
