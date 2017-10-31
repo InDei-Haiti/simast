@@ -340,6 +340,7 @@ if($_POST['mode']=='save'){
 	$rows = $calcs['row'];
 	$cols = $calcs['col'];
 	$querysaveaj = $calcs['querysave'];
+	//echo $querysaveaj.'<br/>';
 	$svals = magic_json_decode($_POST['calcs2'],true);
     //var_dump($rows);
     //var_dump($cols);
@@ -390,7 +391,7 @@ if($_POST['mode']=='save'){
 	}
 	$query = join(',', $query);
 	$sql = 'SELECT '.$query.' FROM '.$querysaveaj;
-	//echo $sql;
+	//echo $sql.'<br/>';
 	$res = db_exec($sql);
 	if($res){
 		$_request = 0;

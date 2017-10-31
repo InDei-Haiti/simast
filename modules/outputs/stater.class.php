@@ -208,7 +208,7 @@ class Stater {
 					//sort($vals);
 					//usort($vals, 'unqsort');
 
-					asort($vals);
+					//asort($vals);
 
 					$res=array();
 					$res2=array();
