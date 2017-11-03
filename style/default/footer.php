@@ -1159,7 +1159,6 @@ function genPDF(){
     });
 }
 
-
 function genPDFFromHtml(){
     var pdf = new jsPDF('p','pt','a4');
     pdf.fromHTML($("#misere"),20,20,{"width":500});
