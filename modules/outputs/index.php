@@ -854,6 +854,10 @@ $q->addQuery('id,title as qname');
 $q->addTable('reports');
 $queriez['Report']=$q->loadList();
 
+if(isset($_GET['getrep'])){
+	echo json_encode($queriez);
+}
+
 unset($q);
 flush_buffers();
 //<label><input type=checkbox name="extra[]" '.addChecks($lpost,'extra',"location").'>Location</label>
@@ -906,7 +910,7 @@ echo '<br/>
 					<table id="filterstab" style="display: none;"><tbody><tr><td colspan="4">
 					&nbsp;Add filter: <select id="select_field" onchange="setTableFilter_output()"><option></option></select></td></tr></tbody></table></fieldset><fieldset id="options" style="margin-left: -7px; width: 88%" class="collapsible collapsed header_collapsible">
 			</fieldset>
-	                <input type="button" class="ce pi ahr" value="Apply" id="submitButton" onclick=" window.location.href = joinList(arrayUnique(linkToArray(window.location.href).concat(serialize(document.filterform)))); "></form></div>
+	                <input type="button" class="ce pi ahr" value="Apply" id="submitButton" ></form></div>
             <!--Haiti-->
             <table cellspacing="1" cellpadding="2" border="0" class="tbl tablesorter moretable" id="ittable" style="display: none;">
                 <thead>
