@@ -655,12 +655,12 @@ var pager = function(){
 		for(var hid=0; hid < thl;hid++){
 			var cthis=thar[hid],txt = $j(cthis).text(),cw=$j(cthis).width();
 			filar[hid]={methods:{},mvals:[],state:false};
-
 			if (st_do <= 1) {
 				fields.push({
 					id: hid,
 					title: $j(cthis).text(),
-					type: self.colType(hid),
+					//type: self.colType(hid),
+					type: $j(cthis).attr("type"),
 					parent: $j(cthis).attr("data-part"),
 					field: $j(cthis).attr("data-field"),
 					datatype: $j(cthis).attr("data-type"),
@@ -736,6 +736,7 @@ var pager = function(){
             })
 			.data("ow",$j(cthis).width());
         }//);
+
 		$j("div.head_menu",thar).live("click",function(df){
 				self.headMenuWork(df);
         });  //).appendTo(cthis);

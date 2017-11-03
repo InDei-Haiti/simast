@@ -355,6 +355,7 @@ if($_POST['mode']=='save'){
 
 	$colsvals = $svals['cols'];
 	$rowsvals = $svals['rows'];
+	$range_fld = array();
 	foreach ($allfld as $i => $v){
 		for ($x = 0;$x<count($colsvals);$x++){
 		    //echo $svals['cols'][$x][id];
@@ -362,22 +363,35 @@ if($_POST['mode']=='save'){
 			    //echo strval($i);
 				$colsvals[$x]['id']= strval($i);
                 foreach ($svals['range'] as $val){
-                    if($val['fld']==$v)
+                    if($val['fld']==$v) {
+                        $range_fld[] = str_replace('.', '_', $v);
+                        if($val['type']=='number'){
+                            for ($iv=0;$iv<count($val['val']);$iv++){
+                                $val['val'][$iv]['s'] = $val['val'][$iv]['s'] + 0;
+                                $val['val'][$iv]['e'] = $val['val'][$iv]['e'] + 0;
+                            }
+                        }
                         $range[$i] = $val;
+                    }
                 }
 			}
 		}
 		for ($x = 0;$x<count($rowsvals);$x++){
 			if($rowsvals[$x]['field']==$v){
 				$rowsvals[$x]['id']= strval($i);
-                foreach ($svals['range'] as $val){
-                    if($val['fld']==$v)
+                foreach ($svals['range'] as $val) {
+                    if ($val['fld'] == $v){
+                        $range_fld[] = str_replace('.', '_', $v);
                         $range[$i] = $val;
+                    }
                 }
 			}
 		}
 	}
-    $svals['range'] = $range;
+	echo '<pre>';
+	var_dump($range);
+    echo '</pre>';
+	$svals['range'] = $range;
     $svals['cols'] = $colsvals;
 	$svals['rows'] = $rowsvals;
 	//var_dump($allfld);
@@ -437,20 +451,27 @@ if($_POST['mode']=='save'){
 			echo '</pre>';
 			break;*/
 			foreach($allfldq as $key => $fldinfo){
-				$forStore = $rowdata[$key];
+			    $forStore = $rowdata[$key];
 				if(isset($fldinfo['info']['sysv']) && !empty($fldinfo['info']['sysv'])){
 					//$tval = $forStore;
 					//$forStore = $wz->getValues($fldinfo['type'],$fldinfo['sysv'],$forStore);
-					$forStore = $fldinfo['value'][$forStore];
+                    if(!in_array($key, $range_fld))
+					    $forStore = $fldinfo['value'][$forStore];
 				}
 				/*if($key=='wform_81_fld_24')
 				    echo strval($forStore).' ';*/
-				$forStore = strval($forStore);
-				if($forStore=='0')
-                    $forStore = '-1';
-                $forStore = utf8_encode($forStore);
-				//$forStore = json_encode($forStore);
-				$forStore = str_replace('"', '', $forStore);
+                if (!is_numeric($forStore)) {
+                    $forStore = strval($forStore);
+                    if ($forStore == '0')
+                        $forStore = '-1';
+                    $forStore = utf8_encode($forStore);
+                    //$forStore = json_encode($forStore);
+                    //$forStore = str_replace('"', '', $forStore);
+                    //echo $forStore.' ';
+                }else{
+                    if ($forStore == 0)
+                        $forStore = -1;
+                }
 				$nfei->store ($forStore);
 			}
 			$nfei->nextRow ();
