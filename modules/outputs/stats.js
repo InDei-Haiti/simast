@@ -32,10 +32,14 @@ sFrames.prototype.init = function(){
 		$j("#launchbut").attr("disabled",false);
 	}
 	var $hapt =$j("#box-home");
+
 	for(var i=0,fl=fields.length;i < fl; i++){
+        console.log(fields[i].title+": "+fields[i].type);
 		$j(['<li class="refulli ui-corner-tr" ><div class="ulit fbox">',fields[i].parent,' : ',fields[i].title,'</div></li>'].join(""))
 			.attr("data-hid",fields[i].id)
-			.attr("data-type",fields[i].type)
+			.attr("type",fields[i].type)
+			.attr("data-type",fields[i].datatype)
+			.attr("data-sys",fields[i].datasys)
 			.attr("data-field",fields[i].field)
             .attr("title",fields[i].datatitle)
 			.attr("data-form",fields[i].dataform)
@@ -578,7 +582,8 @@ sFrames.prototype.Leader = function(obj){
 	var self = this, abort = false,$nl = $j(obj), exx = false, fval = false, nlead = $nl.attr("data-hid"), deltas = $j("#delta-count").is(":checked"),pluse;
 	
 	$j("#bclean").show();
-	self.ntype = $nl.attr("data-type");
+	//self.ntype = $nl.attr("data-type");
+	self.ntype = $nl.attr("type");
     self.nfld= 'wform_'+$nl.attr("data-form")+'.'+$nl.attr("data-field");
 	self.ltext = $nl.text();
 	self.title = $nl.text();
@@ -611,6 +616,7 @@ sFrames.prototype.Leader = function(obj){
 			}
 		}
 		var $tadd, edue, epost, ncase = false;
+		console.log(self.ntype);
 		switch (self.ntype) {
 			case "string":
 				if (selects[nlead] === 'plain' || deltas === false) {

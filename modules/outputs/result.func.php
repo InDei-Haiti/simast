@@ -8,6 +8,17 @@ function downlow($s)
 	return strtolower($s);
 }
 
+function check($array) {
+    $allNumeric = true;
+    foreach($array as $value) {
+        if (!(is_numeric($value))) {
+            $allNumeric = false;
+            break;
+        }
+    }
+    return $allNumeric;
+}
+
 
 function admFirst($arr,$onLVDs) {
 	$pos = array_search ( 'client_adm_no', $arr );
@@ -561,6 +572,7 @@ function resultBuilder($qmode) {
 		$addcl = '';
 		$reportLinks=array();
         foreach ( $headers as $hcode => $hcodeArray ) {
+
 		    $source = $sources[$hcode];
 			$source_cnt = strlen($source);
 			$data_part = $source;
@@ -573,9 +585,27 @@ function resultBuilder($qmode) {
 			if($hcodeArray['type']==='entry_date')
 				$hcodeArray['type'] = 'date';
 			$point = '';
+			$type='';
 			if(strlen($AppUI->_($hcodeArray['title']))>50)
 				$point = '...';
-			$tab_head .= '<th id="head_' . $ind . '" data-thid="' . $ind . '" data-form="'.$hcodeArray['form'].'" data-type="'.$hcodeArray['type'].'" data-field="'.$hcodeArray['fld'].'" data-title='.$source.' data-sys="'.$hcodeArray['sysv'].'"  class="head ' . $addcl . '" data-part="'.$data_part.'">' . substr($AppUI->_($hcodeArray['title']), 0,49).$point . '<div class="head_menu"></div></th>' . "\n";
+			if(isset($hcodeArray['sysv']) && !empty($hcodeArray['sysv']) &&
+                $hcodeArray['sysv'] != 'SysStaff' && $hcodeArray['sysv'] != 'SysDepartment' && $hcodeArray['sysv'] != 'SysCommunes' && $hcodeArray['sysv'] != ''
+                && in_array(trim($hcodeArray['type']), array('select', 'radio', 'checkbox','calculateChoice'))){
+                $sVs = dPgetSysValSet($hcodeArray['sysv']);
+                $sVs = array_keys($sVs);
+                array_pop($sVs);
+                if(check($sVs)){
+                    $type = 'number';
+                }else{
+                    $type = 'string';
+                }
+            }else{
+			    $type = $hcodeArray['type'];
+            }
+            if($type==='calculateNumeric'){
+                $type = 'number';
+            }
+			$tab_head .= '<th id="head_' . $ind . '" data-thid="' . $ind . '" data-form="'.$hcodeArray['form'].'" data-type="'.$hcodeArray['type'].'" data-field="'.$hcodeArray['fld'].'" data-title='.$source.' type="'.$type.'" data-sys="'.$hcodeArray['sysv'].'"  class="head ' . $addcl . '" data-part="'.$data_part.'">' . substr($AppUI->_($hcodeArray['title']), 0,49).$point . '<div class="head_menu"></div></th>' . "\n";
 			$tab_src .= '<th class="fsource">'.$source.'</th>' . "\n";
 			$colz .= '<col id=col_' . $ind . '></col>';
 			$ind ++;
