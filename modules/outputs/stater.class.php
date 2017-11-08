@@ -2139,7 +2139,7 @@ class Stater {
 						//data-ocols  ($khead['cols'] > 1 && $this->stots_cols ) ? ($khead['cols']-1) : $khead['cols']
 						//data-pid="'.($ci > 0 ? ($ci-1).'_'.$khead['parent'] : '').'"
 						$html .= '<th data-ptitle="'.$vcolhead.'"  data-oid="'.$ci."_".$hit.'"  data-ocols="'.($colcode).
-						'" colspan="' . $colcode . '" >' .$this->shortHeader($vcolhead.'-'. $this->cols[$ci]['title'] ). '</th>'."\n\t";
+						'" colspan="' . $colcode . '" >' .$this->shortHeader($vcolhead). '</th>'."\n\t"; // .'-'. $this->cols[$ci]['title'] ceci a ete enlever pour des raisons de formatage du tableau
 						$oldcolYear=$colYear;
 						if($dateDetail['cols'] == $ci && $this->stots_cols === true){
 							$this->frPos+= ($khead ['cols']  > 0 ? $khead['cols'] : 1);
@@ -2297,7 +2297,7 @@ class Stater {
 			}
 			foreach ( $svals ['rows'] as $rid => &$rhead ) {  /// $this->tcomp['rows'][$dateDetail['rows']]->testYear()
 			($dateDetail['rows'] === $rid && !$checkTestYear) ? $caddd=1: $caddd=0;
-			$htmlx .= '<th data-ptitle="'.$rhead ['title'].'" colspan="'.($head_bonus+$caddd).'" class="missgr">' . $rhead ['title'] . '</th>';
+			$htmlx .= '<th data-ptitle="'.$rhead ['title'].'" colspan="'.($head_bonus+$caddd).'" class="missgr">' . trim(explode(":",$rhead ['title'])[1]) . '</th>';
 			}
 			$html=str_replace('####@@@@@@####', $htmlx, $html);
 			$html.=$htmladd;
