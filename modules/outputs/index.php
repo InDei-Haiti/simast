@@ -382,15 +382,18 @@ if($_POST['mode']=='save'){
                 foreach ($svals['range'] as $val) {
                     if ($val['fld'] == $v){
                         $range_fld[] = str_replace('.', '_', $v);
+                        if($val['type']=='number'){
+                            for ($iv=0;$iv<count($val['val']);$iv++){
+                                $val['val'][$iv]['s'] = $val['val'][$iv]['s'] + 0;
+                                $val['val'][$iv]['e'] = $val['val'][$iv]['e'] + 0;
+                            }
+                        }
                         $range[$i] = $val;
                     }
                 }
 			}
 		}
 	}
-	echo '<pre>';
-	var_dump($range);
-    echo '</pre>';
 	$svals['range'] = $range;
     $svals['cols'] = $colsvals;
 	$svals['rows'] = $rowsvals;
@@ -508,7 +511,11 @@ if($_POST['mode']=='save'){
 				$svals['list'] = $rowRules[0];
 			}
 		}
-		makeStat($bar,$svals);
+		/*echo '<pre>';
+		var_export($svals['cols']);
+        //var_dump($svals);
+        echo '</pre>';*/
+        makeStat($bar,$svals);
 	
 		//DiskStatCache($thtml);
 		//echo $thtml;

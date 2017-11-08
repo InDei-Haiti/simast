@@ -208,7 +208,7 @@ class Stater {
 					//sort($vals);
 					//usort($vals, 'unqsort');
 
-					//asort($vals);
+					asort($vals);
 
 					$res=array();
 					$res2=array();
@@ -389,13 +389,11 @@ class Stater {
 			foreach ( $pack [$kpart] as $rid => &$rv ) {
 				$dob_case = strstr ( strtolower($rv ['title']), 'dob' );
 				$rran = $pack ['range'] [$rv ['id']];
-				var_dump($rran);
 				if (!is_null($rran) && is_array ( $rran ) || $dob_case || $kpart === 'cols') {
-					if ($dob_case && ! $rran) {
+				    if ($dob_case && ! $rran) {
 						$rran = array ('type' => $rv ['type'], 'title' => $rv ['title'] );
 						$dob_force = $rind;
 					}
-                    //var_dump($rran);
 					if ($rran ['val'] != "All" ) {
 						if ($rran['val'] !== false) {
 							if ($rran ['type'] == 'date' && ! $dob_case ) {
@@ -581,7 +579,7 @@ class Stater {
 											}
 										} else {
 											//$r = $this->tcomp [$kpart] [$tcid]->cmp ( $ufiq, $i );
-											$r = $currentComp->cmp($ufiq, $i);
+                                            $r = $currentComp->cmp($ufiq, $i);
 										}
 
 										if ((is_numeric($r) || $r === 'quos') && ($r !== false && ($firstfid === true || $kpart === 'cols'))) { ///*&& $r >= 0)*/
