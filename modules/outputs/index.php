@@ -1427,9 +1427,8 @@ echo '</div>';
 echo '<div id="loader">
 
 </div>';
-
 //echo 'Hello World';*/
-echo '<div class="row">';
+echo '<form name="mapform" id="mapform"><div class="row">';
 echo '<div class="col-md-3">';
 ?>
     <div class="row">
@@ -1494,6 +1493,14 @@ echo '<div class="col-md-3">';
             </div>
         </div>
     </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="maplonlatbox">
+                <?php echo '<a href="#" class="ce pi ahr button" id="btngomap">'.$AppUI->_('Go').'</a>';?>
+            </div>
+        </div>
+    </div>
+</form>
 <?php
 echo '</div>';
 echo '<div class="col-md-9"><div class="right" id="map" style="display:none"></div></div>';

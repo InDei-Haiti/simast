@@ -2297,7 +2297,8 @@ class Stater {
 			}
 			foreach ( $svals ['rows'] as $rid => &$rhead ) {  /// $this->tcomp['rows'][$dateDetail['rows']]->testYear()
 			($dateDetail['rows'] === $rid && !$checkTestYear) ? $caddd=1: $caddd=0;
-			$htmlx .= '<th data-ptitle="'.$rhead ['title'].'" colspan="'.($head_bonus+$caddd).'" class="missgr">' . trim(explode(":",$rhead ['title'])[1]) . '</th>';
+			$tab_explode = explode(":",$rhead ['title']);
+			$htmlx = '<th data-ptitle="'.$rhead ['title'].'" colspan="'.($head_bonus+$caddd).'" class="missgr">' . trim($tab_explode[1]) . '</th>';
 			}
 			$html=str_replace('####@@@@@@####', $htmlx, $html);
 			$html.=$htmladd;
