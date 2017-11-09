@@ -1,7 +1,5 @@
 // See post: http://asmaloney.com/2014/01/code/creating-an-interactive-map-with-leaflet-and-openstreetmap/
 //console.log('width avant: '+$('.right').width());
-
-
 var map = L.map( 'map', {
     center: [18.546476, -72.546464],
     minZoom: 2,
@@ -24,7 +22,6 @@ L.tileLayer( /*'http://{s}.mqcdn.com/tiles/1.0.0/map/{z}/{x}/{y}.png', {
 
 //console.log('width apres: '+$('.right').width());
 // $('#tabs').tabs();
-
 
 var myURL = jQuery( 'script[src$="leaf-demo.js"]' ).attr( 'src' ).replace( 'leaf-demo.js', '' );
 
@@ -129,8 +126,7 @@ $('#btngomap').click(function(){
 	});*/
     $('#loader').show();
     $.ajax({
-        xhr: function()
-        {
+        xhr: function() {
             var xhr = new window.XMLHttpRequest();
             //Upload progress
             xhr.upload.addEventListener("progress", function(evt){

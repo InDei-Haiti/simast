@@ -425,10 +425,11 @@ function resultBuilder($qmode) {
 		<input type="button" onclick="popTable(\'mholder\',\'print\')" style="float:left; " value="Print" class="ce pi ahr button">
 		<input type="button" onclick="gpgr.saveTable()" style="float:left; " value="Export to Excel" class="ce pi ahr button adcbutt">
 		</form>';
+		//style="background-color: grey"
 		if ($qmode != 'mas') {
 			$rhtml .= '<input type="button" class="ce pi ahr button adcbutt" value="Save Table Query" onclick="qurer.saveDialog()">
 			<input type="button" class="ce pi ahr button adcbutt" value="Build Stats" onclick="gpgr.startss();">
-			<input type="button" style="background-color: grey" class="ce pi ahr button adcbutt" value="Build Maps"> <!--onclick="gpgr.mapss();"-->';
+			<input type="button" class="ce pi ahr button adcbutt" value="Build Maps" onclick="gpgr.mapss();"> <!--onclick="gpgr.mapss();"-->';
 
 		}
 		//$rhtml .= '<input type="button" class="button adcbutt" value="Add to form" onclick="dialogForm()">';
