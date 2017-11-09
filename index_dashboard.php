@@ -173,7 +173,7 @@ require_once 'base.php';
 
             legend.onAdd = function (map) {
 
-                var div = L.DomUtil.create('#moi', 'info legend');
+                var div = L.DomUtil.create('div', 'info legend','moi');
 
 
 
