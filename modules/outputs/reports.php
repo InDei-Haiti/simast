@@ -317,7 +317,7 @@ if ($_POST ['mode'] == 'save' || $_POST ['mode'] == 'update') {
             foreach ($roles as $role){
                 if($role['value']=='super_admin'){
                     $is_superAdmin = true;
-                    echo 'yes';
+//                    echo 'yes';
                 }
             }
 			$sql = 'select * from report_items order by itype';

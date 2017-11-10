@@ -187,6 +187,7 @@
                                id="bclean"></li>
                     <li><input type="button" class="button ce pi ahr stab_let" value="Chart" onclick="grapher.start();"
                                id="gr_but"></li>
+                    <li><input type="button" class="button ce pi ahr" value="Sommation" onclick="sommation();"></li>
                     <li>
                         <div id="chart_pref">
                             <div id="dx_kill" onclick="grapher.hideOpts();">X</div>

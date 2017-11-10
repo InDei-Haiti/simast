@@ -871,8 +871,8 @@ var v = null;
     $(document).ready(function(){
         miness();
         cmSelector();
-    });
 
+    });
 
     $(document).ready(function(){
         $("#dxsave,#saving").click(function(){
@@ -882,15 +882,17 @@ var v = null;
                  $("#tabs-1").removeClass("tabs-hide");
                  $("#tabs-5").addClass("tabs-hide");
             },500);
+
         });
     });
+    
 </script>
 <script type="text/javascript" src="<?php echo DP_BASE_URL;?>/modules/outputs/output_Js_script_RPA.js"></script>
 <?php
 
 }
 
-	if ($m == 'manager') {
+	if ($m == 'manager'){
 		?>
 <script type="text/javascript" src="modules/outputs/jquery-ui.js"></script>
 <link rel="stylesheet" type="text/css"

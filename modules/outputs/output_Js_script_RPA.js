@@ -203,3 +203,10 @@ $("#submitButton").click(function(){
     });
 
 });
+
+
+
+// Modification Sommation Table
+function sommation(){
+    alert("Alexis");
+}
