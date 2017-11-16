@@ -206,7 +206,82 @@ $("#submitButton").click(function(){
 
 
 
+
 // Modification Sommation Table
+
+function isInArray(value, array) {
+    return array.indexOf(value) > -1;
+}
+
+Array.prototype.unique = function() {
+    var a = this.concat();
+    for(var i=0; i<a.length; ++i) {
+        for(var j=i+1; j<a.length; ++j) {
+            if(a[i] === a[j])
+                a.splice(j--, 1);
+        }
+    }
+
+    return a;
+};
+
 function sommation(){
-    alert("Alexis");
+    var premier_occ = $("#tthome table thead tr:eq(1) th:eq(1)").text();
+    var tab_tete = [], slected = [];
+    var equality = [];
+    var in_ndex = -1;
+    $("#tthome table thead tr:eq(1) th").each(function(){
+        // alert($(this).text());
+        // var atrib = $(this).attr("rowspan");
+        if($(this).index()>=1){
+            if($(this).text()==='Grand Total'){
+                if($(this).index()){
+                    in_ndex = 0;
+                }
+            }
+            if(in_ndex != 0){
+                tab_tete.push($(this).text());
+            }
+
+        }
+    });
+    for(var i =0; i < tab_tete.length;i++){
+
+        console.log(tab_tete[i]);
+    }
+
+
+    // Finding Duplicates
+    for(var i = 0;i<tab_tete.length;i++){
+        var lePush = [];
+        for(var j = i+1; j < tab_tete.length;j++){
+            if(tab_tete[i] == tab_tete[j]){
+                lePush.push(j);
+                slected.push(j);
+            }
+        }
+        if(!isInArray(i,slected)){
+            lePush.push(i);
+            slected.push(i);
+            equality.push({
+                "nom":tab_tete[i],
+                "id_commun":lePush
+            });
+        }else{
+            continue;
+        }
+
+    }
+    console.log(equality);
+
+    $("#tthome table tbody tr").each(function(){
+        var part1_bkp = '';
+        var part2_bkp = '';
+        console.log($(this).html());
+        $(this).children().each(function(){
+            if($(this).index() == 0){
+                console.log($(this));
+            }
+        });
+    });
 }
