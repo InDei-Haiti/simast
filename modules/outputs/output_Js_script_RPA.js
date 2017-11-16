@@ -274,14 +274,70 @@ function sommation(){
     }
     console.log(equality);
 
-    $("#tthome table tbody tr").each(function(){
-        var part1_bkp = '';
-        var part2_bkp = '';
-        console.log($(this).html());
-        $(this).children().each(function(){
-            if($(this).index() == 0){
-                console.log($(this));
+    $("#tthome table thead tr:eq(1)").each(function(){
+        var part1_bkp = $(this).clone();
+        var part2_bkp = $(this).clone();
+
+        part1_bkp.children().each(function(){
+            if($(this).index()>0){
+                $(this).remove();
             }
         });
+
+        var numm = 1+ tab_tete.length;
+        part2_bkp.find("th:lt("+numm+")").remove();
+
+        $(this).empty();
+        $(this).append(part1_bkp);
+
+        for(var z = 0;z < equality.length;z++){
+            $(this).append("<th data-ptile='"+equality[z].nom+"'>"+equality[z].nom+"</th>");
+        }
+
+        $(this).append(part2_bkp);
+    });
+
+    $("#tthome table tbody tr").each(function(){
+        var part1_bkp = $(this).clone();
+        var part2_bkp = $(this).clone();
+
+
+        // Sauvegarde de la premiere TD dans chaque TR
+        part1_bkp.children().each(function(){
+            if($(this).index()>0){
+                $(this).remove();
+            }
+        });
+        // Sauvegarde de la premiere TD dans chaque TR
+
+        // Sauvegarde des derniers TD dans chaque TR
+        var numm = 1+ tab_tete.length;
+        part2_bkp.find("td:lt("+numm+")").remove();
+        // Sauvegarde des derniers TD dans chaque TR
+        // console.log( equality.length);
+        var somme = [] ;
+        for(var z = 0;z < equality.length;z++){
+            console.log(equality[z].nom);
+            console.log(equality[z].id_commun);
+            var somme_1 = 0;
+            for(var m = 0;m < equality[z].id_commun.length; m++){
+                var adel = equality[z].id_commun[m]+1;
+                somme_1 += parseInt($(this).find("td:eq("+adel+")").text());
+            }
+            somme.push(somme_1);
+        }
+
+        $(this).empty();
+        $(this).append(part1_bkp);
+        for(var add = 0;add < somme.length;add++){
+            $(this).append("<td class='vdata'>"+somme[add]+"</td>");
+        }
+        $(this).append(part2_bkp);
+        // console.log($(this).html());
+        // $(this).children().each(function(){
+        //     if($(this).index() == 0){
+        //         console.log($(this));
+        //     }
+        // });
     });
 }
