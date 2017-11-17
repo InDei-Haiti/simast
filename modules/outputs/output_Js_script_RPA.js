@@ -288,13 +288,13 @@ function sommation(){
         part2_bkp.find("th:lt("+numm+")").remove();
 
         $(this).empty();
-        $(this).append(part1_bkp);
+        $(this).append(part1_bkp.find("th"));
 
         for(var z = 0;z < equality.length;z++){
             $(this).append("<th data-ptile='"+equality[z].nom+"'>"+equality[z].nom+"</th>");
         }
 
-        $(this).append(part2_bkp);
+        $(this).append(part2_bkp.find("th"));
     });
 
     $("#tthome table tbody tr").each(function(){
@@ -328,11 +328,11 @@ function sommation(){
         }
 
         $(this).empty();
-        $(this).append(part1_bkp);
+        $(this).append(part1_bkp.find("td"));
         for(var add = 0;add < somme.length;add++){
             $(this).append("<td class='vdata'>"+somme[add]+"</td>");
         }
-        $(this).append(part2_bkp);
+        $(this).append(part2_bkp.find("td"));
         // console.log($(this).html());
         // $(this).children().each(function(){
         //     if($(this).index() == 0){
