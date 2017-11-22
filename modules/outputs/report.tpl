@@ -165,6 +165,10 @@
                             <label for="records">Data records in percent
                                 <input type="checkbox" id="datapercent" value="1">
                             </label>
+
+                            <label for="records">Merge Interval
+                                <input type="checkbox" id="mergInterval" value="1">
+                            </label>
                         </td>
                     </tr>
                     <tr id="colgroupz">
@@ -187,7 +191,7 @@
                                id="bclean"></li>
                     <li><input type="button" class="button ce pi ahr stab_let" value="Chart" onclick="grapher.start();"
                                id="gr_but"></li>
-                    <li><input type="button" class="button ce pi ahr" value="Sommation" onclick="sommation();"></li>
+                    <!--<li><input type="button" class="button ce pi ahr" value="Sommation" onclick="sommation();"></li>-->
                     <li>
                         <div id="chart_pref">
                             <div id="dx_kill" onclick="grapher.hideOpts();">X</div>

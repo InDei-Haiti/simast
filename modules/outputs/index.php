@@ -1537,7 +1537,7 @@ foreach ($all as $i=>$set){
             <td>'.$set['setname'].'</td>
             <td>
             <span id="set_d_'.$set['id'].'" onclick="qurer.delSetRow('.$set['id'].',\''.$set['setname'].'\')"  class="fhref fa fa-trash-o" style="color: blue;font-size: large"></span>
-            <span id="set_e_'.$set['id']. '" onclick="qurer.edit()"  class="fhref fa fa-edit" style="color: blue;font-size: large"></span>
+            <span id="set_e_'.$set['id']. '" onclick="qurer.edit('.$set['id'].',$(this).closest(\'tr\').find(\'td:eq(0)\').text())"  class="fhref fa fa-edit" style="color: blue;font-size: large"></span>
             </td>
           </tr>';
 }
@@ -1720,3 +1720,40 @@ echo '  <link rel="stylesheet" type="text/css" href="http://cdn.leafletjs.com/le
 //		alert("Je susis");
 	});
 </script>
+
+
+
+
+<!-- The Modal For the modification of the sets -->
+<div id="setModal" class="modal">
+
+	<div class="modal-content">
+		<div class="modal-header">
+			<span id="closeSetModal" class="close">&times;</span>
+			<h2>Modification du Set : <SetName> </h2>
+		</div>
+		<div class="modal-body">
+			<div>
+				<label for="elmsList">Liste des Elements : </label>
+				<select id="elmsList">
+					<option>elmsss</option>
+				</select>
+				<button class="ce pi ahr btn" id="addElms" onclick="qurer.addElms()">Ajouter</button>
+			</div>
+			<hr />
+			<table id="theSets" class="table">
+				<thead>
+					<tr>
+						<th>Nom des Elements</th>
+						<th>Type</th>
+						<th colspan="2">Action</th>
+					</tr>
+				</thead>
+				<tbody>
+
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+</div>
