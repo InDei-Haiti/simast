@@ -322,15 +322,19 @@ mysqli_query($sqlrank);*/
 //var_dump($familleA);
 
 unset($resultat);
-header("Content-Disposition: attachment; filename=\"list_".time().".xls\"");
-header("Content-Type: application/vnd.ms-excel;");
+header("Content-Disposition: attachment; filename=\"sql_".time().".sql\"");
+header("Content-Type: application/text;");
 header("Pragma: no-cache");
 header("Expires: 0");
 $out = fopen("php://output", 'w');
-foreach ($table as $data)
-{
-    fputcsv($out, $data,"\t");
-}
+$table = implode(";\n",$table);
+fprintf($out, "%s", $table);
+
+//foreach ($table as $data)
+//{
+  //  fprintf($out, "%s", $str);
+    //fputcsv($out, $data,"\t");
+//}
 
 
 

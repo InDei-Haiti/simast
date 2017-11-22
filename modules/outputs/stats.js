@@ -968,6 +968,7 @@ sFrames.prototype.run = function(){
 						);*/
                         $stat_tab.find("#pick_table").addClass("stabh_vis");
                         $stat_tab.prependTo("#tthome").show();
+                        sommation();
 						reporter.reget();
 						$j(".stab_let").attr("disabled", false);
 						grapher.init();
@@ -1240,11 +1241,11 @@ var grapher = (function(my){
 					}
 				});
 			});
-		}
-		else {
+		} else {
 			cols.push([1, 'All']);
 		}
-		
+		console.log("Cols:");
+		console.log(cols);
 		var td, rsp = 0, $nobj, tdtxt, rpos, use_next = true, needcells = boxes.rows.length, rspleft = 0, noclass, vdc = new RegExp("vdata"), sudc = new RegExp("summr"), tct = new RegExp("tcol"), pcell = new RegExp("perc"), migro = new RegExp("missgr"), tcl;
 		$j("tbody > tr ", $table).filter(":not(.jkdata)").each(function(y){
 			if (!$j(this).hasClass("itog")) {
@@ -2125,4 +2126,139 @@ var chface = new chartz;
 
 if($j.browser.webkit === true){
 	document.onselectstart = function () { return false; };
+}
+
+
+
+
+// Modification Sommation Table
+
+function isInArray(value, array) {
+    return array.indexOf(value) > -1;
+}
+
+Array.prototype.unique = function() {
+    var a = this.concat();
+    for(var i=0; i<a.length; ++i) {
+        for(var j=i+1; j<a.length; ++j) {
+            if(a[i] === a[j])
+                a.splice(j--, 1);
+        }
+    }
+
+    return a;
+};
+
+function sommation(){
+    var premier_occ = $("#tthome table thead tr:eq(1) th:eq(1)").text();
+    var tab_tete = [], slected = [];
+    var equality = [];
+    var in_ndex = -1;
+    $("#tthome table thead tr:eq(1) th").each(function(){
+        // alert($(this).text());
+        // var atrib = $(this).attr("rowspan");
+        if($(this).index()>=1){
+            if($(this).text()==='Grand Total'){
+                if($(this).index()){
+                    in_ndex = 0;
+                }
+            }
+            if(in_ndex != 0){
+                tab_tete.push({nom: $(this).text(), data_oid: $(this).attr('data-oid'), data_ocols: $(this).attr('data-ocols')});
+            }
+
+        }
+    });
+    /*for(var i =0; i < tab_tete.length;i++){
+
+        console.log(tab_tete[i]);
+    }*/
+
+
+    // Finding Duplicates
+    for(var i = 0;i<tab_tete.length;i++){
+        var lePush = [];
+        for(var j = i+1; j < tab_tete.length;j++){
+            if(tab_tete[i].nom == tab_tete[j].nom){
+                lePush.push(j);
+                slected.push(j);
+            }
+        }
+        if(!isInArray(i,slected)){
+            lePush.push(i);
+            slected.push(i);
+            equality.push({
+                "nom":tab_tete[i].nom,
+                "id_commun":lePush,
+                "data_oid":tab_tete[i].data_oid,
+                "data_ocols":tab_tete[i].data_ocols,
+            });
+        }else{
+            continue;
+        }
+    }
+
+    $("#tthome table thead tr:eq(1)").each(function(){
+        var part1_bkp = $(this).clone();
+        var part2_bkp = $(this).clone();
+
+        part1_bkp.children().each(function(){
+            if($(this).index()>0){
+                $(this).remove();
+            }
+        });
+
+        var numm = 1+ tab_tete.length;
+        part2_bkp.find("th:lt("+numm+")").remove();
+
+        $(this).empty();
+        $(this).append(part1_bkp.find("th"));
+
+        for(var z = 0;z < equality.length;z++){
+            $(this).append("<th data-ptitle='"+equality[z].nom+"' data-oid='"+equality[z].data_oid+"' data-ocols='"+equality[z].data_ocols+"'>"+equality[z].nom+"</th>");
+        }
+
+        $(this).append(part2_bkp.find("th"));
+    });
+
+    $("#tthome table tbody tr").each(function(){
+        var part1_bkp = $(this).clone();
+        var part2_bkp = $(this).clone();
+
+        // Sauvegarde de la premiere TD dans chaque TR
+        part1_bkp.children().each(function(){
+            if($(this).index()>0){
+                $(this).remove();
+            }
+        });
+        // Sauvegarde de la premiere TD dans chaque TR
+
+        // Sauvegarde des derniers TD dans chaque TR
+        var numm = 1+ tab_tete.length;
+        part2_bkp.find("td:lt("+numm+")").remove();
+        // Sauvegarde des derniers TD dans chaque TR
+        // console.log( equality.length);
+        var somme = [] ;
+        for(var z = 0;z < equality.length;z++){
+            var somme_1 = 0;
+            for(var m = 0;m < equality[z].id_commun.length; m++){
+                var adel = equality[z].id_commun[m]+1;
+                somme_1 += parseInt($(this).find("td:eq("+adel+")").text());
+            }
+            somme.push(somme_1);
+        }
+
+        $(this).empty();
+        $(this).append(part1_bkp.find("td"));
+        for(var add = 0;add < somme.length;add++){
+            $(this).append("<td class='vdata'>"+somme[add]+"</td>");
+        }
+        $(this).append(part2_bkp.find("td"));
+        // console.log($(this).html());
+        // $(this).children().each(function(){
+        //     if($(this).index() == 0){
+        //         console.log($(this));
+        //     }
+        // });
+    });
 }

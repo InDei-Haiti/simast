@@ -139,14 +139,16 @@ class Household {
 		$prisk_7_2 = 0;
 		$prisk_7_3 = 0;
 
-
-
-
-		
 		// variable de calcul
 		$partner = 0;
 		$count_child_0_4 = 0;
 		$count_child_18_64 = 0;
+		$count_0_64 = 0;
+		$count_0_5 = 0;
+		$count_6_15 = 0;
+		$count_3_18 = 0;
+		$count_3_20 = 0;
+		$count_0_15 = 0;
 		$count_not_complete_basic_edu = 0;
 		$count_chronically_ill = 0;
 		$count_disabled = 0;
@@ -192,6 +194,24 @@ class Household {
 			if ($member->member_fld_age !== null && $member->member_fld_age >= 18 && $member->member_fld_age <= 65) {
 				$count_child_18_64 ++;
 			}
+            if ($member->member_fld_age !== null && $member->member_fld_age >= 0 && $member->member_fld_age <= 64) {
+                $count_0_64++;
+            }
+            if ($member->member_fld_age !== null && $member->member_fld_age >= 0 && $member->member_fld_age <= 5) {
+                $count_0_5++;
+            }
+            if ($member->member_fld_age !== null && $member->member_fld_age >= 6 && $member->member_fld_age <= 15) {
+                $count_6_15++;
+            }
+            if ($member->member_fld_age !== null && $member->member_fld_age >= 3 && $member->member_fld_age <= 18) {
+                $count_3_18++;
+            }
+            if ($member->member_fld_age !== null && $member->member_fld_age >= 3 && $member->member_fld_age <= 20) {
+                $count_3_20++;
+            }
+            if ($member->member_fld_age !== null && $member->member_fld_age >= 0 && $member->member_fld_age <= 15) {
+                $count_0_15++;
+            }
 			
 			// 2.1
 			if (is_array ( $member->member_fld_lsickness ) && count ( $member->member_fld_lsickness ) > 0) {
@@ -1599,46 +1619,49 @@ class Household {
 		//if($this->complete)
 		    $arrl ['depr_sali'] = $depr_sali;
 		//else  $arrl ['depr_sali'] = null;
-		if ($this::$COUNTER == 0) {
+		/*if ($this::$COUNTER == 0) {
             $table [] = array_keys ( $arrl );
         }
         $table [] = array_values ( $arrl );
-        $this::$COUNTER += 1;
+        $this::$COUNTER += 1;*/
         //var_dump($this->fld);
 
 		//update Databas
         $q = new DBQuery();
         $q->addTable($this->table);
-        /*$q->addUpdate($this->fld['hdr_1_1'], $hdr_1_1);
-        $q->addUpdate($this->fld['hdr_1_2'], $hdr_1_2);
-        $q->addUpdate($this->fld['hdr_2_1'], $hdr_2_1);
-        $q->addUpdate($this->fld['hdr_2_2'], $hdr_2_2);
-        $q->addUpdate($this->fld['hdr_3_1'], $hdr_3_1);
-        $q->addUpdate($this->fld['hdr_3_2'], $hdr_3_2);
-        $q->addUpdate($this->fld['hdr_3_3'], $hdr_3_3);
-        $q->addUpdate($this->fld['hdr_3_4'], $hdr_3_4);
-        $q->addUpdate($this->fld['hdr_4_1'], $hdr_4_1);
-        $q->addUpdate($this->fld['hdr_4_2'], $hdr_4_2);
-        $q->addUpdate($this->fld['hdr_4_3'], $hdr_4_3);
-        $q->addUpdate($this->fld['hdr_5_1'], $hdr_5_1);
-        $q->addUpdate($this->fld['hdr_5_2'], $hdr_5_2);
-        $q->addUpdate($this->fld['hdr_5_3'], $hdr_5_3);
-        $q->addUpdate($this->fld['hdr_6_1'], $hdr_6_1);
-        $q->addUpdate($this->fld['hdr_6_2'], $hdr_6_2);
-        $q->addUpdate($this->fld['hdr_6_3'], $hdr_6_3);
-        $q->addUpdate($this->fld['hdr_7_1'], $hdr_7_1);
-        $q->addUpdate($this->fld['hdr_7_2'], $hdr_7_2);
-        $q->addUpdate($this->fld['hdr_7_3'], $hdr_7_3);*/
-
-        /*if($this->complete)
-            $q->addUpdate($this->fld['step7'], $step7);
-        if($this->complete)
-            $q->addUpdate($this->fld['hdvi'], $hdvi);
-        if($this->complete)
-            $q->addUpdate($this->fld['vulnerability'], $vulnerability);
-        if($this->complete)
-            $q->addUpdate($this->fld['depr_sali'], $depr_sali);
-        $q->addWhere('id='.$this->id);*/
+        $q->addUpdate($this->fld['count_0_64'], $count_0_64);
+        $q->addUpdate($this->fld['count_0_5'], $count_0_5);
+        $q->addUpdate($this->fld['count_6_15'], $count_6_15);
+        $q->addUpdate($this->fld['count_3_18'], $count_3_18);
+        $q->addUpdate($this->fld['count_3_20'], $count_3_20);
+        $q->addUpdate($this->fld['count_0_15'], $count_0_15);
+        $q->addUpdate($this->fld['count_child_10_12'], $count_child_10_12);
+        $q->addUpdate($this->fld['count_child_13_15'], $count_child_13_15);
+        $q->addUpdate($this->fld['count_eldery'], $count_eldery);
+        $q->addUpdate($this->fld['count_child_18_64'], $count_child_18_64);
+        $q->addUpdate($this->fld['count_member_15_plus'], $count_member_15_plus);
+        $q->addUpdate($this->fld['count_member_21_plus'], $count_member_21_plus);
+        $q->addUpdate($this->fld['family_size'], $family_size);
+        $q->addUpdate($this->fld['is_couple'], $is_couple ? 1:2);
+        $q->addUpdate($this->fld['count_member_active'], $count_member_active);
+        $q->addUpdate($this->fld['count_transf'], $count_transf);
+        $q->addUpdate($this->fld['count_supp'], $count_supp);
+        $q->addUpdate($this->fld['count_child_0_4'], $count_child_0_4);
+        $q->addUpdate($this->fld['count_chronically_ill'], $count_chronically_ill);
+        $q->addUpdate($this->fld['count_disabled'], $count_disabled);
+        $q->addUpdate($this->fld['count_illiterate'], $count_illiterate);
+        $q->addUpdate($this->fld['count_not_complete_basic_edu'], $count_not_complete_basic_edu);
+        $q->addUpdate($this->fld['count_member_not_at_school'], $count_member_not_at_school);
+        $q->addUpdate($this->fld['total_count_yearlag'], $total_count);
+        $q->addUpdate($this->fld['count_member_inactive'], $count_member_inactive);
+        $q->addUpdate($this->fld['count_member_unemployed'], $count_member_unemployed);
+        $q->addUpdate($this->fld['d_4_3'], $d_4_3);
+        $q->addUpdate($this->fld['step7'], $step7);
+        $q->addUpdate($this->fld['hdvi'], $hdvi);
+        $q->addUpdate($this->fld['vulnerability'], $vulnerability);
+        $q->addUpdate($this->fld['depr_sali'], $depr_sali);
+        $q->addWhere('id='.$this->id);
+        //$table [] = $q->prepare();
 
 		
 
