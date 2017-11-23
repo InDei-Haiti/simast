@@ -469,6 +469,7 @@ var reporter = (function (my) {
     }
     function pickerAct(e) {
         var lthis = e.target;
+        console.log("Je suis la");
         if (lthis === lastPicked) {
             //if(!confirm("This item was already selected as report item, do u want repeat?")){
             return false;
@@ -593,9 +594,10 @@ var reporter = (function (my) {
                 }
             });
         }else{
+            // console.log(project);
             $j.ajax({
                 url:"/?m=outputs&a=reports&mode=save_item&suppressHeaders=1",
-                data:["itemfo=", JSON.stringify(rows[rcid]), "&html="+statTableHtmlData, "&sddata=", JSON.stringify(stater.collector())].join(""),
+                data:["itemfo=", JSON.stringify(rows[rcid]), "&html="+statTableHtmlData, "&sddata=", JSON.stringify(stater.collector()),"&project_id=",project].join(""),
                 type:'post',
                 success:function (msg) {
                     console.log(msg);
