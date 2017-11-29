@@ -567,7 +567,7 @@ var reporter = (function (my) {
     }
 
     function saveFieldItem(rcid) {
-        datatt = ["itemfo=", JSON.stringify(rows[rcid]), "&html="+statTableHtmlData, "&sddata=", JSON.stringify(stater.collector())].join("");
+        datatt = ["itemfo=", JSON.stringify(rows[rcid]), "&html="+statTableHtmlData, "&sddata=", JSON.stringify(stater.collector()),"&project_id=",project].join("");
         if(statTableHtmlData=='img'){
             $j.ajax({
                 url:"/?m=outputs&a=reports&mode=save_item&suppressHeaders=1",
@@ -576,7 +576,8 @@ var reporter = (function (my) {
                     itemfo: JSON.stringify(rows[rcid]),
                     html: statTableHtmlData,
                     sddata: JSON.stringify(stater.collector()),
-                    imgBase64: imgBase64
+                    imgBase64: imgBase64,
+                    project_id: project
                 },
                 type:'post',
                 success:function (msg) {

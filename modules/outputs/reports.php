@@ -435,6 +435,11 @@ if ($_POST ['mode'] == 'save' || $_POST ['mode'] == 'update') {
 				$q->addTable('dashboard_grapher');
 				$q->addWhere('set_id='.$_GET['set_id']);
 				$dataz = $q->loadList();
+//Recuperation de la liste des report item
+				$q->addQuery("id, title, project_id");
+				$q->addTable('report_items');
+				$q->addWhere('data_item IS NOT NULL AND project_id IS NOT NULL'); // Car une nouvelle colonne a ete ajoutee
+				$itemsLst = $q->loadList();
 				$neededInfo = array();
 				foreach ($dataz as $value) {
 					$val = gzdecode($value['data_item']);
@@ -449,7 +454,8 @@ if ($_POST ['mode'] == 'save' || $_POST ['mode'] == 'update') {
 //				gzdecode($grapher['data_item']);
 				echo json_encode(array(
 					"status"=>"success",
-					"value" => $neededInfo
+					"value" => $neededInfo,
+					"itemlst"=>$itemsLst
 				));
 			}else{
 				if(isset($_GET['toDel'])){
@@ -459,10 +465,31 @@ if ($_POST ['mode'] == 'save' || $_POST ['mode'] == 'update') {
 						echo "ok";
 					}
 				}else{
-					echo json_encode(array(
-						"status"=>"echec",
-						"value" =>array()
-					));
+					if(isset($_GET['addElms'])){
+						$q = new DBQuery();
+						$q->addQuery("id, title,itype, data_item, project_id");
+						$q->addTable('report_items');
+						$q->addWhere("id =".$_GET['addElms']);
+						$slctItem = $q->loadList();
+						$ssetId = $_GET['setId'];
+						foreach($slctItem as $mm){
+							$sql = "INSERT INTO dashboard_grapher(set_id,project_id,type,data_item) VALUES('".$ssetId."','".$mm['project_id']."','".strtoupper($mm['itype'])."','".mysql_real_escape_string($mm['data_item'])."')";
+						}
+						$res=mysql_query($sql);
+						if($res){
+							echo "ok";
+						}else{
+							echo "no";
+//							echo mysql_errno().':'.mysql_error();
+//							echo "<br />".$sql;
+						}
+									
+					}else{
+						echo json_encode(array(
+							"status"=>"echec",
+							"value" =>array()
+						));
+					}
 				}
 
 			}
