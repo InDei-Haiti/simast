@@ -1,16 +1,17 @@
 // See post: http://asmaloney.com/2014/01/code/creating-an-interactive-map-with-leaflet-and-openstreetmap/
 //console.log('width avant: '+$('.right').width());
+proj4.defs("urn:ogc:def:crs:EPSG::26918", '+proj=utm +zone=18 +ellps=GRS80 +datum=NAD83 +units=m +no_defs');
 var map = L.map( 'map', {
-    center: [18.546476, -72.546464],
+    center: [18.046476, -73.9999999],
     minZoom: 2,
-    zoom: 9,
+    zoom: 8,
     scrollWheelZoom:false
 });
 //map.remove();
 map.on("load",function() {
 	$('#map').appendTo($('#tabs-6'));
 });
-
+//var myLayer = L.geoJson().addTo(map);
 L.tileLayer( /*'http://{s}.mqcdn.com/tiles/1.0.0/map/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="http://osm.org/copyright" title="OpenStreetMap" target="_blank">OpenStreetMap</a> contributors | Tiles Courtesy of <a href="http://www.mapquest.com/" title="MapQuest" target="_blank">MapQuest</a> <img src="http://developer.mapquest.com/content/osm/mq_logo.png" width="16" height="16">',
     subdomains: ['otile1','otile2','otile3','otile4']
@@ -19,6 +20,26 @@ L.tileLayer( /*'http://{s}.mqcdn.com/tiles/1.0.0/map/{z}/{x}/{y}.png', {
 		    maxZoom: 20,
 		    subdomains:['mt0','mt1','mt2','mt3']
 		}).addTo( map );
+var myStyle = {
+    "color": "#ff7800",
+    "weight": 5,
+    "opacity": 0.65,
+    fillColor: "#bdc3c7"
+};
+$.getJSON('/modules/outputs/maps/communes.geojson', function(data){
+    L.Proj.geoJson(data).addTo(map).bindPopup(function (layer) {
+        return layer.feature.type;
+    });
+});
+/*$.ajax({
+    type: 'GET',
+    url: "/modules/outputs/maps/departments.geojson",
+    dataType: 'json',
+    success: function(data){
+    	alert("Ok");
+        myLayer.addData(data);
+    }
+});*/
 
 //console.log('width apres: '+$('.right').width());
 // $('#tabs').tabs();
@@ -31,7 +52,7 @@ console.log(teb.indexOf('frem'));
 $('#mapstab').click(function(){
 	$('#map').show();
 	 map.invalidateSize();
-	$('#map').appendTo($('#tabs-6'));
+	$('#map').appendTo($('#tabs-6'));L.CRS
 });
 function displayAll(data){
 	console.log(data);
@@ -125,7 +146,7 @@ $('#btngomap').click(function(){
     	alert('can\'t load data');
 	});*/
     $('#loader').show();
-    $.ajax({
+    /*$.ajax({
         xhr: function() {
             var xhr = new window.XMLHttpRequest();
             //Upload progress
@@ -175,7 +196,7 @@ $('#btngomap').click(function(){
             $('#loader').hide();
         },
 		error: function(){ $('#loader').hide();alert('can\'t load data'); },
-    });
+    });*/
 
 
 });

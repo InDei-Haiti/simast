@@ -2467,7 +2467,7 @@ saveClass.prototype.add2Table = function(rdata){
 		addQTlook();
 	}
 
-		$j("#qtable").trigger("update");
+	$j("#qtable").trigger("update");
 
 };
 

@@ -3,6 +3,9 @@
 #### Presentation
 Code source du système d’information pour le projet, au bénéfice du Ministère des Affaires Sociales (MAST), **KORELAVI**
 
+Le programme **KORE LAVI** est créé principalement pour lutter contre la malnutrition infantile et la réduction de l'insécurité alimentaire. L’un des points clés de ce programme est de donner au MAST la capacité de coordination en matière d’assistance sociale par la mise en place d’un système d’information centralisé au niveau des différents organismes déconcentrés du MAST.
+
+
 #### Getting Started
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
 
