@@ -35,7 +35,10 @@ if(isset($_POST['commun']) && !empty($_POST['commun']))
 if(isset($_POST['beginner']) && !empty($_POST['beginner'])){
 	$q->addWhere('men.entry_date="'.$_POST['beginner'].'"');
 }
+//$q->addWhere('men.'.$member_fld ['member_fld_linkparent'].'<=13');
+//$q->addWhere('men.id=65555');
 $sql = $q->prepare();
+//echo $sql;
 //$sql = $sql.' limit '.$_POST['from'].','.$_POST['to'];
 //exit;
 //$resultat = $q->loadColumn();
@@ -59,11 +62,7 @@ $tempId = null;
 $famille = 0;
 $familleA = array();
 while ($row=mysql_fetch_assoc($resultat)){
-    //var_dump($row['men_'.$fld ['milieu']]);
-    //exit;
-    //if($famille==1)
-      //  break;
-	$member = new Member ();
+    $member = new Member ();
 	//echo $row['mem_id'];
 	$member->member_id = $row['mem_id'];
 	$member->member_fld_linkparent = $row ['mem_'.$member_fld ['member_fld_linkparent']];
@@ -233,11 +232,15 @@ while ($row=mysql_fetch_assoc($resultat)){
 		$hd->toilet_acces = $row ['men_'.$fld ['toilet_acces']];
         if (!$hd->toilet_acces || $hd->toilet_acces == 99 || $hd->toilet_acces == 999 || $hd->toilet_acces == 9999 || $hd->toilet_acces == 99999)
             $hd->toilet_acces = null;
-		$hd->addMember($member);
+        //if($member->member_fld_linkparent>=1 && $member->member_fld_linkparent<=16)
+		    $hd->addMember($member);
+
         $familleA[$famille] +=1;
 	}
 	if($tempId && $tempId==$row ['men_id']){
-		$hd->addMember($member);
+        //if($member->member_fld_linkparent>=1 && $member->member_fld_linkparent<=16)
+		    $hd->addMember($member);
+
         $familleA[$famille] +=1;
 	}elseif($tempId && $tempId!=$row ['men_id']){
 		$hd->processingHdvi();
@@ -304,8 +307,10 @@ while ($row=mysql_fetch_assoc($resultat)){
         $hd->toilet_acces = $row ['men_'.$fld ['toilet_acces']];
         if (!$hd->toilet_acces || $hd->toilet_acces == 99 || $hd->toilet_acces == 999 || $hd->toilet_acces == 9999 || $hd->toilet_acces == 99999)
             $hd->toilet_acces = null;
+        //if($member->member_fld_linkparent>=1 && $member->member_fld_linkparent<=16)
+            $hd->addMember($member);
 
-		$hd->addMember($member);
+
         $familleA[$famille] +=1;
 	}
 	$tempId = $row ['men_id'];
@@ -322,13 +327,41 @@ mysqli_query($sqlrank);*/
 //var_dump($familleA);
 
 unset($resultat);
-header("Content-Disposition: attachment; filename=\"sql_".time().".sql\"");
+/*header("Content-Disposition: attachment; filename=\"sql_".time().".sql\"");
 header("Content-Type: application/text;");
 header("Pragma: no-cache");
 header("Expires: 0");
 $out = fopen("php://output", 'w');
 $table = implode(";\n",$table);
 fprintf($out, "%s", $table);
+//$res = db_exec($table);
+
+if($res){
+    echo 'success';
+}*/
+$keys = $table[0];
+//echo count($table);
+
+/*for($j=0;$j<count($table);$j++){
+    if($j>0){
+        for($i=0; $i<count($keys);$i++) {
+            echo $keys[$i] . ': ' . $table[$j][$i].'<br/>';
+        }
+        echo '<br/>';
+        echo '<br/>';
+        echo '<br/>';
+    }
+
+}*/
+header("Content-Disposition: attachment; filename=\"list_".time().".xls\"");
+header("Content-Type: application/vnd.ms-excel;");
+header("Pragma: no-cache");
+header("Expires: 0");
+$out = fopen("php://output", 'w');
+foreach ($table as $data)
+{
+    fputcsv($out, $data,"\t");
+}
 
 //foreach ($table as $data)
 //{

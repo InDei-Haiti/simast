@@ -80,7 +80,7 @@ class Household {
                 return;
             }*/
 
-            if ($mf->member_fld_linkparent != null && $mf->member_fld_linkparent <= 15){
+            if ($mf->member_fld_linkparent != null && $mf->member_fld_linkparent <= 13){
                 $family_size++;
                 if ($mf->member_fld_linkparent==1)
                     $chef += $mf->member_fld_linkparent;
@@ -172,6 +172,9 @@ class Household {
 		
 		// iteration member
 		foreach ( $this->members as $member ) {
+            if ($member->member_fld_linkparent != null && $member->member_fld_linkparent <= 13){
+                continue;
+            }
 			// 1.1
             if($member->member_fld_age===null)
                 $this->complete = false;
@@ -182,11 +185,11 @@ class Household {
 			if ($member->member_fld_age !== null && $member->member_fld_age <= 15) { // Compte les membres de 15 ans et moins
 				$count_child_under_15 ++;
 			}
-			
+
 			if ($member->member_fld_age !== null && $member->member_fld_age >= 65) { // Compte les personnes ages de 65 ans et plus
 				$count_eldery ++;
 			}
-			
+
 			// 1.2
 			if ($member->member_fld_age !== null && $member->member_fld_age >= 0 && $member->member_fld_age <= 4) {
 				$count_child_0_4 ++;
@@ -212,7 +215,7 @@ class Household {
             if ($member->member_fld_age !== null && $member->member_fld_age >= 0 && $member->member_fld_age <= 15) {
                 $count_0_15++;
             }
-			
+
 			// 2.1
 			if (is_array ( $member->member_fld_lsickness ) && count ( $member->member_fld_lsickness ) > 0) {
 				foreach ( $member->member_fld_lsickness as $ill ) {
@@ -220,7 +223,7 @@ class Household {
 						$count_chronically_ill ++;
 				}
 			}
-			
+
 			// 2.2
 			$count_sick = 0;
 			$temp = false;
@@ -242,7 +245,7 @@ class Household {
 			if (($member->member_prob_speak == 3 || $member->member_prob_speak == 4) && ! ($count_sick > 0)) {
 				$count_disabled ++;
 			}
-			
+
 			// 3.1
 			if ($member->member_fld_age != null && $member->member_fld_age >= 15 && ($member->member_fld_read != null && $member->member_fld_read == 2 || $member->member_fld_write != null && $member->member_fld_write == 2)) {
 				$count_illiterate ++;
@@ -250,19 +253,19 @@ class Household {
 			if ($member->member_fld_age != null && $member->member_fld_age >= 15) {
 				$count_member_15_plus ++;
 			}
-			
+
 			// 3.2
 			if (! ($member->member_fld_read == 2 || $member->member_fld_write == 2) && $member->member_fld_age >= 21 && $member->member_fld_level_edu != null && $member->member_fld_level_edu <= 7) {
 				$count_not_complete_basic_edu ++;
 			}
-			
+
 			if ($member->member_fld_age != null && $member->member_fld_age >= 21) {
 				$count_member_21_plus ++;
 			}
 			if (! ($member->member_fld_read == 2 || $member->member_fld_write == 2) && $member->member_fld_age != null && $member->member_fld_age >= 21) {
 				$prisk_3_2 ++;
 			}
-			
+
 			// 3.3
 			if ($member->member_fld_age != null && $member->member_fld_age >= 3 && $member->member_fld_age <= 18) {
 				$count_member_schooling_age ++;
@@ -270,9 +273,9 @@ class Household {
 			if ($member->member_fld_age != null && $member->member_fld_age >= 3 && $member->member_fld_age <= 18 && $member->member_fld_lst_scho_12 != null && $member->member_fld_lst_scho_12 == 2) {
 				$count_member_not_at_school ++;
 			}
-			
+
 			// 3.4
-			
+
 			// 4.1
 			if ($member->member_fld_age != null && $member->member_fld_age >= 18 && $member->member_fld_age <= 64) {
 				if ($member->member_fld_eco_active != null && (($member->member_fld_eco_active >= 1 && $member->member_fld_eco_active <= 6) || $member->member_fld_eco_active == 8)) {
@@ -282,12 +285,12 @@ class Household {
 					$count_member_inactive ++;
 				}
 			}
-			
+
 			// 4.2
 			if ($member->member_fld_eco_active != null && $member->member_fld_eco_active >= 4 && $member->member_fld_eco_active <= 6 && ($member->member_fld_age != null && $member->member_fld_age >= 18 && $member->member_fld_age <= 64)) {
 				$count_member_unemployed ++;
 			}
-			
+
 			// 4.3
 			if ($member->member_fld_age != null && $member->member_fld_age >= 10 && $member->member_fld_age <= 12) {
 				$count_child_10_12 ++;
@@ -298,13 +301,13 @@ class Household {
 			if ((($member->member_fld_eco_active != null && $member->member_fld_eco_active >= 1 && $member->member_fld_eco_active <= 3) || ($member->member_fld_eco_active != null && $member->member_fld_eco_active == 8)) && $member->member_fld_age != null && $member->member_fld_age >= 10 && $member->member_fld_age <= 12) {
 				$count_child_labourer_1 ++;
 			}
-			
+
 			if ((($member->member_fld_eco_active != null && $member->member_fld_eco_active >= 1 && $member->member_fld_eco_active <= 3) || ($member->member_fld_eco_active != null && $member->member_fld_eco_active == 8)) && $member->member_fld_age != null && $member->member_fld_age >= 13 && $member->member_fld_age <= 15) {
 				$count_child_labourer_2 ++;
 			}
-			
+
 			// 5.1
-			
+
 			// 6.1
 			if ($member->member_transf != null && $member->member_transf == 1) {
 				$count_transf ++;
@@ -312,7 +315,7 @@ class Household {
 			if ($member->member_supp != null && $member->member_supp == 1) {
 				$count_supp ++;
 			}
-			
+
 		}
 		/**
 		 * Calcul de l'indicateur #1 ou 1.1
@@ -515,11 +518,14 @@ class Household {
 		$yearlag = array ();
 		$iii = 1;
 		foreach ( $this->members as $member ) {
-			if ($member->member_fld_age != null && $member->member_fld_age >= 3 && $member->member_fld_age <= 20) {
+            if ($member->member_fld_linkparent != null && $member->member_fld_linkparent <= 13){
+                continue;
+            }
+            if ($member->member_fld_age != null && $member->member_fld_age >= 3 && $member->member_fld_age <= 20) {
 				$count_member_3_20 ++;
 			}
 			// if($member->member_fld_level_edu != null && $member->member_fld_act_edu !=null){
-			
+
 			$normedu = null;
 			if ($member->member_fld_age != null) {
 				if ($member->member_fld_age <= 6)
@@ -551,7 +557,7 @@ class Household {
 				if ($member->member_fld_age >= 19)
 					$normedu = 13;
 			}
-			
+
 			$aedu = null;
 			if (($member->member_fld_level_edu != null && $member->member_fld_level_edu <= 2) || ($member->member_fld_act_edu != null && $member->member_fld_act_edu <= 3))
 				$aedu = 0;
@@ -581,23 +587,25 @@ class Household {
 				$aedu = 12;
 			if ((($member->member_fld_level_edu != null && $member->member_fld_level_edu == 15) || ($member->member_fld_act_edu != null && $member->member_fld_act_edu == 16)) && $aedu == null)
 				$aedu = 13;
-			if (($member->member_fld_level_edu && $member->member_fld_level_edu == 16) && aedu == null)
+			if (($member->member_fld_level_edu != null && $member->member_fld_level_edu == 16) && $aedu == null)
 				$aedu = 14;
+			//var_dump($member->member_fld_level_edu);echo ' ';
+			//else {echo $member->member_fld_level_edu.' Alexis ';}
 				// $temp = -$aedu;
-			if ($member->member_fld_level_edu == null && $member->member_fld_act_edu == null)
+            if ($member->member_fld_level_edu == null && $member->member_fld_act_edu == null)
 				$aedu = null;
 			$edulag = 0;
-			
+
 			if ($aedu >= 0 && $normedu != null)
 				if ($aedu < $normedu && $member->member_fld_age >= 3 && $member->member_fld_age < 21)
 					$edulag = $normedu - $aedu;
-			
+
 			if ($normedu == 0 && $member->member_fld_age >= 3 && $member->member_fld_age < 21)
 				$edulag = 0;
 			if ($aedu >= $normedu && $member->member_fld_age >= 3 && $member->member_fld_age < 21)
 				$edulag = 0;
 				// //echo '('.$normedu.','.$aedu.','.$edulag.')';
-			
+
 			if ($edulag == 1 || $edulag == 2 || $edulag == 3)
 				$yearlag [] = 1;
 			elseif ($edulag >= 4)
@@ -630,7 +638,7 @@ class Household {
 			$hdr_3_4 = 0;
 		}
 		// //echo $hdr_3_4;
-		
+        $arrl ['yearlag'] = $total_count;
 		$arrl ['prisk_3_4'] = $prisk_3_4;
 		$arrl ['d_3_4'] = $d_3_4;
 		$arrl ['hdr_3_4'] = $hdr_3_4;
@@ -1212,7 +1220,7 @@ class Household {
 			$p_v_d_7 = array (
 					0.0769524308370264,
 					0.0777533690769001,
-					0.630765423973395 
+					0.0630765423973395
 			);
 		}
 		
@@ -1279,7 +1287,7 @@ class Household {
 		$step_4_7_1 = $step_3_7_1 * $p_v_d_7 [0];
 		$step_4_7_2 = $step_3_7_2 * $p_v_d_7 [1];
 		$step_4_7_3 = $step_3_7_3 * $p_v_d_7 [2];
-		
+
 		/**
 		 * *********** END OF STEP 4 ***************
 		 */
@@ -1291,7 +1299,7 @@ class Household {
 		
 		$sigmaStep_5 = $step_4_1_1 + $step_4_1_2 + $step_4_2_1 + $step_4_2_2 + $step_4_3_1 + $step_4_3_2 + $step_4_3_3 + $step_4_3_4 + $step_4_4_1 + $step_4_4_2 + $step_4_4_3 + $step_4_5_1 + $step_4_5_2 + $step_4_5_3 + $step_4_6_1 + $step_4_6_2 + $step_4_6_3 + $step_4_7_1 + $step_4_7_2 + $step_4_7_3;
 		$step_5 = pow ( $sigmaStep_5, 1 / $beta );
-		
+        $arrl ['step_5'] = $step_5;
 		/**
 		 * ******** END OF STEP 5 *******************
 		 */
@@ -1421,6 +1429,9 @@ class Household {
 		} else {
 			$dummy [19] = 0;
 		}
+		foreach ($dummy as $ind => $val){
+            $arrl ['depr_'.$ind] = $val;
+        }
 		
 		/**
 		 * ********* END OF STEP 6 *************
@@ -1619,14 +1630,14 @@ class Household {
 		//if($this->complete)
 		    $arrl ['depr_sali'] = $depr_sali;
 		//else  $arrl ['depr_sali'] = null;
-		/*if ($this::$COUNTER == 0) {
+		if ($this::$COUNTER == 0) {
             $table [] = array_keys ( $arrl );
         }
         $table [] = array_values ( $arrl );
-        $this::$COUNTER += 1;*/
+        $this::$COUNTER += 1;
         //var_dump($this->fld);
 
-		//update Databas
+		//update Database
         $q = new DBQuery();
         $q->addTable($this->table);
         $q->addUpdate($this->fld['count_0_64'], $count_0_64);
@@ -1663,7 +1674,7 @@ class Household {
         $q->addWhere('id='.$this->id);
         //$table [] = $q->prepare();
 
-		
+
 
 	}
 }
