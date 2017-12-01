@@ -885,7 +885,7 @@ echo '<br/>
         <LI><A href="#tabs-1">'.$AppUI->_('Queries').'</A></LI>
         <LI><A href="#tabs-2">'.$AppUI->_('Forms').'</A></LI>
         <LI><A href="#tabs-3">'.$AppUI->_('Tables').'</A></LI>
-        <LI class="tabs-disabled"><A href="#tabs-4">'.$AppUI->_('Stats').'</A></LI>
+        <LI id="toactivate" class="tabs-disabled"><A href="#tabs-4">'.$AppUI->_('Stats').'</A></LI>
         <LI><A href="#tabs-5">'.$AppUI->_('Report').'</A></LI>
         <LI class="tabs-disabled"><A href="#tabs-6" id="mapstab">'.$AppUI->_('Maps').'</A></LI>
         <LI><A href="#tabs-7">'.$AppUI->_('Sets').'</A></LI>

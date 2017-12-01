@@ -1344,6 +1344,7 @@ var pager = function(){
             autoOpen: true,
             buttons: {
                 "Save": function(){
+							alert("Je suis l'executant");
                     		setid = $j('#chooseset').val();
                     		describe = $j('#desc_dash_item').val();
 							$j.ajax({
@@ -2460,7 +2461,8 @@ saveClass.prototype.add2Table = function(rdata){
 	}else{
 		$newRow.appendTo($qtable);
 	}
-	$qtable.insertAfter("#qtable");
+	// console.log($("#qtable").html());
+	$qtable.insertAfter($("#filterform").parent());
 	if(!tabevent){
 		addQTlook();
 	}

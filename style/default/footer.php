@@ -857,6 +857,16 @@ var v = null;
         setTimeout(cmSelector,500);
     }
 
+        function unactiveBuildStats(){
+        if($("#toactivate").hasClass("tabs-selected")){
+            $("#go2stats").removeAttr("onclick");
+            $("#go2stats").attr("disabled","disabled");
+//            console.log($("#go2stats"));
+        }
+
+        setTimeout(unactiveBuildStats,500);
+    }
+
     function miness(){
         if($("#rbox").children().length > 0){
             $("#rbox li div.kill_area").html('<i class="fa fa-close" style="font-size:24px;color:red"></i>');
@@ -873,6 +883,7 @@ var v = null;
     $(document).ready(function(){
         miness();
         cmSelector();
+        unactiveBuildStats();
 
     });
 
