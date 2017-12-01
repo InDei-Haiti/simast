@@ -2771,6 +2771,52 @@ qlHandler.prototype.delSetRow = function(id,setname){
 	}
 };
 
+qlHandler.prototype.edit = function(id_edit,nomSet){
+	$("#setModal .modal-header h2").text('Modification du Set : '+nomSet);
+	$j.ajax({
+		type: 'get',
+		url:  '/?m=outputs&a=reports&mode=getSetElements&suppressHeaders=1&set_id='+id_edit,
+		success: function(data){
+			var elms = JSON.parse(data);
+			if(elms.status == 'success' && elms.value.length>0){
+				$("#setModal table tbody").empty();
+				for(var i=0;i <elms.value.length ; i++){
+					var titre = (elms.value[i].title == null) ? '[NaN]' : elms.value[i].title;
+					$("#setModal table tbody").append(
+						'<tr>' +
+							'<td id="fromGraph_'+elms.value[i].id+'">'+titre+'</td>' +
+							'<td>'+elms.value[i].type+'</td>' +
+							'<td><a href="#" onclick="qurer.delElms('+elms.value[i].id+')">Delete</a></td>' +
+						'</tr>');
+				}
+
+			}else{
+				console.log("Pas de donnees");
+			}
+		}});
+	var getModal = $("#setModal");
+	getModal.css("display","block");
+	$("#closeSetModal").click(function(){
+		getModal.css("display","none");
+	});
+};
+
+qlHandler.prototype.delElms = function(idElms){
+	$j.ajax({
+		type: 'get',
+		url:  '/?m=outputs&a=reports&mode=getSetElements&suppressHeaders=1&toDel='+idElms,
+		success: function(data){
+			if(data == 'ok'){
+				alert("L'element a ete enleve du SET avec success");
+
+				$("#fromGraph_"+idElms).closest("tr").remove();
+			}
+		}});
+};
+qlHandler.prototype.addElms = function(){
+		alert("En developpement");
+};
+
 var gpgr = new pager;
 var memo = new progress();
 var filmter = new filtersClass();

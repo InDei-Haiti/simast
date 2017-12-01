@@ -428,6 +428,46 @@ if ($_POST ['mode'] == 'save' || $_POST ['mode'] == 'update') {
 			$queriez['Report']=$q->loadList();
 			echo json_encode($queriez);
 			break;
+		case "getSetElements":
+			if(isset($_GET['set_id'])){
+				$q = new DBQuery();
+				$q->addQuery("id, set_id, project_id, type, query_save, data_item");
+				$q->addTable('dashboard_grapher');
+				$q->addWhere('set_id='.$_GET['set_id']);
+				$dataz = $q->loadList();
+				$neededInfo = array();
+				foreach ($dataz as $value) {
+					$val = gzdecode($value['data_item']);
+					$val = json_decode(str_replace("\\","", str_replace("'","", $val)),true);
+					$title = $val['title'];
+					$id_Elements = $value['id'];
+					array_push($neededInfo,array("id" =>$id_Elements,
+						"title"=>$title,
+						"type"=>$value['type']
+					));
+				}
+//				gzdecode($grapher['data_item']);
+				echo json_encode(array(
+					"status"=>"success",
+					"value" => $neededInfo
+				));
+			}else{
+				if(isset($_GET['toDel'])){
+					$sql='DELETE FROM dashboard_grapher WHERE id = '.$_GET['toDel'];
+					$res=mysql_query($sql);
+					if($res){
+						echo "ok";
+					}
+				}else{
+					echo json_encode(array(
+						"status"=>"echec",
+						"value" =>array()
+					));
+				}
+
+			}
+
+			break;
 		default:
 			break;
 //}elseif($_GET['mode'] === 'item_import'){}

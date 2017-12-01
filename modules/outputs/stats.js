@@ -968,7 +968,9 @@ sFrames.prototype.run = function(){
 						);*/
                         $stat_tab.find("#pick_table").addClass("stabh_vis");
                         $stat_tab.prependTo("#tthome").show();
-                        sommation();
+						if($("#mergInterval").is(":checked")){
+							sommation();
+						}
 						reporter.reget();
 						$j(".stab_let").attr("disabled", false);
 						grapher.init();
@@ -2150,6 +2152,7 @@ Array.prototype.unique = function() {
 };
 
 function sommation(){
+	console.log("Executed");
     var premier_occ = $("#tthome table thead tr:eq(1) th:eq(1)").text();
     var tab_tete = [], slected = [];
     var equality = [];
