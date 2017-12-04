@@ -158,12 +158,12 @@ $("#submitButton").click(function(){
                     }
                 }else{
                     if(sttr.toLowerCase().search(name_string.toLowerCase())!= -1){
-                        $(this).removeAttr("style");
+                        $(this).css("display","none");
+                        // $(this).removeAttr("style");
                     }
                 }
             }else{
                 // $(this).removeAttr("style");
-                // alert("Merde");
             }
         }else if(type_equality && type_equality!=''){
             var sttr = $(this).find("td:eq(1)").text();
@@ -204,6 +204,27 @@ $("#submitButton").click(function(){
 
 });
 
+function cacheReport(id_report,cv){
+    if(confirm("You want desactive this report ?")){
+        // var $qr=$j("#qsr_"+cv);
+        // var data='mode=query&imode=del&stype='+$qr.find("td:eq(2)").text()+
+        //     '&sid='+$qr.find(".qeditor").attr("data-id");
+        $j.ajax({
+            url: "?m=outputs&a=reports&mode=desactive_report&suppressHeaders=1&idntf="+id_report,
+            type: 'get',
+            success: function(data){
+                if(data = 'ok'){
+                    // alert("Reussi");
+                    // $("[id^=qsr_][data-id = "+id_report+"]").html();
+                    // console.log($("#qsr_"+cv).html());
+                    $("#qsr_"+cv).fadeOut('slow',function(){
+                        $("#qsr_"+cv).remove();
+                    });
+                }
+            }
+        });
+    }
+}
 
 
 

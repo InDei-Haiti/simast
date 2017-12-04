@@ -859,6 +859,7 @@ $q->clearQuery();
 //$q->clearQuery();
 $q->addQuery('id,title as qname');
 $q->addTable('reports');
+$q->addWhere("actif = 1");
 $queriez['Report']=$q->loadList();
 
 if(isset($_GET['getrep'])){
@@ -996,7 +997,9 @@ echo '<br/>
                 }*/
                 $qsr.='
                 <!-- <td ><span title="Run" class="fhref"><img src="/images/run1.png" weight=22 height=22 border=0 alt="Run"></span></td> -->
-                <td align="center"><span title="'.$AppUI->_('Delete').'" class="fhref fa fa-trash-o" style="color: blue;font-size: large" onclick="qurer.delq(\''.$trid.'\');" >
+                <td align="center">
+                <span title="'.$AppUI->_('Desactive').'" style="color: blue;font-size: large" class="fa fa-ban" data-id="'.$row['id'].'" onclick="cacheReport('.$row['id'].','.$trid.')"></span>
+                <span title="'.$AppUI->_('Delete').'" class="fhref fa fa-trash-o" style="color: blue;font-size: large" onclick="qurer.delq(\''.$trid.'\');" >
                 <!-- <img src="/images/delete1.png" weight=16 height=16 border=0 alt="Delete"> -->
                 </span>
                 <span title="'.$AppUI->_('Export').'" style="color: blue;font-size: large" class="exportq fa fa-download" onclick="qurer.run(\''.$trid.'\',\'export\');" ></span>
