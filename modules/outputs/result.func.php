@@ -428,7 +428,7 @@ function resultBuilder($qmode) {
 		//style="background-color: grey"
 		if ($qmode != 'mas') {
 			$rhtml .= '<input type="button" class="ce pi ahr button adcbutt" value="Save Table Query" onclick="qurer.saveDialog()">
-			<input type="button" class="ce pi ahr button adcbutt" value="Build Stats" onclick="gpgr.startss();">
+			<input id="go2stats" type="button" class="ce pi ahr button adcbutt" value="Build Stats" onclick="gpgr.startss();">
 			<input type="button" class="ce pi ahr button adcbutt" value="Build Maps" onclick="gpgr.mapss();"> <!--onclick="gpgr.mapss();"-->';
 
 		}

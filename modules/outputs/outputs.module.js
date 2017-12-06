@@ -1344,6 +1344,7 @@ var pager = function(){
             autoOpen: true,
             buttons: {
                 "Save": function(){
+							alert("Je suis l'executant");
                     		setid = $j('#chooseset').val();
                     		describe = $j('#desc_dash_item').val();
 							$j.ajax({
@@ -2460,8 +2461,8 @@ saveClass.prototype.add2Table = function(rdata){
 	}else{
 		$newRow.appendTo($qtable);
 	}
-	
-	$qtable.insertAfter("#importbox");
+	// console.log($("#qtable").html());
+	$qtable.insertAfter($("#filterform").parent());
 	if(!tabevent){
 		addQTlook();
 	}
@@ -2769,8 +2770,11 @@ qlHandler.prototype.delSetRow = function(id,setname){
     	alert("can't delete");
 	}
 };
-
+var setId = -1;
+var setName = '';
 qlHandler.prototype.edit = function(id_edit,nomSet){
+	setId = id_edit;
+	setName =nomSet;
 	$("#setModal .modal-header h2").text('Modification du Set : '+nomSet);
 	$j.ajax({
 		type: 'get',
@@ -2778,6 +2782,11 @@ qlHandler.prototype.edit = function(id_edit,nomSet){
 		success: function(data){
 			var elms = JSON.parse(data);
 			if(elms.status == 'success' && elms.value.length>0){
+				$("#elmsList").empty();
+				for(var z=0;z < elms.itemlst.length;z++){
+					$("#elmsList").append("<option value='"+elms.itemlst[z].id+"'>"+elms.itemlst[z].title+"</option>");
+				}
+
 				$("#setModal table tbody").empty();
 				for(var i=0;i <elms.value.length ; i++){
 					var titre = (elms.value[i].title == null) ? '[NaN]' : elms.value[i].title;
@@ -2813,7 +2822,24 @@ qlHandler.prototype.delElms = function(idElms){
 		}});
 };
 qlHandler.prototype.addElms = function(){
-		alert("En developpement");
+	alert("Je suis en train dajoute");
+		var itemId = $("#elmsList").val();
+
+		$j.ajax({
+		type: 'get',
+		url:  '/?m=outputs&a=reports&mode=getSetElements&suppressHeaders=1&addElms='+itemId+'&setId='+setId,
+		success: function(data){
+			if(data == 'ok'){
+				alert("OK");
+				$("#setModal").css("display","none");
+				qurer.edit(setId,setName);
+
+			}else{
+				alert(data);
+			}
+
+
+		}});
 };
 
 var gpgr = new pager;

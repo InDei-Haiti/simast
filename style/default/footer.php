@@ -845,14 +845,26 @@ var v = null;
             $(".wform_81_fld_1 option").each(function(){
                 var compDepID = $(this).val();
 //                alert($(this).html));
-                if(depId == compDepID.substring(0,2)){
+                if(depId != compDepID.substring(0,2)){
                     $(this).attr("disabled","disabled");
+                }else{
+                    $(this).removeAttr("disabled");
                 }
             });
 
         }
 
         setTimeout(cmSelector,500);
+    }
+
+        function unactiveBuildStats(){
+        if($("#toactivate").hasClass("tabs-selected")){
+            $("#go2stats").removeAttr("onclick");
+            $("#go2stats").attr("disabled","disabled");
+//            console.log($("#go2stats"));
+        }
+
+        setTimeout(unactiveBuildStats,500);
     }
 
     function miness(){
@@ -871,6 +883,7 @@ var v = null;
     $(document).ready(function(){
         miness();
         cmSelector();
+        unactiveBuildStats();
 
     });
 
