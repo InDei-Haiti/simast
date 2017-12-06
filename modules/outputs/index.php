@@ -334,6 +334,7 @@ if($_POST['mode']=='save'){
 
     return;
 }elseif($_POST['mode'] == 'btable'){
+    $tempsysStarter = array();
     //var_dump($_POST);
 	$START = time();
 	$calcs = magic_json_decode($_POST['calcs'],true);
@@ -437,6 +438,7 @@ if($_POST['mode']=='save'){
                     $forStore = str_replace('"', '', $forStore);
                     $textVal = str_replace('"', '', $textVal);
 					$allfldq[$keyn]['value'][$rowdatadis[$tab[1]]] = $textVal;
+                    $tempsysStarter[$textVal] = $rowdatadis[$tab[1]];
 				}
 			}
 		}
@@ -530,6 +532,7 @@ if($_POST['mode']=='save'){
 	$END = time() - $START;
 	echo "<br/><br/>Process took $END seconds\n";
 	$_SESSION ['fileNameCsh'] = $tempsession;
+
 	return;
 }
 
@@ -1270,6 +1273,18 @@ echo '<style>
       margin: 1px;
 	  border: 2px solid #DCDBD8;		
 }
+
+.legend {
+    line-height: 18px;
+    color: #555;
+}
+.legend i {
+    width: 18px;
+    height: 18px;
+    float: left;
+    margin-right: 8px;
+    opacity: 0.7;
+}
 		
 </style>';
 	
@@ -1434,15 +1449,15 @@ echo '<div id="loader">
 echo '<form name="mapform" id="mapform"><div class="row">';
 echo '<div class="col-md-3">';
 ?>
-    <div class="row">
+    <!--<div class="row">
         <div class="col-md-12">
-            <?php echo '<label><input type="checkbox" checked="checked" id="markergroup">'.$AppUI->_('Marker group by administrative location').'</label>';?>
+            <?php /*echo '<label><input type="checkbox" checked="checked" id="markergroup">'.$AppUI->_('Marker group by administrative location').'</label>';*/?>
         </div>
     </div>
     <div class="row">
         <div class="col-md-12">
             <div class="maplonlatbox">
-                <?php echo '<h2>'.$AppUI->_('Geographical coordinates').'</h2>';?>
+                <?php /*echo '<h2>'.$AppUI->_('Geographical coordinates').'</h2>';*/?>
                 <div class="form-group">
                     <label for="maplon_select">Longitude field</label>
                     <select id="maplon_select" name="mapping_lon" style="width:200px;" class="form-control">
@@ -1461,15 +1476,15 @@ echo '<div class="col-md-3">';
     <div class="row">
         <div class="col-md-12">
             <div class="maplonlatbox">
-                <?php echo '<h2>'.$AppUI->_('Administrative location').'</h2>';?>
+                <?php /*echo '<h2>'.$AppUI->_('Administrative location').'</h2>';*/?>
                 <div class="form-group">
-                    <label for="mapdep_select"><?php echo $AppUI->_('Department field')?></label>
+                    <label for="mapdep_select"><?php /*echo $AppUI->_('Department field')*/?></label>
                     <select id="mapdep_select" name="mapping_dep" style="width:150px;" class="form-control">
                         <option></option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="mapcom_select"><?php echo $AppUI->_('Commun field')?></label>
+                    <label for="mapcom_select"><?php /*echo $AppUI->_('Commun field')*/?></label>
                     <select id="mapcom_select" name="mapping_com" style="width:150px;" class="form-control">
                         <option></option>
                     </select>
@@ -1480,29 +1495,52 @@ echo '<div class="col-md-3">';
     <div class="row">
         <div class="col-md-12">
             <div class="maplonlatbox">
-                <?php echo '<h2>'.$AppUI->_('Data mapping').'</h2>';?>
+                <?php /*echo '<h2>'.$AppUI->_('Data mapping').'</h2>';*/?>
                 <div class="form-group">
-                    <label for="mapdep_select"><?php echo $AppUI->_('Department field')?></label>
+                    <label for="mapdep_select"><?php /*echo $AppUI->_('Department field')*/?></label>
                     <select id="mapdep_select" name="mapping_dep" style="width:150px;" class="form-control">
                         <option></option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="mapcom_select"><?php echo $AppUI->_('Commun field')?></label>
+                    <label for="mapcom_select"><?php /*echo $AppUI->_('Commun field')*/?></label>
                     <select id="mapcom_select" name="mapping_com" style="width:150px;" class="form-control">
                         <option></option>
                     </select>
                 </div>
             </div>
         </div>
+    </div>-->
+
+<div class="row">
+    <div class="col-md-12">
+        <!--<div class="maplonlatbox">
+            <?php //echo '<h2>'.$AppUI->_('Geographical coordinates').'</h2>';?>
+            <div class="form-group">
+                <label for="maplon_select">Coordinate</label>
+                <select id="maplon_select" name="mapping_lon" style="width:200px;" class="form-control">
+                    <option></option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="data_map">Data mapping</label>
+                <select id="data_map" name="mapping_lat" style="width:200px;" class="form-control">
+
+                </select>
+            </div>
+        </div>-->
+        <div class="maplonlatbox" id="data_map">
+
+        </div>
     </div>
-    <div class="row">
+</div>
+    <!--<div class="row">
         <div class="col-md-12">
             <div class="maplonlatbox">
                 <?php echo '<a href="#" class="ce pi ahr button" id="btngomap">'.$AppUI->_('Go').'</a>';?>
             </div>
         </div>
-    </div>
+    </div>-->
 </form>
 <?php
 echo '</div>';

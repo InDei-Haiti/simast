@@ -2593,8 +2593,7 @@ qlHandler.prototype.run = function(cv,todo){
 		if (majorType == 'report' && todo !== 'export') {
 			//this.reporter(qbegin,qend,$j(".qreditor", $uv).attr("data-id"));
 			this.reporter(qbegin,qend,rowdbID);
-		}
-		else {
+		} else {
 			/*
 			 * document.xform.filter_beginner.value=$j("#start_"+cv).val();
 	 		 *	document.xform.filter_finisher.value=$j("#end_"+cv).val();
@@ -2966,9 +2965,7 @@ function tabPrepare(stg){
 	    //map.invalidateSize();
 	    //alert("invalidateSize");
 	 //}, 1000);
-	
-	
-	
+
 	//map.invalidateSize();
 	//var container = $j("#tabs"); // this = 'tabs' div
     //L.DomEvent.on(container, 'mousedown', L.DomEvent.stopPropagation).on(container, 'doubleclick', L.DomEvent.stopPropagation).on(container, 'click', L.DomEvent.stopPropagation);

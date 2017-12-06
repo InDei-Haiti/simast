@@ -20,17 +20,11 @@ L.tileLayer( /*'http://{s}.mqcdn.com/tiles/1.0.0/map/{z}/{x}/{y}.png', {
 		    maxZoom: 20,
 		    subdomains:['mt0','mt1','mt2','mt3']
 		}).addTo( map );
-var myStyle = {
-    "color": "#ff7800",
-    "weight": 5,
-    "opacity": 0.65,
-    fillColor: "#bdc3c7"
-};
-$.getJSON('/modules/outputs/maps/communes.geojson', function(data){
-    L.Proj.geoJson(data).addTo(map).bindPopup(function (layer) {
-        return layer.feature.type;
-    });
-});
+
+
+
+
+
 /*$.ajax({
     type: 'GET',
     url: "/modules/outputs/maps/departments.geojson",
@@ -46,17 +40,210 @@ $.getJSON('/modules/outputs/maps/communes.geojson', function(data){
 
 var myURL = jQuery( 'script[src$="leaf-demo.js"]' ).attr( 'src' ).replace( 'leaf-demo.js', '' );
 
-teb = ['frem','fren','tet'];
-console.log(teb.indexOf('fre'));
-console.log(teb.indexOf('frem'));
+//alert("Value: "+(parseInt("3990".toString()[0])*Math.pow(10, Math.trunc(Math.log10(2300)))));
+
+
+function onEachFeature(feature, layer){
+
+}
+
+function legend(grades, sum) {
+    var legend = L.control({position: 'topright'});
+
+    legend.onAdd = function (map) {
+
+        var div = L.DomUtil.create('div', 'info legend'),
+
+            labels = [];
+
+        // loop through our density intervals and generate a label with a colored square for each interval
+        div.innerHTML +=
+            '<i style="background:' + getColor(grades[0], sum) + '"></i>-'+grades[0]+' <br>';
+        for (var i = 0; i < grades.length; i++) {
+            div.innerHTML +=
+                '<i style="background:' + getColor(grades[i] + 1, sum) + '"></i> '+
+                grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+');
+        }
+
+        return div;
+    };
+    legend.addTo(map);
+}
+
+
+
+
+
+var tabLegend = [];
+function populateLegendVal(sum) {
+    tab = [];
+    calV = parseInt(Math.trunc(sum * 0.5).toString()[0]) * Math.pow(10, Math.trunc(Math.log10(Math.trunc(sum * 0.05))));
+    tab.push(calV);
+    calV = parseInt(Math.trunc(sum * 0.1).toString()[0]) * Math.pow(10, Math.trunc(Math.log10(Math.trunc(sum * 0.1))));
+    tab.push(calV);
+    calV = parseInt(Math.trunc(sum * 0.15).toString()[0]) * Math.pow(10, Math.trunc(Math.log10(Math.trunc(sum * 0.15))));
+    tab.push(calV);
+    calV = parseInt(Math.trunc(sum * 0.15).toString()[0]) * Math.pow(10, Math.trunc(Math.log10(Math.trunc(sum * 0.15))));
+    tab.push(calV);
+    calV = parseInt(Math.trunc(sum * 0.2).toString()[0]) * Math.pow(10, Math.trunc(Math.log10(Math.trunc(sum * 0.2))));
+    tab.push(calV);
+    calV = parseInt(Math.trunc(sum * 0.25).toString()[0]) * Math.pow(10, Math.trunc(Math.log10(Math.trunc(sum * 0.25))));
+    tab.push(calV);
+    calV = parseInt(Math.trunc(sum * 0.3).toString()[0]) * Math.pow(10, Math.trunc(Math.log10(Math.trunc(sum * 0.3))));
+    tab.push(calV);
+    tab = tab.filter(function(item, pos){
+        return tab.indexOf(item)== pos;
+    });
+
+    return tab;
+}
+function getColor(d, sum) {
+	tabLegend = populateLegendVal(sum);
+    tabLegend.reverse();
+	countTab = tabLegend.length;
+	colorL = '';
+	if(d > tabLegend[0]){
+        colorL = '#800026';
+	} else if(d > tabLegend[1]){
+        colorL = '#BD0026';
+	} else if(d > tabLegend[2]){
+        colorL = '#E31A1C';
+	} else if(d > tabLegend[3]){
+        colorL = '#FC4E2A';
+	} else if(d > tabLegend[4]){
+        colorL = '#FD8D3C';
+	} else if(d > tabLegend[5]){
+        colorL = '#FEB24C';
+	}else if(d > tabLegend[6]){
+        colorL = '#FED976';
+	} else {
+        colorL = '#FFEDA0';
+    }
+    tabLegend.reverse();
+    return colorL;
+}
+tempFeatures = {};
+
+function populateMap(str){
+
+	console.log(geoDataDic);
+    if(geoData=='SysDepartment') {
+        urlGeo = '/modules/outputs/maps/departments.geojson';
+        $.getJSON(urlGeo, function (data) {
+            sumVal = 0;
+            $j.each(geoDataDic, function (i, val) {
+
+            	val.datamapping.forEach(function(item){
+                    sumVal += parseInt(item.val);
+                });
+
+            });
+            geoProj = L.Proj.geoJson(data,
+                {
+                    style: function (feature) {
+                        fillColor = '#cccccc';
+                        if (geoDataDic.hasOwnProperty(feature.properties.ID_Dep)) {
+                        	val = null;
+                        	geoDataDic[feature.properties.ID_Dep].datamapping.forEach(function(item){
+                        		if(str==item.label)
+                        			val = item.val;
+							});
+							if(val != null) {
+								fillColor = getColor(parseInt(val), sumVal);
+
+                            }
+                        }
+
+                        return {
+                            fillColor: fillColor,
+                            weight: 2,
+                            opacity: 1,
+                            color: 'white',
+                            dashArray: '3',
+                            fillOpacity: 0.7
+                        };
+                    }
+                }
+            ).addTo(map);
+            legend(tabLegend, sumVal);
+            geoProj.bindPopup(function (layer) {
+                html = '';
+                html += geoDataDic[layer.feature.properties.ID_Dep].coordinate + '<br/>';
+                geoDataDic[layer.feature.properties.ID_Dep].datamapping.forEach(function (item) {
+                	if(item.label==str)
+						html += '<span style="color: darkblue">'+item.label+": "+item.val+"</span><br/>";
+                	else
+						html += item.label+": "+item.val+"<br/>";
+                });
+                return html;
+            });
+        });
+    }
+
+    if(geoData=='SysCommunes') {
+        urlGeo = '/modules/outputs/maps/communes.geojson';
+        $.getJSON(urlGeo, function (data) {
+            sumVal = 0;
+            $j.each(geoDataDic, function (i, val) {
+
+                val.datamapping.forEach(function(item){
+                    sumVal += parseInt(item.val);
+                });
+
+            });
+            geoProj = L.Proj.geoJson(data,
+                {
+                    style: function (feature) {
+                        fillColor = '#cccccc';
+                        if (geoDataDic.hasOwnProperty(feature.properties.id_com)) {
+                            val = null;
+                            geoDataDic[feature.properties.id_com].datamapping.forEach(function(item){
+                                if(str==item.label)
+                                    val = item.val;
+                            });
+                            if(val != null) {
+                                fillColor = getColor(parseInt(val), sumVal);
+
+                            }
+                        }
+
+                        return {
+                            fillColor: fillColor,
+                            weight: 2,
+                            opacity: 1,
+                            color: 'white',
+                            dashArray: '3',
+                            fillOpacity: 0.7
+                        };
+                    }
+                }
+            ).addTo(map);
+            legend(tabLegend, sumVal);
+            geoProj.bindPopup(function (layer) {
+                html = '';
+                html += geoDataDic[layer.feature.properties.id_com].coordinate + '<br/>';
+                geoDataDic[layer.feature.properties.id_com].datamapping.forEach(function (item) {
+                    if(item.label==str)
+                        html += '<span style="color: darkblue">'+item.label+": "+item.val+"</span><br/>";
+                    else
+                        html += item.label+": "+item.val+"<br/>";
+                })
+                //html += geoDataDic[layer.feature.properties.id_com].datamapping +': '+geoDataDic[layer.feature.properties.id_com].val + '<br/>';
+                return html;
+            });
+        });
+    }
+}
+
+
 $('#mapstab').click(function(){
 	$('#map').show();
 	 map.invalidateSize();
-	$('#map').appendTo($('#tabs-6'));L.CRS
+	$('#map').appendTo($('#tabs-6'));
 });
-function displayAll(data){
-	console.log(data);
-}
+
+
+
 var markercmp = 0;
 $('#btngomap').click(function(){
 	/*$j.get("/?m=outputs&suppressHeaders=1&"+$j('#mapform').serialize()+"&querysave="+$j('#querysave').val(), {mode: "geojsonMap"}, function (data) {
@@ -249,3 +436,25 @@ $('#btngomap').click(function(){
 	var i=this.getSize(),n=e.divideBy(2).round(),s=i.divideBy(2).round(),a=n.subtract(s);
 	return a.x||a.y?(t.animate&&t.pan?this.panBy(a):(t.pan&&this._rawPanBy(a),this.fire("move"),t.debounceMoveend?(clearTimeout(this._sizeTimer),this._sizeTimer=setTimeout(o.bind(this.fire,this,"moveend"),200)):this.fire("moveend")),this.fire("resize",{oldSize:e,newSize:i})):this}
 */
+
+
+//Popup as layer
+
+/*
+var popupLocation1 = new L.LatLng(51.5, -0.09);
+var popupLocation2 = new L.LatLng(51.51, -0.08);
+
+var popupContent1 = '<p>Hello world!<br />This is a nice popup.</p>',
+popup1 = new L.Popup();
+
+popup1.setLatLng(popupLocation1);
+popup1.setContent(popupContent1);
+
+var popupContent2 = '<p>Hello world!<br />This is a nice popup.</p>',
+popup2 = new L.Popup();
+
+popup2.setLatLng(popupLocation2);
+popup2.setContent(popupContent2);
+
+map.addLayer(popup1).addLayer(popup2);
+ */
