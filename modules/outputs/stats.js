@@ -1,6 +1,8 @@
 var fstatp,redv =false,rezo,Rezo,lahand,dcl,flag,tw,acols,shadow;
 var chart = null;
 var map;
+var geoDataDic = {};
+var geoData = null;
 var sFrames = function (){
 	this.$bh=$j("#shome");
 	this.cols=[];this.rows=[];this.$rbox;this.$cbox;this.ctt=$j("#cbox");this.rtt=$j("#rbox");
@@ -34,7 +36,6 @@ sFrames.prototype.init = function(){
 	var $hapt =$j("#box-home");
 
 	for(var i=0,fl=fields.length;i < fl; i++){
-        console.log(fields[i].title+": "+fields[i].type);
 		$j(['<li class="refulli ui-corner-tr" ><div class="ulit fbox">',fields[i].parent,' : ',fields[i].title,'</div></li>'].join(""))
 			.attr("data-hid",fields[i].id)
 			.attr("type",fields[i].type)
@@ -616,7 +617,6 @@ sFrames.prototype.Leader = function(obj){
 			}
 		}
 		var $tadd, edue, epost, ncase = false;
-		console.log(self.ntype);
 		switch (self.ntype) {
 			case "string":
 				if (selects[nlead] === 'plain' || deltas === false) {
@@ -866,6 +866,7 @@ sFrames.prototype.collector = function(filtersPlain){
 			id: $th.attr("data-hid"),
 			field:'wform_'+$th.attr("data-form")+'.'+$th.attr("data-field"),
 			type: $th.attr("data-type"),
+			sys: $th.attr("data-sys"),
 			title: $th.text()
 		});
 	});
@@ -875,6 +876,7 @@ sFrames.prototype.collector = function(filtersPlain){
 			id: $th.attr("data-hid"),
 			field:'wform_'+$th.attr("data-form")+'.'+$th.attr("data-field"),
 			type: $th.attr("data-type"),
+            sys: $th.attr("data-sys"),
 			title: $th.text()
 		});
 		if($j("div.bfg",$th).hasClass("headf-connect")){
@@ -949,7 +951,6 @@ sFrames.prototype.run = function(){
 		querysave = $j('#querysave').val();
 		data = {row:rows_fld,col:cols_fld,querysave:querysave};
 		urlData = 'mode=btable&calcs=' + JSON.stringify(data)+'&calcs2=' + JSON.stringify(self.collector());
-		console.log(urlData);
 		$j.ajax({
 			type: "post",
 			data: urlData,
@@ -1128,7 +1129,7 @@ function addGraphToDashboard(){
 
 }
 var grapher = (function(my){
-	var dataset = [], cols = [], rows = [], $table, boxes, rowb = [], colb = [], vstate = false, palettes=[], currentPalette=0,pgData,colorLock=false;
+	var dataset = [], cols = [], rows = [], sysCodes = {}, $table, boxes, rowb = [], colb = [], vstate = false, palettes=[], currentPalette=0,pgData,colorLock=false;
 	var dataSend = function(){
 		var pboxes = outData(), colsInPart, ndataset = [], xepos = 0, ncols = [[]], ncolb, nrows = [], nrowb;
 		if (colb.length > 0 && $j("#col_big").val() === 'xcall') {
@@ -1159,8 +1160,7 @@ var grapher = (function(my){
 			ncolb = colb.slice(0);
 		}
 		if (rowb.length > 0 && $j("#row_big").val() === 'ycall') {
-            console.log("here");
-			//perform aggregation of rowss into parent
+            //perform aggregation of rowss into parent
 			var rdataset=[],rowOffset=0;
 			for (var pi = 0, pl = rowb.length; pi < pl; pi++) {
 				rowsInPart = rows[rowb[pi][0]][0];
@@ -1213,7 +1213,7 @@ var grapher = (function(my){
 	};
 	
 	var outData = function(){
-		boxes = stater.collector(); 
+		boxes = stater.collector();
 		return {
 			'rows': boxes.rows,
 			'cols': boxes.cols
@@ -1225,6 +1225,7 @@ var grapher = (function(my){
 		rows = [];
 		rowb = [];
 		colb = [];
+		sysCodes = {};
 		dataset = [];
 		var $table = $j("#tthome").find("table"), $thead = $table.find("thead"), clp = 0, clpx = 0, ocols = 0, tcols = 0, colall = $j("#colall").is(":checked");
 		if (colall === false) {
@@ -1246,8 +1247,6 @@ var grapher = (function(my){
 		} else {
 			cols.push([1, 'All']);
 		}
-		console.log("Cols:");
-		console.log(cols);
 		var td, rsp = 0, $nobj, tdtxt, rpos, use_next = true, needcells = boxes.rows.length, rspleft = 0, noclass, vdc = new RegExp("vdata"), sudc = new RegExp("summr"), tct = new RegExp("tcol"), pcell = new RegExp("perc"), migro = new RegExp("missgr"), tcl;
 		$j("tbody > tr ", $table).filter(":not(.jkdata)").each(function(y){
 			if (!$j(this).hasClass("itog")) {
@@ -1258,6 +1257,9 @@ var grapher = (function(my){
 						rsp = $j(this).attr("rowspan");
 						if (!vcs && !scs && !tcs && !pcs && !mit) {
 							tdtxt = $j(this).attr("data-rtitle");
+							tdSysCode = $j(this).attr("data-syscode");
+							if(tdSysCode != null || tdSysCode != '')
+                            	sysCodes[tdtxt] = tdSysCode;
 							if (!tdtxt || tdtxt.length == 0) {
 								tdtxt = $j(this).text();
 								//crsp--;
@@ -1754,7 +1756,6 @@ var grapher = (function(my){
 				//$j("#graph_home").html(pgData[1]);
 				var rstr = [],$ghome=$j("#graph_home");
 				masterdata = $j.parseJSON(pgData[1]['dset']);
-				console.log(masterdata);
 				var options = null;
 				var data = null;
 				type = pgData[1]['cmode'];
@@ -1762,23 +1763,18 @@ var grapher = (function(my){
 				if(pgData[1]['cmode']=='bars' || pgData[1]['cmode']=='pbars' || pgData[1]['cmode']=='sbars' ){
 					categories = [];
                     if($j('#col_big:visible').length > 0){
-                    	console.log("col_big:visible");
                         if($j('#col_big').val()=='xcall'){
                             for (idx = 0; idx < masterdata.rows.length; idx++) {
                                 categories.push(masterdata.rows[idx][1]);
                             }
                         }
                     }else {
-                    	console.log("No...");
                         for (idx = 0; idx < masterdata.rows.length; idx++) {
                             categories.push(masterdata.rows[idx][1]);
                         }
                     }
-                    console.log("Categories");
-                    console.log(categories);
 					categories.reverse();
 					series = [];
-					console.log(masterdata.cols[1].length);
 					if(masterdata.cols[1].length>0){
                         for (idx = 0; idx < masterdata.cols[1].length; idx++) {
                             itemseries = [];
@@ -1803,10 +1799,6 @@ var grapher = (function(my){
                         }
                         categories=null;
 					}
-
-
-					console.log("Series");
-					console.log(series)
                     series.reverse();
                     //chart = bars(categories,series,title);
                     if(pgData[1]['cmode']=='bars') {
@@ -1867,8 +1859,6 @@ var grapher = (function(my){
                             series.push({name:masterdata.cols[1][idx][1],data:itemseries});
                         }
                     }
-					console.log(series);
-					/*console.log(categories);*/
                     if(pieChoke){
                         chart = lines(categories,series,title);//line(series);
 					}else{
@@ -2119,8 +2109,68 @@ var grapher = (function(my){
 				}
 			}
 			grapher.build();
+		},
+		maps: function(){
+
+            var tbpost = $j.parseJSON(dataSend());
+            //tbpost = tbpost[1]['dset'];
+
+            geoData = null;
+            rowCol = '';
+            for(var i=0;i<boxes.cols.length;i++){
+                geoData = boxes.cols[i].sys;
+                if(geoData=='SysCommunes'){
+                    rowCol = 'cols';
+                	break;
+				}else if(geoData=='SysDepartment'){
+                    rowCol = 'cols';
+                    break;
+				}else{
+                    geoData = null;
+                }
+			}
+			if(geoData==null){
+                for(var i=0;i<boxes.rows.length;i++){
+                    geoData = boxes.rows[i].sys;
+                    if(geoData=='SysCommunes'){
+                        rowCol = 'rows';
+                        break;
+                    }else if(geoData=='SysDepartment'){
+                        rowCol = 'rows';
+                        break;
+                    }else{
+                        geoData = null;
+					}
+                }
+			}
+			if(geoData != null){
+				if(rowCol=='rows'){
+					for(var i=0;i<tbpost.data.length;i++){
+                        codeSys = sysCodes[tbpost.rows[i][1]];
+                        codeSys = codeSys.replace(new RegExp("0", 'g'), "");
+                        geoDataDic[codeSys] = {coordinate:tbpost.rows[i][1]};
+                        geoDataDic[codeSys]["datamapping"] = [];
+                        for(var j=0;j<tbpost.cols[1].length;j++){
+                            geoDataDic[codeSys]["datamapping"].push({label:tbpost.cols[1][j][1], val: tbpost.data[i][j]});
+                        }
+                    }
+                    $j('#data_map').empty();
+                    console.log(tbpost.cols[1]);
+                    console.log(tbpost.cols[1].length);
+                    for(var j=0;j<tbpost.cols[1].length;j++){
+                        $j('#data_map').append('<label for="data_map_'+j+'"><input type="radio" name="data_map" class="data-map" id="data_map_'+j+'" value="'+tbpost.cols[1][j][1]+'" onclick="populateMap(this.value)"/> &emsp;'+tbpost.cols[1][j][1]+'</label>');
+                    }
+				}
+			}
+            $j("#tabs> ul > li:eq(5)").removeClass("tabs-disabled");
+            $j("#tabs").toTab(5);
+            $('#map').show();
+            map.invalidateSize();
+            $('#map').appendTo($('#tabs-6'));
+
+
 		}
-		
+
 	}
 }(grapher));
 
@@ -2152,7 +2202,6 @@ Array.prototype.unique = function() {
 };
 
 function sommation(){
-	console.log("Executed");
     var premier_occ = $("#tthome table thead tr:eq(1) th:eq(1)").text();
     var tab_tete = [], slected = [];
     var equality = [];

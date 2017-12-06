@@ -1975,7 +1975,7 @@ class Stater {
 	}
 
 	function buildIt() {
-		global $trows, $svals,$tcols,$dateDetail,$extracola;
+		global $trows, $svals,$tcols,$dateDetail,$extracola,$tempsysStarter;
 		$this->list=$this->uniques=$this->allowed=$this->localuns=$this->localrefs=$this->refs=null;
 		unset($this->list,$this->uniques,$this->allowed,$this->localuns,$this->localrefs,$this->refs);
 		$this->cy=0;
@@ -2424,7 +2424,11 @@ class Stater {
 					$xtmp=$this->tcomp['rows'][0]->getRName($param);
 					if($xtmp==-1)
                         $xtmp = '0';
-					$row.='<td class="rowhead ysub" data-ptitle="'.$xtmp.'" '.$bcolspans.' data-rtitle="'.$xtmp.'" rowspan="@!@'.$rti .'@!@">'.$xtmp.'</td>'."\n";
+					$syscode = '';
+					if(isset($tempsysStarter[$xtmp])){
+					    $syscode = $tempsysStarter[$xtmp];
+                    }
+					$row.='<td class="rowhead ysub" data-ptitle="'.$xtmp.'" '.$bcolspans.' data-syscode="'.$syscode.'" data-rtitle="'.$xtmp.'" rowspan="@!@'.$rti .'@!@">'.$xtmp.'</td>'."\n";
 				}
 				$yearShown[$yearTD]=true;
 				$rowcode='';

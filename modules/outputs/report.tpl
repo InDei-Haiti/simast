@@ -221,6 +221,7 @@
             <li style="display: inline-block;margin:0px;border: 1px solid #eceeef !important;padding:5px;width: 50px;height: 30px"><span id="pick_table" class="fa fa-table" data-rep_item="stat" style="color: #354c8c" title="Pick whole Statistic table"></span></li>
             <!--<li style="display: inline-block;margin-left:-3px;border: 1px solid #eceeef;border-left:none;padding:5px;width: 50px;height: 30px"><span class="fa fa-file-text" style="color: #354c8c" onclick="popupDescStats()" title="Description"></span></li>-->
             <li style="display: inline-block;margin-left:-3px;border: 1px solid #eceeef;border-left:none;padding:5px;width: 50px;height: 30px" onclick="addTableToDashboard()"><span class="fa fa-dashboard" style="color: #354c8c" title="Add to Dashboard"></span></li>
+            <li style="display: inline-block;margin-left:-3px;border: 1px solid #eceeef;border-left:none;padding:5px;width: 50px;height: 30px" onclick="grapher.maps()"><span class="fa fa-map-marker" style="color: #354c8c" title="Add to Dashboard"></span></li>
         </ul>
     </div>
     <span id="tthome">
