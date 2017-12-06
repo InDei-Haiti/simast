@@ -2246,9 +2246,20 @@ function sommation(){
             var somme_1 = 0;
             for(var m = 0;m < equality[z].id_commun.length; m++){
                 var adel = equality[z].id_commun[m]+1;
-                somme_1 += parseInt($(this).find("td:eq("+adel+")").text());
+				// Percent handle
+				if($(this).find("td:eq("+adel+")").text().search("%") == -1){
+					somme_1 += parseInt($(this).find("td:eq("+adel+")").text());
+				}else{
+					somme_1 += parseFloat($(this).find("td:eq("+adel+")").text().replace("%",""));
+				}
+
             }
-            somme.push(somme_1);
+			if($(this).find("td:eq("+adel+")").text().search("%") == -1){
+				somme.push(somme_1);
+			}else{
+				somme.push(somme_1+'%');
+			}
+
         }
 
         $(this).empty();
