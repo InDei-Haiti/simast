@@ -7,8 +7,10 @@
 
 $dPconfig['dbtype'] = 'mysql';
 $dPconfig['dbhost'] = 'localhost';
-//$dPconfig['dbname'] =  'simast';
-$dPconfig['dbname'] =  'crowdl5_simast';
+$dPconfig['dbhost'] = 'simastdev.cqdkbwbzyw0w.us-west-2.rds.amazonaws.com';
+$dPconfig['dbname'] =  'simast';
+$dPconfig['dbname'] =  'simastdev';
+//$dPconfig['dbname'] =  'crowdl5_simast';
 //$dPconfig['dbname'] =  'leaadmin_kario';
 // 'kib-now';'rtt2';
 //
@@ -18,8 +20,10 @@ $dPconfig['dbname'] =  'crowdl5_simast';
 //$dPconfig['dbpass'] = 'SImast123';
 $dPconfig['dbuser'] = 'root';
 $dPconfig['dbpass'] = '';
-//$dPconfig['dbuser'] = 'simastadmin';
-//$dPconfig['dbpass'] = 'fasil';
+$dPconfig['dbuser'] = 'simastadmin';
+$dPconfig['dbpass'] = 'fasil';
+$dPconfig['dbuser'] = 'rpalexis';
+$dPconfig['dbpass'] = 'Fasil123!';
 $dPconfig['dbpersist'] = false;
 $dPconfig['root_dir'] = $baseDir;
 $dPconfig['base_url'] = $baseUrl;
