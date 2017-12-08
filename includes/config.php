@@ -7,9 +7,9 @@
 
 $dPconfig['dbtype'] = 'mysql';
 $dPconfig['dbhost'] = 'localhost';
-$dPconfig['dbhost'] = 'simastdev.cqdkbwbzyw0w.us-west-2.rds.amazonaws.com';
+$dPconfig['dbhost'] = $_SERVER['RDS_HOSTNAME'];
 $dPconfig['dbname'] =  'simast';
-$dPconfig['dbname'] =  'simastdev';
+$dPconfig['dbname'] =  $_SERVER['RDS_DB_NAME'];
 //$dPconfig['dbname'] =  'crowdl5_simast';
 //$dPconfig['dbname'] =  'leaadmin_kario';
 // 'kib-now';'rtt2';
@@ -22,8 +22,8 @@ $dPconfig['dbuser'] = 'root';
 $dPconfig['dbpass'] = '';
 $dPconfig['dbuser'] = 'simastadmin';
 $dPconfig['dbpass'] = 'fasil';
-$dPconfig['dbuser'] = 'rpalexis';
-$dPconfig['dbpass'] = 'Fasil123!';
+$dPconfig['dbuser'] = $_SERVER['RDS_USERNAME'];
+$dPconfig['dbpass'] = $_SERVER['RDS_PASSWORD'];
 $dPconfig['dbpersist'] = false;
 $dPconfig['root_dir'] = $baseDir;
 $dPconfig['base_url'] = $baseUrl;
