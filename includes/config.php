@@ -7,7 +7,7 @@
 
 $dPconfig['dbtype'] = 'mysql';
 //$dPconfig['dbhost'] = 'localhost';
-$dPconfig['dbhost'] = $_SERVER['RDS_HOSTNAME'];
+$dPconfig['dbhost'] = 'simastdev.cqdkbwbzyw0w.us-west-2.rds.amazonaws.com';//$_SERVER['RDS_HOSTNAME'];
 //$dPconfig['dbname'] =  'simast';
 $dPconfig['dbname'] = 'simastdev';
 //$dPconfig['dbname'] =  'crowdl5_simast';
