@@ -1,12 +1,3 @@
-files/tmp/*
-files/flags/*
-files/reports/*
-files/0/*
-files/21/*
-files/357/*
-files/358/*
-files/359/*
-files/367/*
 .idea/*
 includes/config.php
 
