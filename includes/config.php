@@ -7,9 +7,9 @@
 
 $dPconfig['dbtype'] = 'mysql';
 //$dPconfig['dbhost'] = 'localhost';
-$dPconfig['dbhost'] = 'simastdev.cqdkbwbzyw0w.us-west-2.rds.amazonaws.com';//$_SERVER['RDS_HOSTNAME'];
+$dPconfig['dbhost'] = $_SERVER['RDS_HOSTNAME'];
 //$dPconfig['dbname'] =  'simast';
-$dPconfig['dbname'] = 'simastdev';
+$dPconfig['dbname'] = $_SERVER['RDS_DB_NAME'];
 //$dPconfig['dbname'] =  'crowdl5_simast';
 //$dPconfig['dbname'] =  'leaadmin_kario';
 // 'kib-now';'rtt2';
