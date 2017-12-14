@@ -24,7 +24,7 @@ function db_connect($host='localhost', $dbname, $user='root', $passwd='', $persi
 	$ret_val = (($persist) ? $db->PConnect($host, $user, $passwd, $dbname) 
 	            : $db->Connect($host, $user, $passwd, $dbname));
 	if (!($ret_val)) {
-		die('FATAL ERROR: Connection to database server failed');
+		die('FATAL ERROR: Connection to database server failed'.$host.' '.$user.' '.$passwd.' '.$dbname);
 	}
 	
 	$ADODB_FETCH_MODE=ADODB_FETCH_BOTH;
