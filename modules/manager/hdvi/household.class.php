@@ -172,7 +172,7 @@ class Household {
 		
 		// iteration member
 		foreach ( $this->members as $member ) {
-            if ($member->member_fld_linkparent != null && $member->member_fld_linkparent <= 13){
+            if (!($member->member_fld_linkparent != null && $member->member_fld_linkparent <= 13)){
                 continue;
             }
 			// 1.1
@@ -518,7 +518,7 @@ class Household {
 		$yearlag = array ();
 		$iii = 1;
 		foreach ( $this->members as $member ) {
-            if ($member->member_fld_linkparent != null && $member->member_fld_linkparent <= 13){
+            if (!($member->member_fld_linkparent != null && $member->member_fld_linkparent <= 13)){
                 continue;
             }
             if ($member->member_fld_age != null && $member->member_fld_age >= 3 && $member->member_fld_age <= 20) {
@@ -1631,9 +1631,9 @@ class Household {
 		    $arrl ['depr_sali'] = $depr_sali;
 		//else  $arrl ['depr_sali'] = null;
 		if ($this::$COUNTER == 0) {
-            $table [] = array_keys ( $arrl );
+            //$table [] = array_keys ( $arrl );
         }
-        $table [] = array_values ( $arrl );
+        //$table [] = array_values ( $arrl );
         $this::$COUNTER += 1;
         //var_dump($this->fld);
 
@@ -1672,7 +1672,7 @@ class Household {
         $q->addUpdate($this->fld['vulnerability'], $vulnerability);
         $q->addUpdate($this->fld['depr_sali'], $depr_sali);
         $q->addWhere('id='.$this->id);
-        //$table [] = $q->prepare();
+        $table [] = $q->prepare();
 
 
 

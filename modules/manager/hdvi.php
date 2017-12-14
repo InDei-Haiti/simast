@@ -327,7 +327,7 @@ mysqli_query($sqlrank);*/
 //var_dump($familleA);
 
 unset($resultat);
-/*header("Content-Disposition: attachment; filename=\"sql_".time().".sql\"");
+header("Content-Disposition: attachment; filename=\"sql_".time().".sql\"");
 header("Content-Type: application/text;");
 header("Pragma: no-cache");
 header("Expires: 0");
@@ -336,9 +336,9 @@ $table = implode(";\n",$table);
 fprintf($out, "%s", $table);
 //$res = db_exec($table);
 
-if($res){
-    echo 'success';
-}*/
+//if($res){
+//echo 'success';
+//}
 $keys = $table[0];
 //echo count($table);
 
@@ -353,7 +353,9 @@ $keys = $table[0];
     }
 
 }*/
-header("Content-Disposition: attachment; filename=\"list_".time().".xls\"");
+
+
+/*header("Content-Disposition: attachment; filename=\"list_".time().".xls\"");
 header("Content-Type: application/vnd.ms-excel;");
 header("Pragma: no-cache");
 header("Expires: 0");
@@ -361,7 +363,8 @@ $out = fopen("php://output", 'w');
 foreach ($table as $data)
 {
     fputcsv($out, $data,"\t");
-}
+}*/
+
 
 //foreach ($table as $data)
 //{

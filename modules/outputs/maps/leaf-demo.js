@@ -2,7 +2,7 @@
 //console.log('width avant: '+$('.right').width());
 proj4.defs("urn:ogc:def:crs:EPSG::26918", '+proj=utm +zone=18 +ellps=GRS80 +datum=NAD83 +units=m +no_defs');
 var map = L.map( 'map', {
-    center: [18.046476, -73.9999999],
+    center: [18.756476, -73.43434343],
     minZoom: 2,
     zoom: 8,
     scrollWheelZoom:false
@@ -45,10 +45,11 @@ var myURL = jQuery( 'script[src$="leaf-demo.js"]' ).attr( 'src' ).replace( 'leaf
 
 function onEachFeature(feature, layer){
 
+
 }
 
 function legend(grades, sum) {
-    var legend = L.control({position: 'topright'});
+    var legend = L.control({position: 'topleft'});
 
     legend.onAdd = function (map) {
 
@@ -62,19 +63,34 @@ function legend(grades, sum) {
         for (var i = 0; i < grades.length; i++) {
             div.innerHTML +=
                 '<i style="background:' + getColor(grades[i] + 1, sum) + '"></i> '+
-                grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+');
+                grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + ' <br>' : '+');
         }
 
         return div;
     };
     legend.addTo(map);
+
 }
 
 
 
+var info = L.control();
 
+info.onAdd = function (map) {
+    this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
+    this.update();
+    return this._div;
+};
+
+// method that we will use to update the control based on feature properties passed
+info.update = function (textVal) {
+    this._div.innerHTML = textVal;
+};
+
+info.addTo(map);
 
 var tabLegend = [];
+var headerText = '';
 function populateLegendVal(sum) {
     tab = [];
     calV = parseInt(Math.trunc(sum * 0.5).toString()[0]) * Math.pow(10, Math.trunc(Math.log10(Math.trunc(sum * 0.05))));
@@ -125,7 +141,7 @@ function getColor(d, sum) {
 tempFeatures = {};
 
 function populateMap(str){
-
+    headerText = prompt("Entrez le titre","");
 	console.log(geoDataDic);
     if(geoData=='SysDepartment') {
         urlGeo = '/modules/outputs/maps/departments.geojson';
@@ -178,6 +194,7 @@ function populateMap(str){
                 return html;
             });
         });
+        info.update(headerText);
     }
 
     if(geoData=='SysCommunes') {

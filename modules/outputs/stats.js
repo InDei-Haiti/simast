@@ -1052,6 +1052,7 @@ chartz.prototype.doSave = function(pdata){
 		}
 	});
 }
+
 var buttons = Highcharts.getOptions().exporting.buttons.contextButton.menuItems;
 
 /*buttons.push({
@@ -1097,6 +1098,7 @@ var buttons = Highcharts.getOptions().exporting.buttons.contextButton.menuItems;
 
     }
 });*/
+
 function addTableToDashboard(){
     var $statTable = $j("#tthome").find("table");
     $statTable = JSON.stringify('<table cellpadding="2" cellspacing="1" border="0" class="tbl sttable">'+$statTable.html()+'</table>');
@@ -1114,6 +1116,7 @@ function addTableToDashboard(){
     });
 
 }
+
 function addGraphToDashboard(){
     gpgr.chooseSet(urlData, 'GRAPH', graph_data, project);
     $j.get("/?m=outputs&mode=getSet&suppressHeaders=1", function (msg) {
@@ -1454,7 +1457,7 @@ var grapher = (function(my){
 			yAxis: {
 				min: 0,
 				title: {
-					text: 'Population (millions)',
+					text: '',
 					align: 'high'
 				},
 				labels: {
@@ -1462,7 +1465,7 @@ var grapher = (function(my){
 				}
 			},
 			tooltip: {
-				valueSuffix: ' millions'
+				valueSuffix: ' '
 			},
 			plotOptions: {
 				series: {
@@ -1500,7 +1503,7 @@ var grapher = (function(my){
 			yAxis: {
 				min: 0,
 				title: {
-					text: 'Population (millions)',
+					text: '',
 					align: 'high'
 				},
 				labels: {
@@ -1603,7 +1606,7 @@ var grapher = (function(my){
             yAxis: {
                 min: 0,
                 title: {
-                    text: 'Population (millions)',
+                    text: '',
                     align: 'high'
                 },
                 labels: {
@@ -1876,19 +1879,33 @@ var grapher = (function(my){
 					}*/
 					series = [];
                     tempseries = {name: 'Brands',data:[]};
-				    for(idx=0;idx<masterdata.data.length;idx++) {
-						if (parseInt($('#pieChoke').val()) == idx) {
-							for(idy=0;idy<masterdata.data[idx].length;idy++) {
-								tempseries['data'].push({name: masterdata.cols[1][idy][1],y: parseFloat(masterdata.data[idx][idy])});
-							}
-                            tempseries['data'].reverse();
-						}
-				    }
+                    console.log(masterdata);
+                    if($('#col_big').val()=='xcall'){
+                        for (idx = 0; idx < masterdata.cols[0].length; idx++) {
+                            tempseries['data'].push({
+                                name: masterdata.cols[0][idx][1],
+                                y: parseFloat(masterdata.data[0][idx])
+                            });
+                        }
+                        //tempseries['data'].reverse();
+					}else {
+                        for (idx = 0; idx < masterdata.data.length; idx++) {
+                            if (parseInt($('#pieChoke').val()) == idx) {
+                                for (idy = 0; idy < masterdata.data[idx].length; idy++) {
+                                    tempseries['data'].push({
+                                        name: masterdata.cols[1][idy][1],
+                                        y: parseFloat(masterdata.data[idx][idy])
+                                    });
+                                }
+                                tempseries['data'].reverse();
+                            }
+                        }
+                    }
                    // tempseries.reverse();
                     series.push(tempseries);
-
+				    console.log(series);
                     chart = pie(series,title);
-                    graph_data['categories'] = categories;
+                    //graph_data['categories'] = categories;
                     graph_data['series'] = null;
                     graph_data['title'] = title;
                     /*series.reverse();
@@ -2143,8 +2160,10 @@ var grapher = (function(my){
 					}
                 }
 			}
+			var fld_name = '';
 			if(geoData != null){
 				if(rowCol=='rows'){
+                    //fld_name = ;
 					for(var i=0;i<tbpost.data.length;i++){
                         codeSys = sysCodes[tbpost.rows[i][1]];
                         codeSys = codeSys.replace(new RegExp("0", 'g'), "");
@@ -2155,18 +2174,27 @@ var grapher = (function(my){
                         }
                     }
                     $j('#data_map').empty();
-                    console.log(tbpost.cols[1]);
-                    console.log(tbpost.cols[1].length);
+
                     for(var j=0;j<tbpost.cols[1].length;j++){
-                        $j('#data_map').append('<label for="data_map_'+j+'"><input type="radio" name="data_map" class="data-map" id="data_map_'+j+'" value="'+tbpost.cols[1][j][1]+'" onclick="populateMap(this.value)"/> &emsp;'+tbpost.cols[1][j][1]+'</label>');
+                        $j('#data_map').append('<label for="data_map_'+j+'"><input type="radio" name="data_map" class="data-map" id="data_map_'+j+'" value="'+tbpost.cols[1][j][1]+'" onclick="populateMap(this.value)"/> &emsp;'+tbpost.cols[1][j][1]+'</label><br/>');
                     }
 				}
 			}
             $j("#tabs> ul > li:eq(5)").removeClass("tabs-disabled");
             $j("#tabs").toTab(5);
-            $('#map').show();
-            map.invalidateSize();
-            $('#map').appendTo($('#tabs-6'));
+            setTimeout(function(){ map.invalidateSize()}, 400);
+            //$('#map').show();
+           // map.invalidateSize();
+            //$(window).trigger('resize');
+            //map.trigger('resize');
+				/*.on('resize', function () {
+                map.invalidateSize();
+            });*/
+
+           /* google.maps.event.addListenerOnce(map, 'idle', function(){
+                $(window).trigger('resize');
+            });*/
+            //$('#map').appendTo($('#tabs-6'));
 
 
 		}
@@ -2221,10 +2249,6 @@ function sommation(){
 
         }
     });
-    /*for(var i =0; i < tab_tete.length;i++){
-
-        console.log(tab_tete[i]);
-    }*/
 
 
     // Finding Duplicates
@@ -2289,7 +2313,6 @@ function sommation(){
         var numm = 1+ tab_tete.length;
         part2_bkp.find("td:lt("+numm+")").remove();
         // Sauvegarde des derniers TD dans chaque TR
-        // console.log( equality.length);
         var somme = [] ;
         for(var z = 0;z < equality.length;z++){
             var somme_1 = 0;
