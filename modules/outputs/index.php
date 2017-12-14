@@ -914,6 +914,7 @@ echo '<br/>
             
             
             
+            
             <!--Haiti-->
             <div align="left" style="background:white;margin-top:2px;padding: 10px"><form id="filterform" name="filterform" action="" method="get">
 					<fieldset id="filters" style="margin-left:-7px; width: 88%" class="collapsible collapsed header_collapsible">
@@ -1274,9 +1275,29 @@ echo '<style>
 	  border: 2px solid #DCDBD8;		
 }
 
+
+
+.info {
+    padding: 6px 8px;
+    font: 14px/16px Arial, Helvetica, sans-serif;
+    background: white;
+    background: rgba(255,255,255,0.8);
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    border-radius: 5px;
+}
+.info h4 {
+    margin: 0 0 5px;
+    color: #777;
+}
+
 .legend {
     line-height: 18px;
     color: #555;
+    
+    background: white;
+    background: rgba(255,255,255,0.8);
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    border-radius: 5px;
 }
 .legend i {
     width: 18px;
@@ -1285,7 +1306,12 @@ echo '<style>
     margin-right: 8px;
     opacity: 0.7;
 }
-		
+
+#map{
+    width: 700px;
+    height: 600px;
+
+}		
 </style>';
 	
 
@@ -1532,6 +1558,7 @@ echo '<div class="col-md-3">';
         <div class="maplonlatbox" id="data_map">
 
         </div>
+        <a href="#" class="button" id="savemaps" data-rep_item="maps"><?php echo $AppUI->_('Save maps');?></a>
     </div>
 </div>
     <!--<div class="row">

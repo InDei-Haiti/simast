@@ -540,7 +540,7 @@ var reporter = (function (my) {
                         "t":uniqueID()
                     };
                 }
-                else if (curChoice === 'div' && choice_det === 'maps') {
+                else if (curChoice === 'a' && choice_det === 'maps') {
                     //we have selected graph
                     var graphData = grapher.emulSend(true);
                     rows[rcell] = {
@@ -1096,25 +1096,24 @@ var reporter = (function (my) {
         initGraph:function () {
             $j("#graph_tab_holder").live("dblclick", function(e){
                 var element = $('#graph_home');
-               /* html2canvas(element, {
-                    onrendered: function (canvas) {*/
-                        statTableHtmlData = 'img';
-                        //chart.exportChart({type: 'image/png', filename: 'my-png'});
-                        //imgBase64 = chart.getSVG();//.getImageURI();
-                        canvas = document.createElement('canvas'); // Create an empty canvas
-                         canvg(canvas, chart.getSVG()); // Render the SVG on the canvas
-                        imgBase64 = canvas.toDataURL('image/png');
-                        //window.location.href = imgBase64;
-                        itemClick = 'graph';
-                        pickerAct(e);
-                    /*}
-                });*/
+                statTableHtmlData = 'img';
+                canvas = document.createElement('canvas'); // Create an empty canvas
+                canvg(canvas, chart.getSVG()); // Render the SVG on the canvas
+                imgBase64 = canvas.toDataURL('image/png');
+                itemClick = 'graph';
+                pickerAct(e);
             });
         },
         initMaps:function () {
             $j("#savemaps").live("click", function(e){
+                statTableHtmlData = 'img';
+                canvas = document.createElement('canvas'); // Create an empty canvas
+                canvg(canvas, $('#graph_home').html()); // Render the SVG on the canvas
+                imgBase64 = canvas.toDataURL('image/png');
+                itemClick = 'maps';
+                pickerAct(e);
                 //var element = $('#map');
-                leafletImage(map,returnMapPicture);
+                //leafletImage(map,returnMapPicture);
             });
         }
 
