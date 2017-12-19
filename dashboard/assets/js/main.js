@@ -256,16 +256,20 @@ $(document).ready(function(){
             // console.log($(this).text());
         });
         $.post("/dashboard/dash2DB.php",{'dt':lesTitres},function(data){
+                // alert(data);
                 if(data == 'Yes'){
                     alert("Les modifications ont ete faites sur les TITRES");
                 }
         });
+
         console.log(lesTitres);
         lesTitres = [];
+        $("#setModal").css("display","none");
     });
     $("#bb2").click(function(){
         $(".editable").summernote({
             airMode: true
         });
+        $("#setModal").css("display","none");
     });
 });
