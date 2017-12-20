@@ -6,17 +6,26 @@
  * Time: 12:05 PM
  */
 require_once '../base.php';
-
 $link = mysql_connect("localhost", "simastadmin", "fasil")
 or die("Impossible de se connecter : " . mysql_error());
 $db = mysql_select_db("simast", $link);
 $titres = mysql_query("SELECT * FROM new_dashboard WHERE etat = 1");
 $rslt;
-while($r = mysql_fetch_array($titres)){
-    $rslt =  $r;
+while($r = mysql_fetch_assoc ($titres)){
+    $rslt =  $r['titles'];
 }
-$lesTitres = json_decode($rslt[1]);
-$ls = json_decode(json_encode($lesTitres), true);
+$dataz = json_decode(stripslashes($rslt),true);
+//foreach ($dataz as $m){
+//    echo "<pre>";
+//    var_dump($m);
+//    echo "</pre>";
+//}
+//echo "<pre>";
+//var_dump(json_decode(stripslashes($rslt),true));
+//echo "</pre>";
+//var_dump(json_decode($rslt[1], true));
+//$ls = json_decode($rslt[1], true);
+//$ls = json_decode(json_encode($lesTitres), true);
 ?>
 
 
@@ -144,13 +153,17 @@ $ls = json_decode(json_encode($lesTitres), true);
                         <div class="row">
                             <div class="col-md-12 colored verticalText">
                                 <span class="editable" id="title_1"><?php
-                                    foreach($ls as $key => $val){
-                                        echo $val['title_1'];
+                                    foreach($dataz as $val){
+                                        if(isset($val['title_1'])){
+                                            echo $val['title_1'];
+                                        }
                                     }
                                     ?></span></div>
                             <div class="col-md-12 colored verticalText" style="margin-top: 1px"><span class="editable" id="title_2"><?php
-                                    foreach($ls as $key => $val){
-                                        echo $val['title_2'];
+                                    foreach($dataz as $val){
+                                        if(isset($val['title_2'])){
+                                            echo $val['title_2'];
+                                        }
                                     }
                                     ?></span>
                             </div>
@@ -175,9 +188,11 @@ $ls = json_decode(json_encode($lesTitres), true);
                 <div class="panel panel-primary dimens">
                     <div class="panel-heading">
                         <h3 class="panel-title editable" id="boite_1"><?php
-foreach($ls as $key => $val){
-    echo $val['boite_1'];
-}
+                            foreach($dataz as $val){
+                                if(isset($val['boite_1'])){
+                                    echo $val['boite_1'];
+                                }
+                            }
 ?></h3>
                     </div>
                     <div class="panel-body">
@@ -190,9 +205,11 @@ foreach($ls as $key => $val){
                 <div class="panel panel-success dimens">
                     <div class="panel-heading">
                         <h3 class="panel-title editable" id="boite_2"><?php
-foreach($ls as $key => $val){
-    echo $val['boite_2'];
-}
+                            foreach($dataz as $val){
+                                if(isset($val['boite_2'])){
+                                    echo $val['boite_2'];
+                                }
+                            }
 ?></h3>
                     </div>
                     <div class="panel-body">
@@ -204,9 +221,11 @@ foreach($ls as $key => $val){
                 <div class="panel panel-danger dimens">
                     <div class="panel-heading">
                         <h3 class="panel-title editable" id="boite_3"><?php
-foreach($ls as $key => $val){
-    echo $val['boite_2'];
-}
+                            foreach($dataz as $val){
+                                if(isset($val['boite_3'])){
+                                    echo $val['boite_3'];
+                                }
+                            }
 ?></h3>
                     </div>
                     <div class="panel-body">
