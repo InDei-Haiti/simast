@@ -7,6 +7,7 @@ var map = L.map( 'map', {
     zoom: 8,
     scrollWheelZoom:false
 });
+var isFirst = true;
 //map.remove();
 map.on("load",function() {
 	$('#map').appendTo($('#tabs-6'));
@@ -45,11 +46,10 @@ var myURL = jQuery( 'script[src$="leaf-demo.js"]' ).attr( 'src' ).replace( 'leaf
 
 function onEachFeature(feature, layer){
 
-
 }
-
-function legend(grades, sum) {
-    var legend = L.control({position: 'topleft'});
+var legend = L.control({position: 'topleft'});
+function legendFunc(grades, sum) {
+    legend = L.control({position: 'topleft'});
 
     legend.onAdd = function (map) {
 
@@ -74,7 +74,7 @@ function legend(grades, sum) {
 
 
 
-var info = L.control();
+/*var info = L.control();
 
 info.onAdd = function (map) {
     this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
@@ -87,7 +87,7 @@ info.update = function (textVal) {
     this._div.innerHTML = textVal;
 };
 
-info.addTo(map);
+info.addTo(map);*/
 
 var tabLegend = [];
 var headerText = '';
@@ -139,10 +139,35 @@ function getColor(d, sum) {
     return colorL;
 }
 tempFeatures = {};
-
+var info = L.control();
 function populateMap(str){
+    $j("#load_progress_map").show();
+    if(!isFirst) {
+        map.eachLayer(function(layer){
+            if(layer.feature != null)
+                map.removeLayer(layer);
+        });
+    }
+    legend.remove();
+    info.remove();
+    info = L.control();
     headerText = prompt("Entrez le titre","");
-	console.log(geoDataDic);
+
+    console.log(geoDataDic);
+
+    info.onAdd = function (map) {
+        this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
+        this.update();
+        return this._div;
+    };
+
+// method that we will use to update the control based on feature properties passed
+    info.update = function (textVal) {
+        this._div.innerHTML = textVal;
+    };
+
+    info.addTo(map);
+
     if(geoData=='SysDepartment') {
         urlGeo = '/modules/outputs/maps/departments.geojson';
         $.getJSON(urlGeo, function (data) {
@@ -181,7 +206,7 @@ function populateMap(str){
                     }
                 }
             ).addTo(map);
-            legend(tabLegend, sumVal);
+            legendFunc(tabLegend, sumVal);
             geoProj.bindPopup(function (layer) {
                 html = '';
                 html += geoDataDic[layer.feature.properties.ID_Dep].coordinate + '<br/>';
@@ -193,6 +218,10 @@ function populateMap(str){
                 });
                 return html;
             });
+        }).done(function() {
+            $j("#load_progress_map").hide();
+        }).fail(function() {
+            $j("#load_progress_map").hide();
         });
         info.update(headerText);
     }
@@ -235,7 +264,7 @@ function populateMap(str){
                     }
                 }
             ).addTo(map);
-            legend(tabLegend, sumVal);
+            legendFunc(tabLegend, sumVal);
             geoProj.bindPopup(function (layer) {
                 html = '';
                 html += geoDataDic[layer.feature.properties.id_com].coordinate + '<br/>';
@@ -248,8 +277,75 @@ function populateMap(str){
                 //html += geoDataDic[layer.feature.properties.id_com].datamapping +': '+geoDataDic[layer.feature.properties.id_com].val + '<br/>';
                 return html;
             });
-        });
+        }).done(function() {
+            $j("#load_progress_map").hide();
+        }).fail(function() {
+                $j("#load_progress_map").hide();
+            });
+        info.update(headerText);
     }
+
+    if(geoData=='SysCommunalSection') {
+        urlGeo = '/modules/outputs/maps/sections.geojson';
+        $.getJSON(urlGeo, function (data) {
+            sumVal = 0;
+            $j.each(geoDataDic, function (i, val) {
+
+                val.datamapping.forEach(function(item){
+                    sumVal += parseInt(item.val);
+                });
+
+            });
+            geoProj = L.Proj.geoJson(data,
+                {
+                    style: function (feature) {
+                        fillColor = '#cccccc';
+                        if (geoDataDic.hasOwnProperty(feature.properties.ID_Com+feature.properties.No_Section)) {
+                            val = null;
+                            geoDataDic[feature.properties.ID_Com+feature.properties.No_Section].datamapping.forEach(function(item){
+                                if(str==item.label)
+                                    val = item.val;
+                            });
+                            if(val != null) {
+                                fillColor = getColor(parseInt(val), sumVal);
+
+                            }
+                        }
+
+                        return {
+                            fillColor: fillColor,
+                            weight: 2,
+                            opacity: 1,
+                            color: 'white',
+                            dashArray: '3',
+                            fillOpacity: 0.7
+                        };
+                    }
+                }
+            ).addTo(map);
+            legendFunc(tabLegend, sumVal);
+            geoProj.bindPopup(function (layer) {
+                html = '';
+                html += geoDataDic[layer.feature.properties.ID_Com+layer.feature.properties.No_Section].coordinate + '<br/>';
+                geoDataDic[layer.feature.properties.ID_Com+layer.feature.properties.No_Section].datamapping.forEach(function (item) {
+                    if(item.label==str)
+                        html += '<span style="color: darkblue">'+item.label+": "+item.val+"</span><br/>";
+                    else
+                        html += item.label+": "+item.val+"<br/>";
+                })
+                //html += geoDataDic[layer.feature.properties.id_com].datamapping +': '+geoDataDic[layer.feature.properties.id_com].val + '<br/>';
+                return html;
+            });
+        }).done(function() {
+            $j("#load_progress_map").hide();
+        }).fail(function() {
+            $j("#load_progress_map").hide();
+        });
+        info.update(headerText);
+    }
+
+    isFirst = false;
+
 }
 
 

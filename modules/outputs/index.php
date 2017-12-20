@@ -1307,10 +1307,20 @@ echo '<style>
     opacity: 0.7;
 }
 
+
 #map{
     width: 700px;
     height: 600px;
 
+}
+
+#load_progress_map {
+    background: url(/modules/outputs/images/ajax-loader.gif) no-repeat;
+    float: left;
+    height: 34px;
+    margin-left: 30px;
+    width: 33px;
+    margin-top: 30px;
 }		
 </style>';
 	
@@ -1557,6 +1567,9 @@ echo '<div class="col-md-3">';
         </div>-->
         <div class="maplonlatbox" id="data_map">
 
+        </div>
+        <div>
+            <div id="load_progress_map" style="display: none;"></div>
         </div>
         <a href="#" class="button" id="savemaps" data-rep_item="maps"><?php echo $AppUI->_('Save maps');?></a>
     </div>

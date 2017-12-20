@@ -2142,7 +2142,10 @@ var grapher = (function(my){
 				}else if(geoData=='SysDepartment'){
                     rowCol = 'cols';
                     break;
-				}else{
+				}else if(geoData=='SysCommunalSection'){
+                    rowCol = 'cols';
+                    break;
+                }else{
                     geoData = null;
                 }
 			}
@@ -2153,6 +2156,9 @@ var grapher = (function(my){
                         rowCol = 'rows';
                         break;
                     }else if(geoData=='SysDepartment'){
+                        rowCol = 'rows';
+                        break;
+                    }else if(geoData=='SysCommunalSection'){
                         rowCol = 'rows';
                         break;
                     }else{
@@ -2166,7 +2172,38 @@ var grapher = (function(my){
                     //fld_name = ;
 					for(var i=0;i<tbpost.data.length;i++){
                         codeSys = sysCodes[tbpost.rows[i][1]];
-                        codeSys = codeSys.replace(new RegExp("0", 'g'), "");
+                        var res = codeSys.split("");
+                        if(res.length==2){
+                            if(res[0]==0){
+                                res = res.join("").replace(new RegExp("0", 'g'), "");
+                            }
+                        }else if(res.length==6){
+                            if(res[0]==0){
+                                res[0] = "#";
+                            }
+                            if(res[2]==0){
+                                res[2] = "#";
+                            }
+                            if(res[4]==0){
+                                res[4] = "#";
+                            }
+                            res = res.join("").replace(new RegExp("#", 'g'), "");
+                        }else if(res.length==8){
+                            if(res[0]==0){
+                                res[0] = "#";
+                            }
+                            if(res[2]==0){
+                                res[2] = "#";
+                            }
+                            if(res[4]==0){
+                                res[4] = "#";
+                            }
+                            if(res[6]==0){
+                                res[6] = "#";
+                            }
+                            res = res.join("").replace(new RegExp("#", 'g'), "");
+                        }
+                        codeSys = res;
                         geoDataDic[codeSys] = {coordinate:tbpost.rows[i][1]};
                         geoDataDic[codeSys]["datamapping"] = [];
                         for(var j=0;j<tbpost.cols[1].length;j++){
