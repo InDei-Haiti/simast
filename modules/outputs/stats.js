@@ -1740,7 +1740,16 @@ var grapher = (function(my){
 		},
 		build: function(same){
 			/*collect();*/
-            var title = prompt("Graph title : ", "");
+			var getModal = $("#setModal");
+			$("#setModal .modal-header h2").text("Choix Couleurs pour graphes");
+			$("#setModal .modal-body").empty();
+			$("#setModal .modal-body").html("<div style='height: 150px;'></div>");
+
+			getModal.css("display","block");
+			$("#closeSetModal").click(function(){
+				getModal.css("display","none");
+			});
+            // var title = prompt("Graph title : ", "");
 			var tbpostd;
 			if (!same) {
 				 tbpostd = prepareForSend();
