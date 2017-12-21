@@ -241,7 +241,7 @@ $dataz = json_decode(stripslashes($rslt),true);
             <div class="col-md-11 col-md-offset-1 yellow">
                 <div class="row">
                     <div id="box" class="col-md-1"><img src="<?php echo DP_BASE_URL?>/assets/img/orange.PNG" style="height: 70px;width: 62px;"> </div>
-                    <div class="col-md-9 blanc"></div>
+                    <div id="leg" class="col-md-9 blanc"></div>
                 </div>
                 <div class="row">
                     <div id="box_2" class="col-md-1"><img src="<?php echo DP_BASE_URL?>/assets/img/pam_log.PNG" style="height: 70px;width: 62px;"></div>
@@ -249,35 +249,83 @@ $dataz = json_decode(stripslashes($rslt),true);
                 </div>
             </div>
         </div>
-        <script type="text/javascript">
-            var mymap = L.map('map').setView([18.538381, -72.331454], 13);
-            L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-            }).addTo(mymap);
-
-            var legend = L.control({position: 'bottomleft'});
-
-            legend.onAdd = function (map) {
-
-                var div = L.DomUtil.create('div', 'info legend','moi');
-
-
-
-                categories = ['STX','HHX','HF','STX/HF'];
-
-                for (var i = 0; i < categories.length; i++) {
-                    div.innerHTML +=
-                        '<i style="background:' + getColor(categories[i]) + '"></i> ' +
-                        (categories[i] ? categories[i] + '<br>' : '+');
-                }
-
-                return div;
-            }
-        </script>
         <script src="<?php echo DP_BASE_URL?>/assets/js/jquery-min.js"></script>
         <script src="<?php echo DP_BASE_URL?>/assets/js/bootstrap.min.js"></script>
         <script src="<?php echo DP_BASE_URL?>/assets/js/jasny-bootstrap.min.js"></script>
         <script src="<?php echo DP_BASE_URL?>/assets/editor/summernote.min.js"></script>
         <script src="<?php echo DP_BASE_URL?>/assets/js/main.js"></script>
+
+        <script type="text/javascript">
+            var mymap = L.map('map');
+            mymap.on("load",function(e){
+                $("#leg").append("<ul></ul>");
+                z = ["Leg_1","Leg_2","Leg_3","Leg_4"];
+                m = ["#0ff","#00F","#0F0","#f00"];
+
+                for(i=0;i<z.length;i++){
+                    $(".blanc ul").append("<li style='float:left;'>"+z[i]+" - <span style='display:inline-block;width:10px;height: 10px;background-color:"+m[i]+"'></span></li>");
+                }
+            });
+            mymap.setView([18.553221, -72.315073], 8);
+            L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+                attribution: '',
+                maxZoom: 18,
+                id: 'mapbox.streets',
+                accessToken: 'pk.eyJ1IjoicnBhbGV4aXMiLCJhIjoiY2piZ24wNTFoMzVoeTJxcWd5b3h1ZDR0MyJ9.i5FJqEUeoMmnAJtHwJXkHA'
+            }).addTo(mymap);
+        </script>
+<!--        <script type="text/javascript">-->
+<!--        var mymap = L.map('map').setView([-104.99404, 39.75621], 13);-->
+<!--        L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {-->
+<!--            attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'-->
+<!--        }).addTo(mymap);-->
+<!---->
+<!--        var legend = L.control({position: 'bottomleft'});-->
+<!--        var depts = [];-->
+<!--//            = new L.geoJson();-->
+<!--//        depts.addTo(mymap);-->
+<!---->
+<!--        $.ajax({-->
+<!--            dataType: "json",-->
+<!--            url: "assets/shapefiles/departments.geojson",-->
+<!--            success: function(data) {-->
+<!--//                console.log(data);-->
+<!--                depts.push(data);-->
+<!--            }-->
+<!--        }).error(function() {});-->
+<!--//        console.log(depts);-->
+<!---->
+<!--        var geojsonFeature = {-->
+<!--            "type": "Feature",-->
+<!--            "properties": {-->
+<!--                "name": "Coors Field",-->
+<!--                "amenity": "Baseball Stadium",-->
+<!--                "popupContent": "This is where the Rockies play!"-->
+<!--            },-->
+<!--            "geometry": {-->
+<!--                "type": "Point",-->
+<!--                "coordinates": [-104.99404, 39.75621]-->
+<!--            }-->
+<!--        };-->
+<!---->
+<!--        L.geoJSON(geojsonFeature).addTo(mymap);-->
+<!---->
+<!--        //            legend.onAdd = function (map) {-->
+<!--        //-->
+<!--        //                var div = L.DomUtil.create('div', 'info legend','moi');-->
+<!--        //-->
+<!--        //-->
+<!--        //-->
+<!--        //                categories = ['STX','HHX','HF','STX/HF'];-->
+<!--        //-->
+<!--        //                for (var i = 0; i < categories.length; i++) {-->
+<!--        //                    div.innerHTML +=-->
+<!--        //                        '<i style="background:' + getColor(categories[i]) + '"></i> ' +-->
+<!--        //                        (categories[i] ? categories[i] + '<br>' : '+');-->
+<!--        //                }-->
+<!--        //-->
+<!--        //                return div;-->
+<!--        //            }-->
+<!--    </script>-->
     </body>
 </html>

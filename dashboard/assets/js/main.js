@@ -225,11 +225,20 @@ var owl;
  Perso Bootstrap
  ========================================================================== */
 var lesTitres = [];
+
+function addLegende(){
+    $("#legende").click(function(){
+        $("#vizu").html("<form class='form-horizontal'>" +
+            "<label for='nomLabel'>Nom du Label</label>  <input id='nomLabel' type='text' name='nom_legend'><br />" +
+            "<label for='colorLabel'>Couleur du Label</label><input id='colorLabel' type='color' name = 'labelColor' ><br /><button class='ce pi ahr'>Save</button></form>");
+    });
+    setTimeout(addLegende,500);
+}
 $(document).ready(function(){
     $(".navmenu-nav li a").click(function(){
         switch($(this).attr("id")){
             case "titre":
-                // $("#setModal .modal-content .modal-header h2").text("Modification du Titre");
+                $("#setModal .modal-content .modal-header h2").text("Modification du Titre");
                 $("#setModal").css("display","block");
                 break;
             case "boites":
@@ -237,17 +246,20 @@ $(document).ready(function(){
                 break;
             case "carte":
                 $("#setModal .modal-content .modal-header h2").text("Modification de Carte");
+                $("#setModal").css("display","block");
+
+                $("#setModal .modal-content .modal-body").empty();
+                $("#setModal .modal-content .modal-body").html("<button id='bb_polygone'>Creer un polygone</button> <button id='legende'>Creer une legende</button><hr />" +
+                    "<br />" +
+                    "<div id='vizu'></div>");
                 break;
         }
-
         // $("#setModal").css("display","block");
-
     });
     $("#closeSetModal").click(function(){
         $("#setModal").css("display","none");
     });
     $("#bb").click(function(){
-
         $(".editable").each(function(){
             $(this).summernote('destroy');
             item = {};
@@ -266,10 +278,15 @@ $(document).ready(function(){
         lesTitres = [];
         $("#setModal").css("display","none");
     });
+
     $("#bb2").click(function(){
         $(".editable").summernote({
             airMode: true
         });
         $("#setModal").css("display","none");
     });
+
+    addLegende();
 });
+
+
