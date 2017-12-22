@@ -971,7 +971,7 @@ echo '<br/>
                 $qsr.='<tr id="qsr_'.$trid.'" data-showr="'.$sr.'">
                 <!--<td title="Edit" align="center"><div class="'.$edClass.' fa fa-pencil" data-id="'.$row['id'].'" style="color: blue;font-size: large"></div></td>-->';
                 $st=trimView($row['qname']);
-                $qsr.='<td data-text="'.$st['orig'].'" '.($st['show'] === true ? ' class="moreview"' : '').' data-id="'.$row['id'].'"><span class="fhref flink" onclick="qurer.run(\''.$trid.'\',\'run\');">'.$st['str'].'</span></td>
+                $qsr.='<td title ="'.$st['orig'].'" data-text="'.$st['orig'].'" '.($st['show'] === true ? ' class="moreview"' : '').' data-id="'.$row['id'].'"><span class="fhref flink" onclick="qurer.run(\''.$trid.'\',\'run\');">'.$st['str'].'</span></td>
                 <td align="center">'.$pnameOut.'</td>
                 <td>&nbsp;</td>';
                 $st=trimView($row['qdesc']);
