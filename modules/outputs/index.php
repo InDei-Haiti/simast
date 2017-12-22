@@ -1842,3 +1842,21 @@ echo '<!--<link rel="stylesheet" type="text/css" href="http://cdn.leafletjs.com/
 	</div>
 
 </div>
+
+<!-- The Modal For the modification of the sets -->
+<div id="chartModal" class="modal">
+
+    <div class="modal-content">
+        <div class="modal-header">
+            <span id="closeChartModal" class="close">&times;</span>
+            <h2></h2>
+        </div>
+        <div class="modal-body">
+
+        </div>
+        <div class="modal-footer">
+
+        </div>
+    </div>
+
+</div>
