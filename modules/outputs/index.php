@@ -975,7 +975,7 @@ echo '<br/>
                 <td align="center">'.$pnameOut.'</td>
                 <td>&nbsp;</td>';
                 $st=trimView($row['qdesc']);
-                $qsr.='<td data-text="'.$st['orig'].'"'.($st['show'] === true ? ' class="moreview"' : '').' >'.$st['str'].'</td>';
+                $qsr.='<td data-text="'.$st['orig'].'"'.($st['show'] === true ? ' class="moreview"' : '').' style="width: 130px;">'.$st['str'].'</td>';
                 $sdateClean=viewDate($row['sdate']);
                 $edateClean=viewDate($row['edate']);
                 //if($pname == "Table"){
