@@ -997,6 +997,20 @@ if($m=='dashboard'){
     });
 
     </script>
+
+    <script>
+        $(document).ready(function(){
+            $(".getInfo").click(function(){
+                    if($(this).closest("div.col-md-6").find("div.descrip").css("display") == "none"){
+                        $(this).closest("div.col-md-6").find("div.descrip").css("display","block");
+                    }else{
+                        $(this).closest("div.col-md-6").find("div.descrip").css("display","none");
+                    }
+            });
+
+        }
+        );
+    </script>
     <?php
 }
 if($m=='projects'){

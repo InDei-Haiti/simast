@@ -12,7 +12,7 @@ $sets = $q->loadHashList();
 
 
 $q = new DBQuery();
-$q->addQuery("id, set_id, project_id, type, query_save, data_item");
+$q->addQuery("id, set_id, project_id, type, query_save, data_item,description");
 $q->addTable('dashboard_grapher');
 
 $hashList = $q->loadList();
@@ -368,7 +368,13 @@ $hashList = $q->loadList();
                             echo '<div class="row">';
                             foreach ($list as $index=>$grapher) {
                                 echo '<div class="col-md-6'.$offset.'">';
-
+                                echo "<span class='getInfo'><i class=\"fa fa-info-circle\" aria-hidden=\"true\" style=\"color: blue;\"></i></span>";
+//                                echo "<div class='descrip' style='display:none;'>".$grapher['description']."</div>";
+                                if($grapher['description'] == ''){
+                                    echo "<div class='descrip' style='display:none;'>Description indisponible</div>";
+                                }else{
+                                    echo "<div class='descrip' style='display:none;'>".$grapher['description']."</div>";
+                                }
                                 if($grapher['type']=='GRAPH'){
 
                                     $graph_data = gzdecode($grapher['data_item']);
