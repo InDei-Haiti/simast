@@ -6,11 +6,11 @@
 ### FOR INFORMATION ON MANUAL CONFIGURATION AND FOR DOCUMENTATION SEE ./includes/config-dist.php ###
 
 $dPconfig['dbtype'] = 'mysql';
-//$dPconfig['dbhost'] = 'localhost';
-$dPconfig['dbhost'] = $_SERVER['RDS_HOSTNAME'];
+$dPconfig['dbhost'] = 'localhost';
+//$dPconfig['dbhost'] = $_SERVER['RDS_HOSTNAME'];
 //$dPconfig['dbname'] =  'simast';
-$dPconfig['dbname'] = $_SERVER['RDS_DB_NAME'];
-//$dPconfig['dbname'] =  'crowdl5_simast';
+//$dPconfig['dbname'] = $_SERVER['RDS_DB_NAME'];
+$dPconfig['dbname'] =  'crowdl5_simast';
 //$dPconfig['dbname'] =  'leaadmin_kario';
 // 'kib-now';'rtt2';
 //
@@ -18,12 +18,12 @@ $dPconfig['dbname'] = $_SERVER['RDS_DB_NAME'];
 // 'db11-kan';///'kangemi-test'; ///'testkario';//'mukdan';//'kawangware';//'kariobangi';////'mukuru';//'kibera';//'dandora';/////////////////'leatoto'
 //$dPconfig['dbuser'] = 'crowdl5_simast';
 //$dPconfig['dbpass'] = 'SImast123';
-//$dPconfig['dbuser'] = 'root';
-//$dPconfig['dbpass'] = '';
+$dPconfig['dbuser'] = 'root';
+$dPconfig['dbpass'] = '';
 //$dPconfig['dbuser'] = 'simastadmin';
 //$dPconfig['dbpass'] = 'fasil';
-$dPconfig['dbuser'] = $_SERVER['RDS_USERNAME'];
-$dPconfig['dbpass'] = $_SERVER['RDS_PASSWORD'];
+//$dPconfig['dbuser'] = $_SERVER['RDS_USERNAME'];
+//$dPconfig['dbpass'] = $_SERVER['RDS_PASSWORD'];
 $dPconfig['dbpersist'] = false;
 $dPconfig['root_dir'] = $baseDir;
 $dPconfig['base_url'] = $baseUrl;

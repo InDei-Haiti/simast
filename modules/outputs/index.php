@@ -357,6 +357,9 @@ if($_POST['mode']=='save'){
 	$colsvals = $svals['cols'];
 	$rowsvals = $svals['rows'];
 	$range_fld = array();
+	/*echo '<pre>';
+	var_dump($svals);
+    echo '</pre>';*/
 	foreach ($allfld as $i => $v){
 		for ($x = 0;$x<count($colsvals);$x++){
 		    //echo $svals['cols'][$x][id];
@@ -411,60 +414,60 @@ if($_POST['mode']=='save'){
 	$sql = 'SELECT '.$query.' FROM '.$querysaveaj;
 	//echo $sql.'<br/>';
 	$res = db_exec($sql);
-	if($res){
-		$_request = 0;
-		$keys_request = array();
-		$sql = 'SELECT COUNT(*) AS count FROM '.$querysaveaj;
-		$res1 = db_exec($sql);
-		$count_request = db_free_result($res1);
-		$allfldq = array();
-		$wz = new Wizard('print');
-		foreach($allfld as $field){
-			$tab = explode('.', $field);
-			$tabform = explode('_', $tab[0]);
-			$fuid = $tabform[1];
-			$wz->loadFormInfo($fuid);
-			$fldinfo = $wz->findFieldName($tab[1]);
-			$keyn = str_replace('.', '_', $field);
-			$allfldq[$keyn]['info'] = $fldinfo;
-			if(isset($fldinfo['sysv']) && !empty($fldinfo['sysv'])){
-				$sql = 'SELECT DISTINCT('.$field.') FROM '.$querysaveaj;
-				$resdis = db_exec($sql);
-				while ( $rowdatadis = db_fetch_assoc( $resdis ) ) {
-				    $textVal = $wz->getValues($fldinfo['type'],$fldinfo['sysv'],$rowdatadis[$tab[1]]);
+	if($res) {
+        $_request = 0;
+        $keys_request = array();
+        $sql = 'SELECT COUNT(*) AS count FROM ' . $querysaveaj;
+        $res1 = db_exec($sql);
+        $count_request = db_free_result($res1);
+        $allfldq = array();
+        $wz = new Wizard('print');
+        foreach ($allfld as $field) {
+            $tab = explode('.', $field);
+            $tabform = explode('_', $tab[0]);
+            $fuid = $tabform[1];
+            $wz->loadFormInfo($fuid);
+            $fldinfo = $wz->findFieldName($tab[1]);
+            $keyn = str_replace('.', '_', $field);
+            $allfldq[$keyn]['info'] = $fldinfo;
+            if (isset($fldinfo['sysv']) && !empty($fldinfo['sysv'])) {
+                $sql = 'SELECT DISTINCT(' . $field . ') FROM ' . $querysaveaj;
+                $resdis = db_exec($sql);
+                while ($rowdatadis = db_fetch_assoc($resdis)) {
+                    $textVal = $wz->getValues($fldinfo['type'], $fldinfo['sysv'], $rowdatadis[$tab[1]]);
                     $textVal = strval($textVal);
                     $textVal = preg_replace('/\\\\/', '', $textVal);
                     //$textVal = json_encode($textVal);
                     $forStore = str_replace('"', '', $forStore);
                     $textVal = str_replace('"', '', $textVal);
-					$allfldq[$keyn]['value'][$rowdatadis[$tab[1]]] = $textVal;
+                    $allfldq[$keyn]['value'][$rowdatadis[$tab[1]]] = $textVal;
                     $tempsysStarter[$textVal] = $rowdatadis[$tab[1]];
-				}
-			}
-		}
-		/*echo '<pre>';
-		var_dump($allfldq);
-		echo '</pre>';*/
+                }
+            }
+        }
+        /*echo '<pre>';
+        var_dump($allfldq);
+        echo '</pre>';*/
 
-		$tempsys = array();
-		while ( $rowdata = db_fetch_assoc( $res ) ) {
-			$keys_request[] = $_request;
-			//echo $forStore.'....';
-			$_request++ ;
-			/*echo '<pre>';
-			var_dump($rowdata);
-			echo '</pre>';
-			break;*/
-			foreach($allfldq as $key => $fldinfo){
-			    $forStore = $rowdata[$key];
-				if(isset($fldinfo['info']['sysv']) && !empty($fldinfo['info']['sysv'])){
-					//$tval = $forStore;
-					//$forStore = $wz->getValues($fldinfo['type'],$fldinfo['sysv'],$forStore);
-                    if(!in_array($key, $range_fld))
-					    $forStore = $fldinfo['value'][$forStore];
-				}
-				/*if($key=='wform_81_fld_24')
-				    echo strval($forStore).' ';*/
+        $tempsys = array();
+        while ($rowdata = db_fetch_assoc($res)) {
+            $keys_request[] = $_request;
+            //echo $forStore.'....';
+            $_request++;
+            /*echo '<pre>';
+            var_dump($rowdata);
+            echo '</pre>';
+            break;*/
+            foreach ($allfldq as $key => $fldinfo) {
+                $forStore = $rowdata[$key];
+                if (isset($fldinfo['info']['sysv']) && !empty($fldinfo['info']['sysv'])) {
+                    //$tval = $forStore;
+                    //$forStore = $wz->getValues($fldinfo['type'],$fldinfo['sysv'],$forStore);
+                    if (!in_array($key, $range_fld))
+                        $forStore = $fldinfo['value'][$forStore];
+                }
+                /*if($key=='wform_81_fld_24')
+                    echo strval($forStore).' ';*/
                 if (!is_numeric($forStore)) {
                     $forStore = strval($forStore);
                     if ($forStore == '0')
@@ -473,20 +476,21 @@ if($_POST['mode']=='save'){
                     //$forStore = json_encode($forStore);
                     //$forStore = str_replace('"', '', $forStore);
                     //echo $forStore.' ';
-                }else{
+                } else {
                     if ($forStore == 0)
                         $forStore = -1;
                 }
-				$nfei->store ($forStore);
-			}
-			$nfei->nextRow ();
-		}
-		$bigtar_keys = (/*isset($dataRequest) && */$count_request > 0) ?  $keys_request : array();
-		$tddd=$nfei->getForStat ();
-		
-		diskFile::tableBodyWrite ( $tddd );
-		$nfei->purge ();
-	}
+                $nfei->store($forStore);
+            }
+            $nfei->nextRow();
+        }
+        $bigtar_keys = (/*isset($dataRequest) && */
+            $count_request > 0) ? $keys_request : array();
+        $tddd = $nfei->getForStat();
+
+        diskFile::tableBodyWrite($tddd);
+        $nfei->purge();
+    }
 	
 	require_once('stater.class.php');
 	//$cl=preg_replace('/\\\{1,}"/','"',$_POST['calcs']);

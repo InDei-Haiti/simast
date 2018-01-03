@@ -1158,6 +1158,9 @@ var grapher = (function(my){
 			ncolb = [];
 		}
 		else {
+			console.log("Dataset");
+			console.log(dataset);
+			console.log("End dataset");
 			ndataset = dataset.slice(0);
 			ncols = cols.slice(0);
 			ncolb = colb.slice(0);
@@ -1398,6 +1401,204 @@ var grapher = (function(my){
         $("#chartModal .modal-footer").html('<button type="button" id="optionBtn" class="ce pi ahr btn"  data-dismiss="modal" style="background: white;color: #354c8c;border-color: white;float: right">Valider</button>');
 
 	}
+
+
+    var columns = function(categoriesv,seriesv,title){
+        /* Highcharts.setOptions({
+             colors: colors
+         });*/
+
+        chartOption = {
+            chart: {
+                type: 'column',
+                height: 500
+            },
+            title: {
+                text: title
+            },
+            subtitle: {
+                text: ''
+            },
+            xAxis: {
+                categories: categoriesv,
+                title: {
+                    text: null
+                }
+            },
+            yAxis: {
+                min: 0,
+                title: {
+                    text: '',
+                    align: 'high'
+                },
+                labels: {
+                    overflow: 'justify'
+                }
+            },
+            legend: {
+                /*layout: 'vertical',
+                 align: 'right',
+                 verticalAlign: 'top',
+                 */
+                /*x: 0,
+                y: 30,*/
+                floating: false,
+                /*borderWidth: 1,*/
+                backgroundColor: ((Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'),
+                shadow: true
+                /*reversed: true*/
+            },
+            credits: {
+                enabled: false
+            },
+            series: seriesv
+        };
+        //chartOption['legend']
+        if($j("#sperc-rows").is(":checked") || $j("#sperc-cols").is(":checked")) {
+            chartOption['tooltip'] = {
+                pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y:.2f}%</b><br/>',
+                shared: true
+            };
+            chartOption['plotOptions'] = {
+                bar: {
+                    dataLabels: {
+                        enabled: true,
+                        format: '{y} %',
+                        valueDecimals: 2
+                    }
+                }
+            };
+        }else{
+            chartOption['tooltip'] = {
+                pointFormat: '<span style="color:{series.color}">{series.name}</span>: {point.y:.2f}<b></b><br/>',
+                shared: true
+            };
+            chartOption['plotOptions'] = {
+                bar: {
+                    dataLabels: {
+                        enabled: true,
+                        format: '{y}',
+                        valueDecimals: 2
+                    }
+                }
+            };
+        }
+        return /*$j('#graph_home').*/Highcharts.chart('graph_home', chartOption);
+    };
+
+    var scolumns = function(categoriesv,seriesv,title){
+        chartOption = {
+            chart: {
+                type: 'column'
+            },
+            title: {
+                text: title
+            },
+            subtitle: {
+                text: ''
+            },
+            xAxis: {
+                categories: categoriesv,
+                title: {
+                    text: null
+                }
+            },
+            yAxis: {
+                min: 0,
+                title: {
+                    text: '',
+                    align: 'high'
+                },
+                labels: {
+                    overflow: 'justify'
+                }
+            },
+            tooltip: {
+                valueSuffix: ' '
+            },
+            plotOptions: {
+                series: {
+                    stacking: 'normal'
+                },
+                bar: {
+                    dataLabels: {
+                        enabled: true,
+                        format: '{point.percentage:.2f}%',
+                        valueDecimals: 2
+                    }
+                }
+            },
+            legend: {
+                reversed: true
+            },
+            credits: {
+                enabled: false
+            },
+            series: seriesv
+        };
+        return /*$j('#graph_home').*/Highcharts.chart('graph_home', chartOption);
+    };
+
+    var pcolumns = function(categoriesv,seriesv,title){
+        chartOption = {
+            chart: {
+                type: 'column'
+            },
+            title: {
+                text: title
+            },
+            subtitle: {
+                text: ''
+            },
+            xAxis: {
+                categories: categoriesv,
+                title: {
+                    text: null
+                }
+            },
+            yAxis: {
+                min: 0,
+                title: {
+                    text: '',
+                    align: 'high'
+                },
+                labels: {
+                    overflow: 'justify'
+                }
+            },
+            tooltip: {
+                pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ({point.percentage:.2f}%)<br/>',
+                shared: true
+            },
+            plotOptions: {
+                series: {
+                    stacking: 'percent',
+                },
+                bar: {
+                    dataLabels: {
+                        enabled: true,
+                        format: '{point.percentage:.2f}%',
+                        valueDecimals: 2
+                    }
+                }
+            },
+            legend: {
+                reversed: true
+            },
+            credits: {
+                enabled: false
+            },
+            series: seriesv
+        };
+
+        if($j("#sperc-rows").is(":checked") || $j("#sperc-cols").is(":checked")) {
+            chartOption['tooltip'] = {
+                pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y:.2f}%</b><br/>',
+                shared: true
+            }
+        }
+        return /*$j('#graph_home').*/Highcharts.chart('graph_home', chartOption);
+    };
 
 	var bars = function(categoriesv,seriesv,title){
        /* Highcharts.setOptions({
@@ -1822,6 +2023,9 @@ var grapher = (function(my){
 				var options = null;
 				var data = null;
 				type = pgData[1]['cmode'];
+				console.log("---------Data--------------");
+				console.log(masterdata);
+                console.log("---------End Data--------------");
 				graph_data = {};
 				if(pgData[1]['cmode']=='bars' || pgData[1]['cmode']=='pbars' || pgData[1]['cmode']=='sbars' ){
 					categories = [];
@@ -1933,7 +2137,119 @@ var grapher = (function(my){
 					graph_data['series'] = series;
 					graph_data['title'] = title;
                     graph_data['type'] = pgData[1]['cmode'];
-				}else if(pgData[1]['cmode']=='lines'){
+				}
+				else if(pgData[1]['cmode']=='columns' || pgData[1]['cmode']=='pcolumns' || pgData[1]['cmode']=='scolumns' ){
+                    categories = [];
+                    if($j('#col_big:visible').length > 0){
+                        if($j('#col_big').val()=='xcall'){
+                            for (idx = 0; idx < masterdata.rows.length; idx++) {
+                                categories.push(masterdata.rows[idx][1]);
+                            }
+                        }
+                    }else {
+                        for (idx = 0; idx < masterdata.rows.length; idx++) {
+                            categories.push(masterdata.rows[idx][1]);
+                        }
+                    }
+                    categories.reverse();
+                    series = [];
+                    if(masterdata.cols[1].length>0){
+                        for (idx = 0; idx < masterdata.cols[1].length; idx++) {
+                            itemseries = [];
+                            for(idy=0;idy<masterdata.data.length;idy++){
+                                if($j("#sperc-rows").is(":checked") || $j("#sperc-cols").is(":checked")) {
+                                    itemseries.push(parseFloat(masterdata.data[idy][idx]));
+                                }else{
+                                    itemseries.push(parseInt(masterdata.data[idy][idx]));
+                                }
+                            }
+                            itemseries.reverse();
+                            series.push({name:masterdata.cols[1][idx][1],data:itemseries});
+                        }
+                    }else{
+                        itemseries = [];
+                        for(idy=0;idy<categories.length;idy++){
+                            if($j("#sperc-rows").is(":checked") || $j("#sperc-cols").is(":checked")) {
+                                itemseries.push(parseFloat(masterdata.data[idy][idx]));
+                            }else{
+                                series.push({name:categories[idy],y:parseInt(masterdata.data[idy][0])});
+                            }
+                        }
+                        categories=null;
+                    }
+                    series.reverse();
+                    //chart = bars(categories,series,title);
+                    if(pgData[1]['cmode']=='columns') {
+                        if(categories!=null) {
+                            list = [];
+                            series.forEach(function(item){list.push(item.name)});
+                            chartOptionFunc(list);
+                            $('#optionBtn').click(function() {
+                                title = $('#chart-title').val();
+                                chartColors = [];
+                                $('input[name^=colorChart]').each(function(){
+                                    chartColors.push($(this).val());
+                                });
+                                $('#chartModal').css("display","none");
+                                Highcharts.setOptions({colors:chartColors});
+                                chart = columns(categories, series, title);
+                            });
+
+                        }else {
+                            list = [];
+                            series.forEach(function(item){list.push(item.name)});
+                            chartOptionFunc(list);
+                            $('#optionBtn').click(function() {
+                                title = $('#chart-title').val();
+                                chartColors = [];
+                                $('input[name^=colorChart]').each(function(){
+                                    chartColors.push($(this).val());
+                                });
+                                $('#chartModal').css("display","none");
+                                Highcharts.setOptions({colors:chartColors});
+                                chart = bar(series, title);
+                            });
+
+                        }
+                    }
+
+                    if(pgData[1]['cmode']=='scolumns') {
+                        list = [];
+                        series.forEach(function(item){list.push(item.name)});
+                        chartOptionFunc(list);
+                        $('#optionBtn').click(function() {
+                            title = $('#chart-title').val();
+                            chartColors = [];
+                            $('input[name^=colorChart]').each(function(){
+                                chartColors.push($(this).val());
+                            });
+                            $('#chartModal').css("display","none");
+                            Highcharts.setOptions({colors:chartColors});
+                            chart = scolumns(categories, series, title);
+                        });
+                    }
+
+                    if(pgData[1]['cmode']=='pcolumns') {
+                        list = [];
+                        series.forEach(function(item){list.push(item.name)});
+                        chartOptionFunc(list);
+                        $('#optionBtn').click(function() {
+                            title = $('#chart-title').val();
+                            chartColors = [];
+                            $('input[name^=colorChart]').each(function(){
+                                chartColors.push($(this).val());
+                            });
+                            $('#chartModal').css("display","none");
+                            Highcharts.setOptions({colors:chartColors});
+                            chart = pcolumns(categories, series, title);
+                        });
+                    }
+                    graph_data['categories'] = categories;
+                    graph_data['series'] = series;
+                    graph_data['title'] = title;
+                    graph_data['type'] = pgData[1]['cmode'];
+                }
+				else if(pgData[1]['cmode']=='lines'){
 					var pieChoke = false;
 					if($('#pieChoke').val() != "-1")
 						pieChoke = true;

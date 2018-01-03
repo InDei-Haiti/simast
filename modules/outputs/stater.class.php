@@ -1990,7 +1990,7 @@ class Stater {
 		if($trows ==0 ){
 			$ntrows=$tcols;
 		}else{
-		($tcols-1) > 0 ? $ntrows=($tcols-1) : $ntrows=1;
+		    ($tcols-1) > 0 ? $ntrows=($tcols-1) : $ntrows=1;
 		}
 		if($dateDetail['cols'] !== false && $this->allDates['cols'] !== true){
 		    if(is_array($this->tcomp['cols'][$dateDetail['cols']])){
@@ -2295,10 +2295,12 @@ class Stater {
 				$html.='</tr><tr>';
 				$htmladd='</tr>';
 			}
-			foreach ( $svals ['rows'] as $rid => &$rhead ) {  /// $this->tcomp['rows'][$dateDetail['rows']]->testYear()
-			($dateDetail['rows'] === $rid && !$checkTestYear) ? $caddd=1: $caddd=0;
-			$tab_explode = explode(":",$rhead ['title']);
-			$htmlx = '<th data-ptitle="'.$rhead ['title'].'" colspan="'.($head_bonus+$caddd).'" class="missgr">' . trim($tab_explode[1]) . '</th>';
+            //$htmlx = '';
+			foreach ( $svals ['rows'] as $rid => &$rhead ) {
+			    /// $this->tcomp['rows'][$dateDetail['rows']]->testYear()
+                ($dateDetail['rows'] === $rid && !$checkTestYear) ? $caddd=1: $caddd=0;
+                $tab_explode = explode(":",$rhead ['title']);
+                $htmlx .= '<th data-ptitle="'.$rhead ['title'].'" colspan="'.($head_bonus+$caddd).'" class="missgr">' . trim($tab_explode[1]) . '</th>';
 			}
 			$html=str_replace('####@@@@@@####', $htmlx, $html);
 			$html.=$htmladd;

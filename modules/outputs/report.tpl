@@ -196,6 +196,9 @@
                         <div id="chart_pref">
                             <div id="dx_kill" onclick="grapher.hideOpts();">X</div>
                             <select id="chart_type" class="form-control" style="width:300px" onchange="grapher.pieOpts()">
+                                <option value="columns">Columns</option>
+                                <option value="pcolumns">Percent Columns</option>
+                                <option value="scolumns">Stocked Columns</option>
                                 <option value="bars">Bars</option>
                                 <option value="pbars">Percent Bars</option>
                                 <option value="sbars">Stocked Bars</option>
