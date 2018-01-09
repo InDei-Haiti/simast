@@ -868,10 +868,54 @@ var v = null;
     }
 
     function miness(){
-        if($("#rbox").children().length > 0){
-            $("#rbox li div.kill_area").html('<i class="fa fa-close" style="font-size:24px;color:red"></i>');
-            $("li.ui-state-disabled").css("background-image","");
+        if($("#rbox").children("li").length > 0){
+          $("#rbox").children("li").each(function(){
+              $(this).find("div.kill_area").html('<i class="fa fa-close" style="font-size:24px;color:red"></i>');
+                // $("#rbox li div.kill_area").html('<i class="fa fa-close" style="font-size:24px;color:red"></i>');
+                // $("li.ui-state-disabled").css("background-image","");
+
+                if($(this).children("div.showmn").length == 0){
+                    $(this).append("<div class='showmn'></div>");
+                    var theDownArrow = $(this).find(".showmn");
+                    if(theDownArrow.html() == ""){
+                       theDownArrow.html('<i class="fa fa-chevron-down" style="margin-top: 21px;margin-left: -250px; color:white;"></i>');
+                    }
+                }
+          });
         }
+        $(".showmn i").click(function(){
+//          console.log($(this).closest("li").html());
+//          $("<p style='display:none;'>LeMenu</p>").insertAfter($(this).closest("li"));
+            var varTitle = $(this).closest("li").find("div.ulit").text();
+            var getModal = $("#avgCalcs");
+            getModal.css("display","block");
+            $("#closeAvgCalcsModal").click(function(){
+                getModal.css("display","none");
+            });
+
+            $("#avgCalcs div.modal-body").html('<br /><br /><div class="row" style="padding-left: 10px;"><form class="form-inline">' +
+             '<div class="form-group"><input id="avg" type="checkbox" class="form-control" /><label style="margin-left:5px;" for="avg">AVG</label><input type="text" style="width:  300px; margin-left:10px;" class="form-control" name="nameChoix" value="AVG -'+varTitle+'" /></div> <br /><br />' +
+              '<div class="form-group"><input id="sum" type="checkbox" class="form-control" /><label style="margin-left:5px;" for="sum">SUM</label><input type="text" style="width:  300px; margin-left:10px;" class="form-control" name="nameChoix" value="SUM -'+varTitle+'" /></div><br /><br />' +
+               '<div class="form-group"><input id="calc" type="checkbox" class="form-control" /><label style="margin-left:5px;" for="calc">CALC</label><input type="text" style="width:  300px; margin-left:10px;" class="form-control" name="nameChoix" value="CALC -'+varTitle+'" /></div><br /><br />' +
+              '<br /><input type=submit value="Valider" class="button ce pi ahr"></form></div>');
+        });
+        // if($("#rbox").children().length > 0){
+        //     $("#rbox li div.kill_area").html('<i class="fa fa-close" style="font-size:24px;color:red"></i>');
+        //     $("li.ui-state-disabled").css("background-image","");
+        //
+        //     $("#rbox li").append('<div class="showmn"></div>');
+        //     if($("#rbox li .showmn").html() == ""){
+        //        $("#rbox li .showmn").html('<i class="fa fa-chevron-down" style="margin-top: 21px;margin-left: -250px; color:white;"></i>');
+        //     }
+        //
+        //     if( $("#rbox li div.showmn i").html() == ""){
+        //         $("#rbox li div.showmn i").click(function(){
+        //             alert("C'est moi");
+        //         });
+        //     }
+        //
+        //    // html('<i class="fa fa-close" style="font-size:24px;color:red"></i>');
+        // }
 
         if($("#cbox").children().length > 0){
             $("#cbox li div.kill_area").html('<i class="fa fa-close" style="font-size:24px;color:red"></i>');
@@ -898,7 +942,7 @@ var v = null;
 
         });
     });
-    
+
 </script>
 <script type="text/javascript" src="<?php echo DP_BASE_URL;?>/modules/outputs/output_Js_script_RPA.js"></script>
 <?php
