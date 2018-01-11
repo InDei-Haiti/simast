@@ -1158,9 +1158,6 @@ var grapher = (function(my){
 			ncolb = [];
 		}
 		else {
-			console.log("Dataset");
-			console.log(dataset);
-			console.log("End dataset");
 			ndataset = dataset.slice(0);
 			ncols = cols.slice(0);
 			ncolb = colb.slice(0);
@@ -1388,6 +1385,7 @@ var grapher = (function(my){
         });
         $("#bodyChartOption").append("<br/>");
         $("#bodyChartOption").append("<label>Titre du chart: <input type='text' name='chart_title' id='chart-title'/></label><br/><br/>");
+        $("#bodyChartOption").append("<label>Sous-Titre du chart: <input type='text' name='chart_sub_title' id='chart-sub-title'/></label><br/><br/>");
         i = 0;
         colorsDef = Highcharts.getOptions().colors;
         list.forEach(function(item){
@@ -1403,11 +1401,11 @@ var grapher = (function(my){
 	}
 
 
-    var columns = function(categoriesv,seriesv,title){
+    var columns = function(categoriesv,seriesv,title,subTitle){
         /* Highcharts.setOptions({
              colors: colors
          });*/
-
+		alert(subTitle);
         chartOption = {
             chart: {
                 type: 'column',
@@ -1417,7 +1415,7 @@ var grapher = (function(my){
                 text: title
             },
             subtitle: {
-                text: ''
+                text: subTitle
             },
             xAxis: {
                 categories: categoriesv,
@@ -1486,7 +1484,7 @@ var grapher = (function(my){
         return /*$j('#graph_home').*/Highcharts.chart('graph_home', chartOption);
     };
 
-    var scolumns = function(categoriesv,seriesv,title){
+    var scolumns = function(categoriesv,seriesv,title,subTitle){
         chartOption = {
             chart: {
                 type: 'column'
@@ -1495,7 +1493,7 @@ var grapher = (function(my){
                 text: title
             },
             subtitle: {
-                text: ''
+                text: subTitle
             },
             xAxis: {
                 categories: categoriesv,
@@ -1539,7 +1537,7 @@ var grapher = (function(my){
         return /*$j('#graph_home').*/Highcharts.chart('graph_home', chartOption);
     };
 
-    var pcolumns = function(categoriesv,seriesv,title){
+    var pcolumns = function(categoriesv,seriesv,title,subTitle){
         chartOption = {
             chart: {
                 type: 'column'
@@ -1548,7 +1546,7 @@ var grapher = (function(my){
                 text: title
             },
             subtitle: {
-                text: ''
+                text: subTitle
             },
             xAxis: {
                 categories: categoriesv,
@@ -1600,7 +1598,7 @@ var grapher = (function(my){
         return /*$j('#graph_home').*/Highcharts.chart('graph_home', chartOption);
     };
 
-	var bars = function(categoriesv,seriesv,title){
+	var bars = function(categoriesv,seriesv,title,subTitle){
        /* Highcharts.setOptions({
             colors: colors
         });*/
@@ -1614,7 +1612,7 @@ var grapher = (function(my){
 				text: title
 			},
 			subtitle: {
-				text: ''
+				text: subTitle
 			},
 			xAxis: {
 				categories: categoriesv,
@@ -1683,7 +1681,7 @@ var grapher = (function(my){
 		return /*$j('#graph_home').*/Highcharts.chart('graph_home', chartOption);
 	};
 
-    var sbars = function(categoriesv,seriesv,title){
+    var sbars = function(categoriesv,seriesv,title,subTitle){
 		chartOption = {
 			chart: {
 				type: 'bar'
@@ -1692,7 +1690,7 @@ var grapher = (function(my){
 				text: title
 			},
 			subtitle: {
-				text: ''
+				text: subTitle
 			},
 			xAxis: {
 				categories: categoriesv,
@@ -1736,7 +1734,7 @@ var grapher = (function(my){
         return /*$j('#graph_home').*/Highcharts.chart('graph_home', chartOption);
     };
 
-    var pbars = function(categoriesv,seriesv,title){
+    var pbars = function(categoriesv,seriesv,title,subTitle){
 		chartOption = {
 			chart: {
 				type: 'bar'
@@ -1745,7 +1743,7 @@ var grapher = (function(my){
 				text: title
 			},
 			subtitle: {
-				text: ''
+				text: subTitle
 			},
 			xAxis: {
 				categories: categoriesv,
@@ -1797,7 +1795,7 @@ var grapher = (function(my){
         return /*$j('#graph_home').*/Highcharts.chart('graph_home', chartOption);
     };
 
-    var bar = function(seriesv,title) {
+    var bar = function(seriesv,title,subTitle) {
     	chartOption = {
 			chart: {
 				type: 'bar',
@@ -1811,6 +1809,9 @@ var grapher = (function(my){
 			},
 			title: {
 				text: title
+			},
+            subtitle: {
+				text: subTitle
 			},
 			xAxis: {
 				type: 'category'
@@ -1849,13 +1850,13 @@ var grapher = (function(my){
         return /*$j('#graph_home').*/Highcharts.chart('graph_home', chartOption);
     };
 
-    var lines = function(categoriesv,seriesv,title){
+    var lines = function(categoriesv,seriesv,title,subTitle){
         return /*$j('#graph_home').*/Highcharts.chart('graph_home', {
             title: {
                 text: title
             },
             subtitle: {
-                text: ''
+                text: subTitle
             },
             xAxis: {
                 categories: categoriesv,
@@ -1898,7 +1899,7 @@ var grapher = (function(my){
         });
     };
 
-    var line = function(categoriesv,seriesv,title){
+    var line = function(categoriesv,seriesv,title,subTitle){
 		chartOption = {
 			chart: {
 				plotBackgroundColor: null,
@@ -1908,6 +1909,9 @@ var grapher = (function(my){
 			},
 			title: {
 				text: title
+			},
+			subtitle: {
+				text: subTitle
 			},
 			tooltip: {
 				pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
@@ -1927,7 +1931,7 @@ var grapher = (function(my){
         return /*$j('#graph_home').*/Highcharts.chart('graph_home', chartOption);
     };
 
-    var pie = function(seriesv,title){
+    var pie = function(seriesv,title,subTitle){
 		chartOption = {
 			chart: {
 				plotBackgroundColor: null,
@@ -1937,6 +1941,9 @@ var grapher = (function(my){
 			},
 			title: {
 				text: title
+			},
+			subtitle: {
+				text: subTitle
 			},
 			tooltip: {
 				pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
@@ -2001,7 +2008,8 @@ var grapher = (function(my){
 		build: function(same){
 			/*collect();*/
 
-            var title = prompt("Graph title : ", "");
+            var title = '';//prompt("Graph title : ", "");
+			var subTitle = '';
 			var tbpostd;
 			if (!same) {
 				 tbpostd = prepareForSend();
@@ -2023,9 +2031,6 @@ var grapher = (function(my){
 				var options = null;
 				var data = null;
 				type = pgData[1]['cmode'];
-				console.log("---------Data--------------");
-				console.log(masterdata);
-                console.log("---------End Data--------------");
 				graph_data = {};
 				if(pgData[1]['cmode']=='bars' || pgData[1]['cmode']=='pbars' || pgData[1]['cmode']=='sbars' ){
 					categories = [];
@@ -2075,13 +2080,14 @@ var grapher = (function(my){
                             chartOptionFunc(list);
                             $('#optionBtn').click(function() {
                                 title = $('#chart-title').val();
+                                subTitle = $('#chart-sub-title').val();
                                 chartColors = [];
                                 $('input[name^=colorChart]').each(function(){
                                     chartColors.push($(this).val());
                                 });
                                 $('#chartModal').css("display","none");
                                 Highcharts.setOptions({colors:chartColors});
-                                chart = bars(categories, series, title);
+                                chart = bars(categories, series, title, subTitle);
                             });
 
                         }else {
@@ -2090,13 +2096,14 @@ var grapher = (function(my){
                             chartOptionFunc(list);
                             $('#optionBtn').click(function() {
                                 title = $('#chart-title').val();
+                                subTitle = $('#chart-sub-title').val();
                                 chartColors = [];
                                 $('input[name^=colorChart]').each(function(){
                                     chartColors.push($(this).val());
                                 });
                                 $('#chartModal').css("display","none");
                                 Highcharts.setOptions({colors:chartColors});
-                                chart = bar(series, title);
+                                chart = bar(series, title, subTitle);
                             });
 
                     	}
@@ -2108,13 +2115,14 @@ var grapher = (function(my){
                         chartOptionFunc(list);
                         $('#optionBtn').click(function() {
                             title = $('#chart-title').val();
+                            subTitle = $('#chart-sub-title').val();
                             chartColors = [];
                             $('input[name^=colorChart]').each(function(){
                                 chartColors.push($(this).val());
                             });
                             $('#chartModal').css("display","none");
                             Highcharts.setOptions({colors:chartColors});
-                            chart = sbars(categories, series, title);
+                            chart = sbars(categories, series, title, subTitle);
                         });
                     }
 
@@ -2124,13 +2132,14 @@ var grapher = (function(my){
                         chartOptionFunc(list);
                         $('#optionBtn').click(function() {
                             title = $('#chart-title').val();
+                            subTitle = $('#chart-sub-title').val();
                             chartColors = [];
                             $('input[name^=colorChart]').each(function(){
                                 chartColors.push($(this).val());
                             });
                             $('#chartModal').css("display","none");
                             Highcharts.setOptions({colors:chartColors});
-                            chart = pbars(categories, series, title);
+                            chart = pbars(categories, series, title, subTitle);
                         });
                     }
 					graph_data['categories'] = categories;
@@ -2186,13 +2195,14 @@ var grapher = (function(my){
                             chartOptionFunc(list);
                             $('#optionBtn').click(function() {
                                 title = $('#chart-title').val();
+                                subTitle = $('#chart-sub-title').val();
                                 chartColors = [];
                                 $('input[name^=colorChart]').each(function(){
                                     chartColors.push($(this).val());
                                 });
                                 $('#chartModal').css("display","none");
                                 Highcharts.setOptions({colors:chartColors});
-                                chart = columns(categories, series, title);
+                                chart = columns(categories, series, title, subTitle);
                             });
 
                         }else {
@@ -2201,13 +2211,14 @@ var grapher = (function(my){
                             chartOptionFunc(list);
                             $('#optionBtn').click(function() {
                                 title = $('#chart-title').val();
+                                subTitle = $('#chart-sub-title').val();
                                 chartColors = [];
                                 $('input[name^=colorChart]').each(function(){
                                     chartColors.push($(this).val());
                                 });
                                 $('#chartModal').css("display","none");
                                 Highcharts.setOptions({colors:chartColors});
-                                chart = bar(series, title);
+                                chart = bar(series, title, subTitle);
                             });
 
                         }
@@ -2219,13 +2230,14 @@ var grapher = (function(my){
                         chartOptionFunc(list);
                         $('#optionBtn').click(function() {
                             title = $('#chart-title').val();
+                            subTitle = $('#chart-sub-title').val();
                             chartColors = [];
                             $('input[name^=colorChart]').each(function(){
                                 chartColors.push($(this).val());
                             });
                             $('#chartModal').css("display","none");
                             Highcharts.setOptions({colors:chartColors});
-                            chart = scolumns(categories, series, title);
+                            chart = scolumns(categories, series, title, subTitle);
                         });
                     }
 
@@ -2235,13 +2247,14 @@ var grapher = (function(my){
                         chartOptionFunc(list);
                         $('#optionBtn').click(function() {
                             title = $('#chart-title').val();
+                            subTitle = $('#chart-sub-title').val();
                             chartColors = [];
                             $('input[name^=colorChart]').each(function(){
                                 chartColors.push($(this).val());
                             });
                             $('#chartModal').css("display","none");
                             Highcharts.setOptions({colors:chartColors});
-                            chart = pcolumns(categories, series, title);
+                            chart = pcolumns(categories, series, title, subTitle);
                         });
                     }
                     graph_data['categories'] = categories;
@@ -2295,13 +2308,14 @@ var grapher = (function(my){
                         chartOptionFunc(list);
                         $('#optionBtn').click(function() {
                             title = $('#chart-title').val();
+                            subTitle = $('#chart-sub-title').val();
                             chartColors = [];
                             $('input[name^=colorChart]').each(function(){
                                 chartColors.push($(this).val());
                             });
                             $('#chartModal').css("display","none");
                             Highcharts.setOptions({colors:chartColors});
-                            chart = lines(categories,series,title);
+                            chart = lines(categories,series,title, subTitle);
                         });
 					}else{
                         list = [];
@@ -2309,13 +2323,14 @@ var grapher = (function(my){
                         chartOptionFunc(list);
                         $('#optionBtn').click(function() {
                             title = $('#chart-title').val();
+                            subTitle = $('#chart-sub-title').val();
                             chartColors = [];
                             $('input[name^=colorChart]').each(function(){
                                 chartColors.push($(this).val());
                             });
                             $('#chartModal').css("display","none");
                             Highcharts.setOptions({colors:chartColors});
-                            chart = lines(categories,series,title);
+                            chart = lines(categories,series,title, subTitle);
                         });
 					}
                     graph_data['categories'] = categories;
@@ -2330,7 +2345,6 @@ var grapher = (function(my){
 					}*/
 					series = [];
                     tempseries = {name: 'Brands',data:[]};
-                    console.log(masterdata);
                     if($('#col_big').val()=='xcall'){
                         for (idx = 0; idx < masterdata.cols[0].length; idx++) {
                             tempseries['data'].push({
@@ -2355,17 +2369,18 @@ var grapher = (function(my){
                    // tempseries.reverse();
                     series.push(tempseries);
                     list = [];
-                    series.forEach(function(item){list.push(item.name)});
+                    series[0]['data'].forEach(function(item){list.push(item.name)});
                     chartOptionFunc(list);
                     $('#optionBtn').click(function() {
                         title = $('#chart-title').val();
+                        subTitle = $('#chart-sub-title').val();
                         chartColors = [];
                         $('input[name^=colorChart]').each(function(){
                             chartColors.push($(this).val());
                         });
                         $('#chartModal').css("display","none");
                         Highcharts.setOptions({colors:chartColors});
-                        chart = pie(series,title);
+                        chart = pie(series,title, subTitle);
                     });
 
                     //graph_data['categories'] = categories;
@@ -2426,11 +2441,15 @@ var grapher = (function(my){
 					chart = new google.visualization.GeoMap(document.getElementById('graph_home'));
 				}
 
-
 				//chart.draw(data, options);
 				parts = null;
-                $j("#graph_tab_holder").clone(true).addClass("stabh_vis").prependTo("#graph_home").show();
-				reporter.initGraph();
+                //$j("#graph_tab_holder").clone(true).addClass("stabh_vis").prependTo("#graph_home");
+                setTimeout(function(){
+                    $j("#graph_tab_holder").clone(true).addClass("stabh_vis").prependTo("#graph_home").show();
+				}, 10000);
+
+					//.prependTo("#graph_home").show();
+                reporter.initGraph();
 				$ghome.find(".bottom-buts")
 					.hover(function(){
 						$j(this).find("div").fadeTo("fast", 1);
@@ -2840,10 +2859,9 @@ function sommation(){
             $(this).append("<td class='vdata'>"+somme[add]+"</td>");
         }
         $(this).append(part2_bkp.find("td"));
-        // console.log($(this).html());
         // $(this).children().each(function(){
         //     if($(this).index() == 0){
-        //         console.log($(this));
+
         //     }
         // });
     });
