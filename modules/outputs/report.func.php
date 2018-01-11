@@ -144,7 +144,7 @@ if (count($rdata) > 0) {
 				$html .= "
 				<tr>
 				<!-- Start of section -->
-				<td id='sec_" . $sec_id . "' class='sec_part'>";
+				<td id='sec_" . $sec_id . "' class='sec_part' style='padding:15px;'>";
 
 				//here will be place for distinct attention to type of report value, but for now we're developing for plain cell value
 				if (count($svals ['cols']) > 0) {
