@@ -870,6 +870,7 @@ var v = null;
     function miness(){
         if($("#rbox").children("li").length > 0){
           $("#rbox").children("li").each(function(){
+            if($(this).attr("data-type")=="numeric" || $(this).attr("data-type")=="calculateNumeric"){
               $(this).find("div.kill_area").html('<i class="fa fa-close" style="font-size:24px;color:red"></i>');
                 // $("#rbox li div.kill_area").html('<i class="fa fa-close" style="font-size:24px;color:red"></i>');
                 // $("li.ui-state-disabled").css("background-image","");
@@ -881,6 +882,29 @@ var v = null;
                        theDownArrow.html('<i class="fa fa-chevron-down" style="margin-top: 21px;margin-left: -250px; color:white;"></i>');
                     }
                 }
+            }else{
+              $(this).find("div.kill_area").html('<i class="fa fa-close" style="font-size:24px;color:red"></i>');
+            }
+          });
+        }
+
+        if($("#cbox").children("li").length > 0){
+          $("#cbox").children("li").each(function(){
+            if($(this).attr("data-type")=="numeric" || $(this).attr("data-type")=="calculateNumeric"){
+              $(this).find("div.kill_area").html('<i class="fa fa-close" style="font-size:24px;color:red"></i>');
+                // $("#rbox li div.kill_area").html('<i class="fa fa-close" style="font-size:24px;color:red"></i>');
+                // $("li.ui-state-disabled").css("background-image","");
+
+                if($(this).children("div.showmn").length == 0){
+                    $(this).append("<div class='showmn'></div>");
+                    var theDownArrow = $(this).find(".showmn");
+                    if(theDownArrow.html() == ""){
+                       theDownArrow.html('<i class="fa fa-chevron-down" style="margin-top: 21px;margin-left: -250px; color:white;"></i>');
+                    }
+                }
+            }else{
+              $(this).find("div.kill_area").html('<i class="fa fa-close" style="font-size:24px;color:red"></i>');
+            }
           });
         }
         $(".showmn i").click(function(){
@@ -896,7 +920,8 @@ var v = null;
             $("#avgCalcs div.modal-body").html('<br /><br /><div class="row" style="padding-left: 10px;"><form class="form-inline">' +
              '<div class="form-group"><input id="avg" type="checkbox" class="form-control theCheck" /><label style="margin-left:5px;" for="avg">AVG</label><input type="text" style="width:  300px; margin-left:10px;" class="form-control" name="avg" value="AVG -'+varTitle+'" /></div> <br /><br />' +
               '<div class="form-group"><input id="sum" type="checkbox" class="form-control theCheck" /><label style="margin-left:5px;" for="sum">SUM</label><input type="text" style="width:  300px; margin-left:10px;" class="form-control" name="sum" value="SUM -'+varTitle+'" /></div><br /><br />' +
-               '<div class="form-group"><input id="calc" type="checkbox" class="form-control theCheck" /><label style="margin-left:5px;" for="calc">CALC</label><input type="text" style="width:  300px; margin-left:10px;" class="form-control" name="calc" value="CALC -'+varTitle+'" /></div><br /><br />' +
+               '<div class="form-group"><input id="min" type="checkbox" class="form-control theCheck" /><label style="margin-left:5px;" for="max">MIN</label><input type="text" style="width:  300px; margin-left:10px;" class="form-control" name="min" value="MIN -'+varTitle+'" /></div><br /><br />' +
+               '<div class="form-group"><input id="max" type="checkbox" class="form-control theCheck" /><label style="margin-left:5px;" for="max">MAX</label><input type="text" style="width:  300px; margin-left:10px;" class="form-control" name="max" value="MAX -'+varTitle+'" /></div><br /><br />' +
               '<br /><button id="valid" class="button ce pi ahr">Valider</button></form></div>');
         });
 
@@ -942,10 +967,10 @@ var v = null;
         //    // html('<i class="fa fa-close" style="font-size:24px;color:red"></i>');
         // }
 
-        if($("#cbox").children().length > 0){
-            $("#cbox li div.kill_area").html('<i class="fa fa-close" style="font-size:24px;color:red"></i>');
-            $("li.ui-state-disabled").css("background-image","");
-        }
+        // if($("#cbox").children().length > 0){
+        //     $("#cbox li div.kill_area").html('<i class="fa fa-close" style="font-size:24px;color:red"></i>');
+        //     $("li.ui-state-disabled").css("background-image","");
+        // }
         setTimeout(miness,500);
     }
 
