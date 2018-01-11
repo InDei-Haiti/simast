@@ -894,10 +894,35 @@ var v = null;
             });
 
             $("#avgCalcs div.modal-body").html('<br /><br /><div class="row" style="padding-left: 10px;"><form class="form-inline">' +
-             '<div class="form-group"><input id="avg" type="checkbox" class="form-control" /><label style="margin-left:5px;" for="avg">AVG</label><input type="text" style="width:  300px; margin-left:10px;" class="form-control" name="nameChoix" value="AVG -'+varTitle+'" /></div> <br /><br />' +
-              '<div class="form-group"><input id="sum" type="checkbox" class="form-control" /><label style="margin-left:5px;" for="sum">SUM</label><input type="text" style="width:  300px; margin-left:10px;" class="form-control" name="nameChoix" value="SUM -'+varTitle+'" /></div><br /><br />' +
-               '<div class="form-group"><input id="calc" type="checkbox" class="form-control" /><label style="margin-left:5px;" for="calc">CALC</label><input type="text" style="width:  300px; margin-left:10px;" class="form-control" name="nameChoix" value="CALC -'+varTitle+'" /></div><br /><br />' +
-              '<br /><input type=submit value="Valider" class="button ce pi ahr"></form></div>');
+             '<div class="form-group"><input id="avg" type="checkbox" class="form-control theCheck" /><label style="margin-left:5px;" for="avg">AVG</label><input type="text" style="width:  300px; margin-left:10px;" class="form-control" name="avg" value="AVG -'+varTitle+'" /></div> <br /><br />' +
+              '<div class="form-group"><input id="sum" type="checkbox" class="form-control theCheck" /><label style="margin-left:5px;" for="sum">SUM</label><input type="text" style="width:  300px; margin-left:10px;" class="form-control" name="sum" value="SUM -'+varTitle+'" /></div><br /><br />' +
+               '<div class="form-group"><input id="calc" type="checkbox" class="form-control theCheck" /><label style="margin-left:5px;" for="calc">CALC</label><input type="text" style="width:  300px; margin-left:10px;" class="form-control" name="calc" value="CALC -'+varTitle+'" /></div><br /><br />' +
+              '<br /><button id="valid" class="button ce pi ahr">Valider</button></form></div>');
+        });
+
+        $("#valid").click(function(event){
+            event.preventDefault();
+            canClose = 1;
+            $(".theCheck").each(function(){
+              if($(this).is(":checked")){
+                le_id = this.id; //console.log(this.id);
+                $("form input").each(function(){
+                    if(le_id == $(this).attr("name")){
+                      // console.log($(this).val());
+                      if($(this).val() == ""){
+                        canClose = 0;
+                      }
+                    }
+
+              });
+            }
+            });
+
+            if(canClose == 1){
+              console.log("Modification opere avec success");
+            }else{
+              console.log("Le champs cocher ne doit pas etre vide!");
+            }
         });
         // if($("#rbox").children().length > 0){
         //     $("#rbox li div.kill_area").html('<i class="fa fa-close" style="font-size:24px;color:red"></i>');
