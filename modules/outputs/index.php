@@ -23,7 +23,7 @@ if($_POST['mode']=='save'){
 	//exit;
 	require_once $AppUI->getFileInModule($m, 'patch.func');
 	exportResultExcel();
-	
+
 	return ;
 }elseif($_POST['mode']=='savefile'){
     $is_save=$_POST['is_save'];
@@ -55,7 +55,7 @@ if($_POST['mode']=='save'){
    // db_fetch_assoc();
     $res=db_loadColumn($sql);
     $list = mysql_real_escape_string(gzencode(implode(',',$res), 9, FORCE_GZIP));
-    $stmpl = 'insert into `activity_queries`(qname, qdesc, created, activity_id, sector_id, st_area_id, beneficieries, amount, `prepare`, list, is_save, headers) 
+    $stmpl = 'insert into `activity_queries`(qname, qdesc, created, activity_id, sector_id, st_area_id, beneficieries, amount, `prepare`, list, is_save, headers)
                     values ("'.$qname.'","'.$qdesc.'",now(),'.$activity_id.','.$sector_id.','.$st_area_id.','.$beneficieries.','.$amount.',"'.$prepare.'","'.$list.'",'.$is_save.',"'.$headers.'")';
 
     //$res = mysql_query($sql);
@@ -87,7 +87,7 @@ if($_POST['mode']=='save'){
 		echo $res;
 		return ;
 }elseif ($_POST['mode'] == "setquery"){
-    $stmpl = 'insert into `sets`(setname) 
+    $stmpl = 'insert into `sets`(setname)
                     values ("'.$_POST['set'].'")';
     $zid = 0;
     $res = db_exec($stmpl);
@@ -136,7 +136,7 @@ if($_POST['mode']=='save'){
 }elseif ($_GET['mode'] == 'rowkill'){
 	$rid=(int)$_GET['row'];
 	if($rid >=0 && is_numeric($_GET['row'])){
-		//$fsaved=$_SESSION['table']['body']; 
+		//$fsaved=$_SESSION['table']['body'];
 		$fsaved=getFileBody('body');
 		//var_dump($fsaved);
 		if(count($fsaved) > 0){
@@ -215,7 +215,7 @@ if($_POST['mode']=='save'){
             $popup_fields[] = $popup_field;
         }
     }
-	
+
 	if($latlng){
         $query = join(',', $query);
 		$sql = 'SELECT '.$query.' FROM '.$querysaveaj;
@@ -298,7 +298,7 @@ if($_POST['mode']=='save'){
         header('Accept-Ranges: bytes'."\r\n");
         ob_end_flush();
     }else{
-		
+
 	}
 	//echo file_get_contents(diskFile::getJsonPath());
 	//$_SESSION ['fileNameCsh'] = $tempsession;
@@ -319,7 +319,7 @@ if($_POST['mode']=='save'){
     }
     //INSERT INTO `dashboard_grapher`(`id`, `set_id`, `project_id`, `type`, `query_save`, `data_item`)
     $describe = $_POST['describe'];
-    $sql = "INSERT INTO dashboard_grapher(`set_id`, project_id, `type`, query_save, data_item, description) VALUES 
+    $sql = "INSERT INTO dashboard_grapher(`set_id`, project_id, `type`, query_save, data_item, description) VALUES
     (".$_POST['setid'].",".$_POST['project'].",'".$_POST['type']."',null,'".mysql_real_escape_string(gzencode(var_export($_POST['data_item'],true), 9, FORCE_GZIP))."', '".$describe."')";
     //echo $sql;
     $zid = 0;
@@ -491,11 +491,11 @@ if($_POST['mode']=='save'){
         diskFile::tableBodyWrite($tddd);
         $nfei->purge();
     }
-	
+
 	require_once('stater.class.php');
 	//$cl=preg_replace('/\\\{1,}"/','"',$_POST['calcs']);
 	//$svals=json_decode(stripslashes($_POST['calcs']),true);
-	
+
 	//$_SESSION ['fileNameCsh']='8c4a5c4a7fe7d6bac9239b59d1818ed0';//759ee55ed403219e085c442c83be66e9';
 	$fip=$_SESSION ['fileNameCsh'];
 	//echo $fip;
@@ -522,15 +522,15 @@ if($_POST['mode']=='save'){
         //var_dump($svals);
         echo '</pre>';*/
         makeStat($bar,$svals);
-	
+
 		//DiskStatCache($thtml);
 		//echo $thtml;
 		$fps=$baseDir.'/files/tmp/'.$fip.'.tss';
 		$sfh=fopen($fps,'r');
 		fpassthru($sfh);
 		fclose($sfh);
-		//unset($thtml); 
-		
+		//unset($thtml);
+
 	}
 	$_SESSION ['fileNameCshBack'] = $_SESSION ['fileNameCsh'];
 	$END = time() - $START;
@@ -638,7 +638,7 @@ if(isset($_GET['map'])){
 					$row[$index] = $q->loadList();
 					$tasks[$ir] = $row;
 				}
-			}			
+			}
 		}
 	}
 	//var_dump(json_encode($tasks));
@@ -646,7 +646,7 @@ if(isset($_GET['map'])){
 	    $json = json_encode($tasks);
 	}
 	/*if($json){
-		$script = ' 
+		$script = '
 				  var json = '.$json.';
 				  for (var i = 0, length = json.length; i < length; i++) {
 					  var data = json[i];
@@ -671,18 +671,18 @@ if(isset($_GET['map'])){
 						    infowindow.open(map,marker);
 						  });///
 						 var infowindow = new google.maps.InfoWindow();
-						 google.maps.event.addListener(marker,"click", (function(marker,content,infowindow){ 
+						 google.maps.event.addListener(marker,"click", (function(marker,content,infowindow){
 						        return function() {
 						           infowindow.setContent(contentString);
 						           infowindow.open(map,marker);
 						        };
-						    })(marker,contentString,infowindow)); 
-						
+						    })(marker,contentString,infowindow));
+
 						  }
 					}
 		';
 	}*/
-	
+
 }else if (/* $_SERVER ['CONTENT_LENGTH'] > 0 &&  */count ( $_POST ) > 0) {
 	//$rustart = getrusage(null);
 	$lpost = array ();
@@ -691,8 +691,8 @@ if(isset($_GET['map'])){
 	$show_start='';
 	$show_end='';
 	$final = array();
-	
-	
+
+
 	require_once('result.func.php');
 	$nfei= new evolver();
 
@@ -902,9 +902,9 @@ echo '<br/>
 		<!-- <select onchange="rebootQTable(this);" data-items="">
 			<option value="queries" selected>Queries</option>
 			<option value="items">Report Items</option>
-		</select> 
+		</select>
 		<br> -->
-		
+
         <p>
             <span onclick="$j(\'#importbox\').toggle();" class="fhref flink">'.$AppUI->_('Import query').'</span><span class="offwall msgs" id="msg_place"></span>
             <div id="importbox" class="myimporter">
@@ -914,11 +914,11 @@ echo '<br/>
                     <input type="hidden" name="mode" value="importquery">
                 </form>
             </div>
-            
-            
-            
-            
-            
+
+
+
+
+
             <!--Haiti-->
             <div align="left" style="background:white;margin-top:2px;padding: 10px"><form id="filterform" name="filterform" action="" method="get">
 					<fieldset id="filters" style="margin-left:-7px; width: 88%" class="collapsible collapsed header_collapsible">
@@ -926,7 +926,8 @@ echo '<br/>
 					<table id="filterstab" style="display: none;"><tbody><tr><td colspan="4">
 					&nbsp;Add filter: <select id="select_field" onchange="setTableFilter_output()"><option></option></select></td></tr></tbody></table></fieldset><fieldset id="options" style="margin-left: -7px; width: 88%" class="collapsible collapsed header_collapsible">
 			</fieldset>
-	                <input type="button" class="ce pi ahr" value="Apply" id="submitButton" ></form></div>
+	                <input type="button" class="ce pi ahr" value="Apply" id="submitButton" > <button class="ce pi ahr" id="showCachedElms">Decacher Elements</button></form></div>
+
             <!--Haiti-->
             <table cellspacing="1" cellpadding="2" border="0" class="tbl tablesorter moretable" id="ittable" style="display: none;">
                 <thead>
@@ -936,7 +937,7 @@ echo '<br/>
                 </thead>
                 <tbody></tbody>
             </table>
-    
+
             <!--<table cellspacing="1" cellpadding="2" border="0" class="tbl tablesorter moretable ck" id="qtable" style="width: 100%">-->
             <table cellspacing="1" cellpadding="2" border="0" class="tbl moretable ck" id="qtable" style="width: 95%">
                 <thead>
@@ -1089,7 +1090,7 @@ echo '<br/>
 
 echo '<h3 style="padding: 5px;">&emsp;&emsp;'.$AppUI->_('Forms').'<div id="imgloader" style="display:none;width:25px;height:25px"><img src="/modules/outputs/images/ajax-loader.gif"/></div></h3>';
 echo '<div  id="forms" style="height:auto !important;min-height: 500px">
-						
+
 		</div>';
 
 echo 	'</div>';
@@ -1209,7 +1210,7 @@ unset($rhtml);
 /*Report to be here*/
 echo '<div  id="tabs-6" class="mtab" style="100%">';
 echo '<style>
-		
+
 #div1{
   height: 30px;
   width: 20%;
@@ -1223,13 +1224,13 @@ echo '<style>
   border: solid 1px #000000;
   background-color: #66CC00;
 }
-		
+
 .left {
 	  float: left;
 	  width: 125px;
 	  text-align: right;
 	  height: 800px;
-	  width:20%; 
+	  width:20%;
 	  padding: 2px;
 	  margin: 3px;
 	  border: 2px solid #DCDBD8;
@@ -1243,40 +1244,40 @@ echo '<style>
 	  width:75%;
 	  height:1000px;
 	  border: 2px solid #DCDBD8;
-	  display: inline;    
+	  display: inline;
 }
 .mapfieldbox{
 	  margin: 1px;
 	  min-height:100px;
 	  height: auto;
 	  border: 2px solid #DCDBD8;
-      		
+
 }
 .mapmarkergroup{
       margin: 1px;
 	  height:100px;
-	  border: 2px solid #DCDBD8;		
+	  border: 2px solid #DCDBD8;
 }
 .maplonlatbox{
       margin: 1px;
       padding: 5px;
 	  /*height:300px;*/
 	  border: 2px solid #DCDBD8;
-			
+
 }
 .mapadminlocbox{
       margin: 1px;
 	  height:100px;
-	  border: 2px solid #DCDBD8;		
+	  border: 2px solid #DCDBD8;
 }
 .mapdatamappingbox{
       margin: 1px;
 	  height:100px;
-	  border: 2px solid #DCDBD8;		
+	  border: 2px solid #DCDBD8;
 }
 .mappopupinfogbox{
       margin: 1px;
-	  border: 2px solid #DCDBD8;		
+	  border: 2px solid #DCDBD8;
 }
 
 
@@ -1297,7 +1298,7 @@ echo '<style>
 .legend {
     line-height: 18px;
     color: #555;
-    
+
     background: white;
     background: rgba(255,255,255,0.8);
     box-shadow: 0 0 15px rgba(0,0,0,0.2);
@@ -1325,9 +1326,9 @@ echo '<style>
     margin-left: 30px;
     width: 33px;
     margin-top: 30px;
-}		
+}
 </style>';
-	
+
 
 echo "<style>
 
@@ -1368,7 +1369,7 @@ line-height: 800px;
 			  z-index: 99999;
 			  background: red
 			}
-			
+
 	</style>";
 	/* echo ' <p>
 
@@ -1397,7 +1398,7 @@ line-height: 800px;
         </form>
     </div>
     </p> '; */
-	
+
 	//echo '<div style="width: 20%;color:red;">';
 /*echo '<div style="100%">';
 echo '<div class="left">
@@ -1725,7 +1726,7 @@ if($_POST['stype'] ===  'Stats' || $_POST['stype'] ===  'Chart'){
 	echo '</pre>'; */
 	//echo json_encode($svals);
 	$tpl->append('extraCode','fstatp='.json_encode($svals).';');
-	
+
 	/* echo 'extraCode: '.$tpl->extraCode;
 	exit; */
 }
@@ -1740,13 +1741,13 @@ echo '<!--<link rel="stylesheet" type="text/css" href="http://cdn.leafletjs.com/
 		<!--<link rel="stylesheet" type="text/css" href="http://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/0.4.0/MarkerCluster.css" />
     <link rel="stylesheet" type="text/css" href="http://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/0.4.0/MarkerCluster.Default.css" />
 -->
-      
+
       <!--<script type="text/javascript" src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js?2"></script>
       <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-ajax/2.1.0/leaflet.ajax.min.js"></script>-->
       <!--<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/0.4.0/leaflet.markercluster.js"></script>-->
       <link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css" integrity="sha512-M2wvCLH6DSRazYeZRIm1JnYyh22purTM+FDB5CsyxtQJYeKq83arPe5wgbNmcFXGqiSH2XR8dT/fJISVA1r/zQ==" crossorigin=""/>
       <script type="text/javascript" src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js" integrity="sha512-lInM/apFSqyy1o6s89K4iQUKg6ppXEgsVxT35HbzUupEVRh2Eu9Wdl4tHj7dZO0s1uvplcYGmt3498TtHq+log==" crossorigin=""></script>
-      
+
       <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.4.4/proj4.js"></script>
       <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/proj4leaflet/1.0.2/proj4leaflet.js"></script>
       ';
@@ -1754,7 +1755,7 @@ echo '<!--<link rel="stylesheet" type="text/css" href="http://cdn.leafletjs.com/
 ?>
 
 	<script type="text/javascript">
-	
+
 	function mapProjects(){
 		checkedValue = $('.projects:checked');
 		projects = "";
@@ -1786,14 +1787,14 @@ echo '<!--<link rel="stylesheet" type="text/css" href="http://cdn.leafletjs.com/
 			 //google.maps.event.addListener(map, 'zoom_changed', function() {
 			    //zoomLevel = map.getZoom();
 			  //  console.log(map.getCenter());
-			//}); 
+			//});
 		//}
 		//initialize();
 		</script>
-	
-	
-	
-	
+
+
+
+
 	<!-- <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true&callback=initialize">
 	</script> -->
 	<?php }?>
@@ -1874,6 +1875,31 @@ echo '<!--<link rel="stylesheet" type="text/css" href="http://cdn.leafletjs.com/
         </div>
         <div class="modal-body">
 
+        </div>
+        <div class="modal-footer">
+
+        </div>
+    </div>
+
+</div>
+
+<div id="unHideSelector" class="modal">
+
+    <div class="modal-content">
+        <div class="modal-header">
+            <span id="closeUnHideSelector" class="close">&times;</span>
+            <h2></h2>
+        </div>
+        <div class="modal-body">
+          <form>
+              <input id="items" type="radio" name="choix" value="items"> <label for="items">Items </label><br>
+              <input id="reps" type="radio" name="choix" value="reps" checked> <label for="reps"> Reports</label> <br>
+          </form>
+          
+
+          <table id="unn" class="table">
+
+          </table>
         </div>
         <div class="modal-footer">
 

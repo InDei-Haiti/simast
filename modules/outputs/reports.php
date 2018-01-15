@@ -298,7 +298,7 @@ if ($_POST ['mode'] == 'save' || $_POST ['mode'] == 'update') {
                 $blob = base64_encode(fread($fh,filesize($_SESSION ['fileNameCshfBack'])));
                 $html = '<img src="data:image/png;base64,'.$blob.'" class="grer" data-rep_item="graph">';*/
             }
-			
+
 			//$_SESSION ['fileNameCshfBack']
 			//var_dump($_POST);
             $html = mysql_real_escape_string($html);
@@ -353,7 +353,7 @@ if ($_POST ['mode'] == 'save' || $_POST ['mode'] == 'update') {
 							$html = mysql_fetch_row($res);
 							echo $html[0];
 						}
-						
+
 					}else
 						echo proceedReportItem($irdata);
 				}
@@ -512,7 +512,7 @@ if ($_POST ['mode'] == 'save' || $_POST ['mode'] == 'update') {
 //							echo mysql_errno().':'.mysql_error();
 //							echo "<br />".$sql;
 						}
-									
+
 					}else{
 						echo json_encode(array(
 							"status"=>"echec",
@@ -521,6 +521,52 @@ if ($_POST ['mode'] == 'save' || $_POST ['mode'] == 'update') {
 					}
 				}
 
+			}
+
+			break;
+		case "getHidedElmts":
+			if(isset($_GET["cached"]) AND $_GET["cached"] == 0){
+				$q = new DBQuery();
+				$q->addQuery("id,title,itype");
+				$q->addTable('report_items');
+				$q->addWhere("actif = 0 ");
+				$theItems = $q->loadList();
+				unset($q);
+
+				$q = new DBQuery();
+				$q->addQuery("title,id");
+				$q->addTable('reports');
+				$q->addWhere("actif = 0 ");
+				$theReps = $q->loadList();
+
+				$rslt = array("items"=>$theItems,
+											"reports"=>$theReps
+								);
+				echo json_encode($rslt);
+			}elseif(isset($_GET["cached"]) AND $_GET["cached"] == 1){
+						if(isset($_GET["chk"]) AND $_GET["chk"]==0){
+							$sql = "UPDATE report_items SET actif = 1 WHERE id = ".$_GET["id"];
+							$res=mysql_query($sql);
+							if($res){
+								echo "ok";
+							}else{
+								echo "no";
+	//							echo mysql_errno().':'.mysql_error();
+	//							echo "<br />".$sql;
+							}
+
+
+						}else{
+							$sql = "UPDATE reports SET actif = 1 WHERE id = ".$_GET["id"];
+							$res=mysql_query($sql);
+							if($res){
+								echo "ok";
+							}else{
+								echo "no";
+	//							echo mysql_errno().':'.mysql_error();
+	//							echo "<br />".$sql;
+							}
+						}
 			}
 
 			break;

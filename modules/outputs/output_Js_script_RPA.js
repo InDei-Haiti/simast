@@ -246,4 +246,86 @@ function cacheReport(id_report,cv,chx){
 }
 
 
+// Unhide Element Cached
 
+$(document).ready(function(){
+    $("#showCachedElms").click(function(ev){
+        ev.preventDefault();
+        $j.ajax({
+            url: "?m=outputs&a=reports&mode=getHidedElmts&cached=0&suppressHeaders=1",
+            type: 'get',
+            success: function(data){
+              $("#unn tbody").empty();
+              data = JSON.parse(data);
+              console.log(data.reports);
+                $("#unn").append("<tr><td>Nom</td><td>Type</td><td>Decacher</td></tr>");
+              for(var i = 0; i < data.reports.length; i++){
+                  $("#unn").append("<tr><td>"+data.reports[i].title+"</td><td>Report</td><td><span onclick='unHideElmts("+data.reports[i].id+",0)'>Afficher</span></td></tr>");
+              }
+            }
+        });
+
+        $('input[type=radio][name=choix]').change(function() {
+            if (this.value == 'items') {
+              $j.ajax({
+                  url: "?m=outputs&a=reports&mode=getHidedElmts&cached=0&suppressHeaders=1",
+                  type: 'get',
+                  success: function(data){
+                    $("#unn tbody").empty();
+                    data = JSON.parse(data);
+                    console.log(data.reports);
+                      $("#unn").append("<tr><td>Nom</td><td>Type</td><td>Decacher</td></tr>");
+                    for(var i = 0; i < data.items.length; i++){
+                        $("#unn").append("<tr><td>"+data.items[i].title+"</td><td>"+data.items[i].itype+"</td><td><span onclick='unHideElmts("+data.reports[i].id+",1)'>Afficher</span></td></tr>");
+                    }
+                  }
+              });
+            }
+            else if (this.value == 'reps') {
+              $j.ajax({
+                  url: "?m=outputs&a=reports&mode=getHidedElmts&cached=0&suppressHeaders=1",
+                  type: 'get',
+                  success: function(data){
+                    $("#unn tbody").empty();
+                    data = JSON.parse(data);
+                    console.log(data.items);
+                      $("#unn").append("<tr><td>Nom</td><td>Type</td><td>Decacher</td></tr>");
+                    for(var i = 0; i < data.reports.length; i++){
+                        $("#unn").append("<tr><td>"+data.reports[i].title+"</td><td>Report</td><td><span onclick='unHideElmts("+data.items[i].id+",0)'>Afficher</span></td></tr>");
+                    }
+                  }
+              });
+            }
+        });
+        var getModal = $("#unHideSelector");
+        getModal.css("display","block");
+        $("#closeUnHideSelector").click(function(){
+          getModal.css("display","none");
+        });
+    });
+});
+
+function unHideElmts(id,chx){
+    if(chx == 0){
+      $j.ajax({
+          url: "?m=outputs&a=reports&mode=getHidedElmts&cached=1&suppressHeaders=1&chx="+chx+"&id="+id,
+          type: 'get',
+          success: function(data){
+              if(data == "ok"){
+                  location.reload();
+              }
+          }
+      });
+    }else{
+      $j.ajax({
+          url: "?m=outputs&a=reports&mode=getHidedElmts&cached=1&suppressHeaders=1&chx="+chx+"&id="+id,
+          type: 'get',
+          success: function(data){
+            if(data == "ok"){
+                location.reload();
+            }
+          }
+
+      });
+    }
+}
