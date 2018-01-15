@@ -204,25 +204,44 @@ $("#submitButton").click(function(){
 
 });
 
-function cacheReport(id_report,cv){
-    if(confirm("You want desactive this report ?")){
-        // var $qr=$j("#qsr_"+cv);
-        // var data='mode=query&imode=del&stype='+$qr.find("td:eq(2)").text()+
-        //     '&sid='+$qr.find(".qeditor").attr("data-id");
-        $j.ajax({
-            url: "?m=outputs&a=reports&mode=desactive_report&suppressHeaders=1&idntf="+id_report,
-            type: 'get',
-            success: function(data){
-                if(data = 'ok'){
-                    // alert("Reussi");
-                    // $("[id^=qsr_][data-id = "+id_report+"]").html();
-                    // console.log($("#qsr_"+cv).html());
-                    $("#qsr_"+cv).fadeOut('slow',function(){
-                        $("#qsr_"+cv).remove();
-                    });
+function cacheReport(id_report,cv,chx){
+    if(chx == 0){
+        if(confirm("You want desactive this report ?")){
+            // var $qr=$j("#qsr_"+cv);
+            // var data='mode=query&imode=del&stype='+$qr.find("td:eq(2)").text()+
+            //     '&sid='+$qr.find(".qeditor").attr("data-id");
+            $j.ajax({
+                url: "?m=outputs&a=reports&mode=desactive_report&suppressHeaders=1&idntf="+id_report+"&chx="+chx,
+                type: 'get',
+                success: function(data){
+                    if(data = 'ok'){
+                        // alert("Reussi");
+                        // $("[id^=qsr_][data-id = "+id_report+"]").html();
+                        // console.log($("#qsr_"+cv).html());
+                        $("#qsr_"+cv).fadeOut('slow',function(){
+                            $("#qsr_"+cv).remove();
+                        });
+                    }
                 }
-            }
-        });
+            });
+        }
+    }else if(chx == 1){
+        if(confirm("You want desactive this item ?")){
+            $j.ajax({
+                url: "?m=outputs&a=reports&mode=desactive_report&suppressHeaders=1&idntf="+id_report+"&chx="+chx,
+                type: 'get',
+                success: function(data){
+                    if(data = 'ok'){
+                        // alert("Reussi");
+                        // $("[id^=qsr_][data-id = "+id_report+"]").html();
+                        // console.log($("#qsr_"+cv).html());
+                        $("#qsr_"+cv).fadeOut('slow',function(){
+                            $("#qsr_"+cv).remove();
+                        });
+                    }
+                }
+            });
+        }
     }
 }
 

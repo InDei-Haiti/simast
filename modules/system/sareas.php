@@ -46,6 +46,7 @@ if(isset($_GET['mode'])){
 
 ?>
 <script type="text/javascript" src="<?php echo DP_BASE_URL?>/style/default/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="<?php echo DP_BASE_URL?>/style/default/jquery-ui.min.js"></script>
 <script type="text/javascript">
 
 	/*

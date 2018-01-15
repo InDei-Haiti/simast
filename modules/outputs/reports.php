@@ -320,7 +320,7 @@ if ($_POST ['mode'] == 'save' || $_POST ['mode'] == 'update') {
 //                    echo 'yes';
                 }
             }
-			$sql = 'select * from report_items order by itype';
+			$sql = 'select * from report_items WHERE actif = 1 order by itype ';
 			$res = mysql_query($sql);
 			$items = array();
 			if (is_resource($res)) {
@@ -372,16 +372,32 @@ if ($_POST ['mode'] == 'save' || $_POST ['mode'] == 'update') {
 			echo $pok;
 			break;
 		case 'desactive_report':
-			if(isset($_GET['idntf'])){
-				$sql_desac = "UPDATE reports SET actif = 0 WHERE id = ".$_GET['idntf'];
-//				echo $sql_desac;
-				$res=mysql_query($sql_desac);
-				if($res){
-					echo 'ok';
+			if(isset($_GET["chx"]) AND $_GET["chx"] == 0){
+				if(isset($_GET['idntf'])){
+					$sql_desac = "UPDATE reports SET actif = 0 WHERE id = ".$_GET['idntf'];
+	//				echo $sql_desac;
+					$res=mysql_query($sql_desac);
+					if($res){
+						echo 'ok';
+					}
+				}else{
+					echo "Je suis Alexis mmmm";
 				}
-			}else{
-				echo "Je suis Alexis mmmm";
 			}
+
+			if(isset($_GET["chx"]) AND $_GET["chx"] == 1){
+				if(isset($_GET['idntf'])){
+					$sql_desac = "UPDATE report_items SET actif = 0 WHERE id = ".$_GET['idntf'];
+					//				echo $sql_desac;
+					$res=mysql_query($sql_desac);
+					if($res){
+						echo 'ok';
+					}
+				}else{
+					echo "Je suis Alexis mmmm";
+				}
+			}
+
 
 			break;
 		case 'item_import':

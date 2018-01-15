@@ -944,7 +944,7 @@ echo '<br/>
                         <!--<th class="phead">&nbsp;</th>-->
                         <th class="phead">'.$AppUI->_('Name').'</th>
                         <th class="phead">'.$AppUI->_('Type').'</th>
-                        <th class="phead">'.$AppUI->_('Item Type').'</th>
+                        <!--<th class="phead">'.$AppUI->_('Item Type').'</th>-->
                         <th class="phead">'.$AppUI->_('Description').'</th>
                         <!--<th class="phead">'.$AppUI->_('Start Date').'</th>
                         <th class="phead">'.$AppUI->_('End Date').'</th>-->
@@ -977,7 +977,7 @@ echo '<br/>
                 $st=trimView($row['qname']);
                 $qsr.='<td title ="'.$st['orig'].'" data-text="'.$st['orig'].'" '.($st['show'] === true ? ' class="moreview"' : '').' data-id="'.$row['id'].'"><span class="fhref flink" onclick="qurer.run(\''.$trid.'\',\'run\');">'.$st['str'].'</span></td>
                 <td align="center">'.$pnameOut.'</td>
-                <td>&nbsp;</td>';
+                <!--<td>&nbsp;</td>-->';
                 $st=trimView($row['qdesc']);
                 $qsr.='<td data-text="'.$st['orig'].'"'.($st['show'] === true ? ' class="moreview"' : '').' style="width: 130px;">'.$st['str'].'</td>';
                 $sdateClean=viewDate($row['sdate']);
@@ -1006,7 +1006,7 @@ echo '<br/>
                 $qsr.='
                 <!-- <td ><span title="Run" class="fhref"><img src="/images/run1.png" weight=22 height=22 border=0 alt="Run"></span></td> -->
                 <td align="center">
-                <span title="'.$AppUI->_('Desactive').'" style="color: blue;font-size: large" class="fa fa-ban" data-id="'.$row['id'].'" onclick="cacheReport('.$row['id'].','.$trid.')"></span>
+                <span title="'.$AppUI->_('Desactive').'" style="color: blue;font-size: large" class="fa fa-ban" data-id="'.$row['id'].'" onclick="cacheReport('.$row['id'].','.$trid.',0)"></span>
                 <span title="'.$AppUI->_('Delete').'" class="fhref fa fa-trash-o" style="color: blue;font-size: large" onclick="qurer.delq(\''.$trid.'\');" >
                 <!-- <img src="/images/delete1.png" weight=16 height=16 border=0 alt="Delete"> -->
                 </span>
