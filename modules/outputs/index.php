@@ -926,7 +926,7 @@ echo '<br/>
 					<table id="filterstab" style="display: none;"><tbody><tr><td colspan="4">
 					&nbsp;Add filter: <select id="select_field" onchange="setTableFilter_output()"><option></option></select></td></tr></tbody></table></fieldset><fieldset id="options" style="margin-left: -7px; width: 88%" class="collapsible collapsed header_collapsible">
 			</fieldset>
-	                <input type="button" class="ce pi ahr" value="Apply" id="submitButton" > <button class="ce pi ahr" id="showCachedElms">Decacher Elements</button></form></div>
+	                <input type="button" class="ce pi ahr" value="Apply" id="submitButton" > <button class="ce pi ahr pull-right" style="margin-right: 58px;" id="showCachedElms">Decacher Elements</button></form></div>
 
             <!--Haiti-->
             <table cellspacing="1" cellpadding="2" border="0" class="tbl tablesorter moretable" id="ittable" style="display: none;">
@@ -944,12 +944,12 @@ echo '<br/>
                     <tr>
                         <!--<th class="phead">&nbsp;</th>-->
                         <th class="phead">'.$AppUI->_('Name').'</th>
-                        <th class="phead">'.$AppUI->_('Type').'</th>
+                        <th class="phead showMain">'.$AppUI->_('Type').'</th>
                         <!--<th class="phead">'.$AppUI->_('Item Type').'</th>-->
-                        <th class="phead">'.$AppUI->_('Description').'</th>
+                        <th class="phead showMain">'.$AppUI->_('Description').'</th>
                         <!--<th class="phead">'.$AppUI->_('Start Date').'</th>
                         <th class="phead">'.$AppUI->_('End Date').'</th>-->
-                        <th class="phead">&nbsp;</th>
+                        <th class="phead showMain">Actions&nbsp;</th>
                         <!--<th class="phead">&nbsp;</th>-->
                     </tr>
                 </thead>';
@@ -1007,14 +1007,14 @@ echo '<br/>
                 $qsr.='
                 <!-- <td ><span title="Run" class="fhref"><img src="/images/run1.png" weight=22 height=22 border=0 alt="Run"></span></td> -->
                 <td align="center">
-                <span title="'.$AppUI->_('Desactive').'" style="color: blue;font-size: large" class="fa fa-ban" data-id="'.$row['id'].'" onclick="cacheReport('.$row['id'].','.$trid.',0)"></span>
-                <span title="'.$AppUI->_('Delete').'" class="fhref fa fa-trash-o" style="color: blue;font-size: large" onclick="qurer.delq(\''.$trid.'\');" >
-                <!-- <img src="/images/delete1.png" weight=16 height=16 border=0 alt="Delete"> -->
-                </span>
-                <span title="'.$AppUI->_('Export').'" style="color: blue;font-size: large" class="exportq fa fa-download" onclick="qurer.run(\''.$trid.'\',\'export\');" ></span>
-                <span title="'.$AppUI->_('Edit').'" style="color: blue;font-size: large" class="qreditor fa fa-pencil" data-id="'.$row['id'].'"></span>
+                <span title="'.$AppUI->_('Edit').'" style="color: #354c8c;display: inline-flex;margin:0; padding:0;width: 25px;float:left;font-size: smaller;" class="qreditor fa fa-edit" data-id="'.$row['id'].'"></span>                
+                <span title="'.$AppUI->_('Export').'" style="color: #354c8c;display: inline-flex;margin:0; padding:0;width: 25px;float:left;font-size: smaller;" class="exportq fa fa-download" onclick="qurer.run(\''.$trid.'\',\'export\');" ></span>
+                <span title="'.$AppUI->_('Desactive').'" style="color: #354c8c;display: inline-flex;margin:0; padding:0;width: 25px;float:left;font-size: smaller;" class="fa fa-ban showMain" data-id="'.$row['id'].'" onclick="cacheReport('.$row['id'].','.$trid.',0)"></span>
+                <span title="'.$AppUI->_('Delete').'" class="fhref fa fa-trash-o" style="color: #354c8c;display: inline-flex;margin:0; padding:0;width: 25px;float:left;font-size: smaller;" onclick="qurer.delq(\''.$trid.'\');" ></span>
+                
+                
                 </td>
-                <!--<td align="center"><div title="'.$AppUI->_('Export').'" style="color: blue;font-size: large" class="exportq fa fa-download" onclick="qurer.run(\''.$trid.'\',\'export\');" ></div></td>-->
+                
                 </tr>';
                 $trid++;
                 echo $qsr;
@@ -1891,10 +1891,14 @@ echo '<!--<link rel="stylesheet" type="text/css" href="http://cdn.leafletjs.com/
             <h2></h2>
         </div>
         <div class="modal-body">
-          <form>
+          <form style="float:left;">
               <input id="items" type="radio" name="choix" value="items"> <label for="items">Items </label><br>
               <input id="reps" type="radio" name="choix" value="reps" checked> <label for="reps"> Reports</label> <br>
           </form>
+
+        <div id="countShowed" style="margin-top: 29px;margin-left: 300px;font-weight: bold;">
+            <p></p>
+        </div>
           
 
           <table id="unn" class="table">

@@ -255,12 +255,12 @@ $(document).ready(function(){
             url: "?m=outputs&a=reports&mode=getHidedElmts&cached=0&suppressHeaders=1",
             type: 'get',
             success: function(data){
-              $("#unn tbody").empty();
+              $("#unn").empty();
               data = JSON.parse(data);
               console.log(data.reports);
-                $("#unn").append("<tr><td>Nom</td><td>Type</td><td>Decacher</td></tr>");
+                $("#unn").append("<thead><tr><th>Nom</th><th>Type</th><th>Decacher</th></tr></thead>");
               for(var i = 0; i < data.reports.length; i++){
-                  $("#unn").append("<tr><td>"+data.reports[i].title+"</td><td>Report</td><td><span onclick='unHideElmts("+data.reports[i].id+",0)'>Afficher</span></td></tr>");
+                  $("#unn").append("<tr><td>"+data.reports[i].title+"</td><td>Report</td><td id='clls_"+data.reports[i].id+"'><span onclick='unHideElmts("+data.reports[i].id+",0)'><i style='color: #354c8c;' class='fa fa-toggle-on fa-4' aria-hidden='true'></i></span></td></tr>");
               }
             }
         });
@@ -271,12 +271,12 @@ $(document).ready(function(){
                   url: "?m=outputs&a=reports&mode=getHidedElmts&cached=0&suppressHeaders=1",
                   type: 'get',
                   success: function(data){
-                    $("#unn tbody").empty();
+                    $("#unn").empty();
                     data = JSON.parse(data);
                     console.log(data.reports);
-                      $("#unn").append("<tr><td>Nom</td><td>Type</td><td>Decacher</td></tr>");
+                      $("#unn").append("<thead><tr><th>Nom</th><th>Type</th><th>Decacher</th></tr></thead>");
                     for(var i = 0; i < data.items.length; i++){
-                        $("#unn").append("<tr><td>"+data.items[i].title+"</td><td>"+data.items[i].itype+"</td><td><span onclick='unHideElmts("+data.reports[i].id+",1)'>Afficher</span></td></tr>");
+                        $("#unn").append("<tr><td>"+data.items[i].title+"</td><td>"+data.items[i].itype+"</td><td id='clls_"+data.reports[i].id+"'><span onclick='unHideElmts("+data.reports[i].id+",1)'><i style='color: #354c8c;' class='fa fa-toggle-on fa-4' aria-hidden='true'></i></span></td></tr>");
                     }
                   }
               });
@@ -286,12 +286,12 @@ $(document).ready(function(){
                   url: "?m=outputs&a=reports&mode=getHidedElmts&cached=0&suppressHeaders=1",
                   type: 'get',
                   success: function(data){
-                    $("#unn tbody").empty();
+                    $("#unn").empty();
                     data = JSON.parse(data);
                     console.log(data.items);
-                      $("#unn").append("<tr><td>Nom</td><td>Type</td><td>Decacher</td></tr>");
+                      $("#unn").append("<thead><tr><th>Nom</th><th>Type</th><th>Decacher</th></tr></thead>");
                     for(var i = 0; i < data.reports.length; i++){
-                        $("#unn").append("<tr><td>"+data.reports[i].title+"</td><td>Report</td><td><span onclick='unHideElmts("+data.items[i].id+",0)'>Afficher</span></td></tr>");
+                        $("#unn").append("<tr><td>"+data.reports[i].title+"</td><td>Report</td><td id='clls_"+data.items[i].id+"'><span onclick='unHideElmts("+data.items[i].id+",0)'><i style='color: #354c8c;' class='fa fa-toggle-on fa-4' aria-hidden='true'></i></span></td></tr>");
                     }
                   }
               });
@@ -301,18 +301,26 @@ $(document).ready(function(){
         getModal.css("display","block");
         $("#closeUnHideSelector").click(function(){
           getModal.css("display","none");
+            location.reload();
         });
     });
 });
-
+var cnts = 0;
 function unHideElmts(id,chx){
+
     if(chx == 0){
       $j.ajax({
           url: "?m=outputs&a=reports&mode=getHidedElmts&cached=1&suppressHeaders=1&chx="+chx+"&id="+id,
           type: 'get',
           success: function(data){
+              cnts++;
               if(data == "ok"){
-                  location.reload();
+                  // location.reload();
+                  $("#clls_"+id).closest("tr").fadeOut('slow',function(){
+                      $("#clls_"+id).closest("tr").remove();
+                  });
+                  $("#countShowed p").html("<strong>"+cnts+" &eacute;l&eacute;ments ont &eacute;t&eacute; d&eacute;cach&eacute;. Cliquez sur la croix pour le/les voir.</strong>");
+
               }
           }
       });
@@ -321,8 +329,13 @@ function unHideElmts(id,chx){
           url: "?m=outputs&a=reports&mode=getHidedElmts&cached=1&suppressHeaders=1&chx="+chx+"&id="+id,
           type: 'get',
           success: function(data){
+              cnts++;
             if(data == "ok"){
-                location.reload();
+                // location.reload();
+                $("#clls_"+id).closest("tr").fadeOut('slow',function(){
+                    $("#clls_"+id).closest("tr").remove();
+                });
+                $("#countShowed p").html("<strong>"+cnts+" &eacute;l&eacute;ments ont &eacute;t&eacute; d&eacute;cach&eacute;. Cliquez sur la croix pour le/les voir.</strong>");
             }
           }
 
