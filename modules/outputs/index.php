@@ -906,14 +906,14 @@ echo '<br/>
 		<br> -->
 
         <p>
-            <span onclick="$j(\'#importbox\').toggle();" class="fhref flink">'.$AppUI->_('Import query').'</span><span class="offwall msgs" id="msg_place"></span>
+           <!-- <span onclick="$j(\'#importbox\').toggle();" class="fhref flink">'.$AppUI->_('Import query').'</span><span class="offwall msgs" id="msg_place"></span>
             <div id="importbox" class="myimporter">
                 <form name="upq" action="/?m=outputs&suppressHeaders=1" enctype="multipart/form-data" method="POST" onsubmit="return AIM.submit(this, {\'onStart\' : startCallback, \'onComplete\' : qurer.extractRow})">
                     <input type="file" name="qfile" id="fultra" data-ext="qbn|rbn|ibn">
                     <input type="submit" value="Import query/item" class="button" disabled="disabled" >
                     <input type="hidden" name="mode" value="importquery">
                 </form>
-            </div>
+            </div>-->
 
 
 
@@ -971,7 +971,7 @@ echo '<br/>
                     $edClass='qreditor';
                     $pnameOut='Report';
                 }else{
-                    $pnameOut='Table'.$pname;
+                    $pnameOut='TableQuery';
                 }
                 $qsr.='<tr id="qsr_'.$trid.'" data-showr="'.$sr.'">
                 <!--<td title="Edit" align="center"><div class="'.$edClass.' fa fa-pencil" data-id="'.$row['id'].'" style="color: blue;font-size: large"></div></td>-->';
