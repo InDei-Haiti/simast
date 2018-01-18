@@ -2295,7 +2295,7 @@ class Stater {
 				$html.='</tr><tr>';
 				$htmladd='</tr>';
 			}
-            //$htmlx = '';
+            $htmlx = '';
 			foreach ( $svals ['rows'] as $rid => &$rhead ) {
 			    /// $this->tcomp['rows'][$dateDetail['rows']]->testYear()
                 ($dateDetail['rows'] === $rid && !$checkTestYear) ? $caddd=1: $caddd=0;

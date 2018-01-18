@@ -866,9 +866,9 @@ var v = null;
 
         setTimeout(unactiveBuildStats,500);
     }
-
+    var $objectClick;
     function miness(){
-        if($("#rbox").children("li").length > 0){
+        /*if($("#rbox").children("li").length > 0){
           $("#rbox").children("li").each(function(){
             if($(this).attr("data-type")=="numeric" || $(this).attr("data-type")=="calculateNumeric"){
               $(this).find("div.kill_area").html('<i class="fa fa-close" style="font-size:24px;color:red"></i>');
@@ -886,30 +886,33 @@ var v = null;
               $(this).find("div.kill_area").html('<i class="fa fa-close" style="font-size:24px;color:red"></i>');
             }
           });
-        }
+        }*/
 
-        if($("#cbox").children("li").length > 0){
+        /*if($("#cbox").children("li").length > 0){
           $("#cbox").children("li").each(function(){
             if($(this).attr("data-type")=="numeric" || $(this).attr("data-type")=="calculateNumeric"){
-              $(this).find("div.kill_area").html('<i class="fa fa-close" style="font-size:24px;color:red"></i>');
+              //$(this).find("div.kill_area").html('<i class="fa fa-close" style="font-size:24px;color:red"></i>');
                 // $("#rbox li div.kill_area").html('<i class="fa fa-close" style="font-size:24px;color:red"></i>');
                 // $("li.ui-state-disabled").css("background-image","");
 
                 if($(this).children("div.showmn").length == 0){
-                    $(this).append("<div class='showmn'></div>");
-                    var theDownArrow = $(this).find(".showmn");
-                    if(theDownArrow.html() == ""){
-                       theDownArrow.html('<i class="fa fa-chevron-down" style="margin-top: 21px;margin-left: -250px; color:white;"></i>');
-                    }
+                    //$(this).append("<div class='showmn'></div>");
+                    //var theDownArrow = $(this).find(".showmn");
+                    //if(theDownArrow.html() == ""){
+                      // theDownArrow.html('<i class="fa fa-chevron-down" style="margin-top: 21px;margin-left: -250px; color:white;"></i>');
+                    //}
                 }
             }else{
-              $(this).find("div.kill_area").html('<i class="fa fa-close" style="font-size:24px;color:red"></i>');
+              //$(this).find("div.kill_area").html('<i class="fa fa-close" style="font-size:24px;color:red"></i>');
             }
           });
-        }
-        $(".showmn i").click(function(){
+        }*/
+
+        /*$(".showmn1 i").click(function(){
 //          console.log($(this).closest("li").html());
 //          $("<p style='display:none;'>LeMenu</p>").insertAfter($(this).closest("li"));
+            $objectClick = $(this).closest("li");
+            console.log($objectClick.html());
             var varTitle = $(this).closest("li").find("div.ulit").text();
             var getModal = $("#avgCalcs");
             getModal.css("display","block");
@@ -922,12 +925,15 @@ var v = null;
               '<div class="form-group"><input id="sum" type="checkbox" class="form-control theCheck" /><label style="margin-left:5px;" for="sum">SUM</label><input type="text" style="width:  300px; margin-left:10px;" class="form-control" name="sum" value="SUM -'+varTitle+'" /></div><br /><br />' +
                '<div class="form-group"><input id="min" type="checkbox" class="form-control theCheck" /><label style="margin-left:5px;" for="max">MIN</label><input type="text" style="width:  300px; margin-left:10px;" class="form-control" name="min" value="MIN -'+varTitle+'" /></div><br /><br />' +
                '<div class="form-group"><input id="max" type="checkbox" class="form-control theCheck" /><label style="margin-left:5px;" for="max">MAX</label><input type="text" style="width:  300px; margin-left:10px;" class="form-control" name="max" value="MAX -'+varTitle+'" /></div><br /><br />' +
-              '<br /><button id="valid" class="button ce pi ahr">Valider</button></form></div>');
-        });
+              '<br /><button id="valid-choose-func" class="button ce pi ahr">Valider</button></form></div>');
+        });*/
 
-        $("#valid").click(function(event){
+        /*$("#valid-choose-func1").click(function(event){
+            //var $objectClick;
             event.preventDefault();
             canClose = 1;
+            console.log($objectClick);
+            $objectClick.attr("data-example", "Haiti trou de merde");
             $(".theCheck").each(function(){
               if($(this).is(":checked")){
                 le_id = this.id; //console.log(this.id);
@@ -939,8 +945,8 @@ var v = null;
                       }
                     }
 
-              });
-            }
+                });
+              }
             });
 
             if(canClose == 1){
@@ -948,7 +954,7 @@ var v = null;
             }else{
               console.log("Le champs cocher ne doit pas etre vide!");
             }
-        });
+        });*/
         // if($("#rbox").children().length > 0){
         //     $("#rbox li div.kill_area").html('<i class="fa fa-close" style="font-size:24px;color:red"></i>');
         //     $("li.ui-state-disabled").css("background-image","");
@@ -971,7 +977,7 @@ var v = null;
         //     $("#cbox li div.kill_area").html('<i class="fa fa-close" style="font-size:24px;color:red"></i>');
         //     $("li.ui-state-disabled").css("background-image","");
         // }
-        setTimeout(miness,500);
+        //setTimeout(miness,500);
     }
 
     $(document).ready(function(){

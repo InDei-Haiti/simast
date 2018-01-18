@@ -9,7 +9,7 @@ var sFrames = function (){
 	this.periods=[];this.leader;this.ntype;this.nfld;this.ltext;
 	this.times = ['none','All','weekly','monthly','quarterly','annually'];this.$gbox=$j("#gbox");
 	this.lf;this.launch=false;this.title;this.dobc= new RegExp("dob",'ig');	
-	this.ddvi = $j("<div class='kill_area' title='Delete'></div>");
+	this.ddvi = $j("<div class='kill_area' title='Delete'><i class='fa fa-close' style='font-size:24px;color:red'></i></div>");
 	this.ranges = [];	
 	this.groupSum={visual:{},title:''};
 	this.boxMode;
@@ -264,17 +264,20 @@ sFrames.prototype.rcvField = function ($pitem, udiv, pev){
     }
     fromer = $pitem.sender;
 	df = $item.attr('data-hid');
+
+
+
 	this.findGrouped(udiv,df);
     if (self.checkCurr(udiv, $item)) {
 		var dimg = $j(self.ddvi).clone(true), opp, $nwid, cact = false;
+
 		if (dstp) {
 			dstp = false;
 			$nwid = $j($item).clone(true);
+
 			$j($item).draggable('disable');
-			
 		}
 		else {
-			
 			var $icopy = self.findcopy(df);
 			$nwid = $j($icopy).clone();
 			$nwid.draggable('enable').removeClass('ui-state-disabled');
@@ -282,10 +285,16 @@ sFrames.prototype.rcvField = function ($pitem, udiv, pev){
 			$j($icopy).draggable('disable').addClass('ui-state-disabled');
 			cact = true;
 		}
+
 		self.recruiter($j($item).attr("data-hid"), udiv);
 		$nwid.addClass("head-field").removeClass("ui-widget-content").find("div.fbox").toggleClass("fbox fbox2");//.addClass("fbox2");
 		// if(pev == "emul")$nwid.draggable('enable').removeClass('ui-state-disabled');
 		$nwid.find("div").after(dimg);
+        if($nwid.attr("data-type")=="numeric" || $nwid.attr("data-type")=="calculateNumeric"){
+            $nwid.append("<div class='showmn'><i class='fa fa-chevron-down' style='margin-top: 21px;margin-left: -250px; color:white;'></i></div>");
+        }
+        //$nwid.append("<div class='datafilter'><i class='fa fa-filter' style='margin-top: -10px;color:white;'></i></div>");
+
 		if (udiv == "rbox") {
 			$nwid.bind('click', function(e){
 				//self.dataBox='row';
@@ -389,6 +398,50 @@ sFrames.prototype.rcvField = function ($pitem, udiv, pev){
 		}, function(x){
 			self.setFree(this, 'click', x.data.area);
 		});
+        $nwid.find(".showmn").click(function(){
+            var varTitle = $(this).closest("li").find("div.ulit").text();
+            var getModal = $("#avgCalcs");
+            getModal.css("display","block");
+            $("#closeAvgCalcsModal").click(function(){
+                getModal.css("display","none");
+            });
+            $("#avgCalcs div.modal-body").html('<br /><br /><div class="row" style="padding-left: 10px;"><div class="form-inline">' +
+                '<div class="form-group"><input id="avg" type="checkbox" class="form-control theCheck" /><label style="margin-left:5px;" for="avg">AVG</label><input type="text" style="width:  300px; margin-left:10px;" class="form-control" name="avg" value="AVG -'+varTitle+'" /></div> <br /><br />' +
+                '<div class="form-group"><input id="sum" type="checkbox" class="form-control theCheck" /><label style="margin-left:5px;" for="sum">SUM</label><input type="text" style="width:  300px; margin-left:10px;" class="form-control" name="sum" value="SUM -'+varTitle+'" /></div><br /><br />' +
+                '<div class="form-group"><input id="min" type="checkbox" class="form-control theCheck" /><label style="margin-left:5px;" for="max">MIN</label><input type="text" style="width:  300px; margin-left:10px;" class="form-control" name="min" value="MIN -'+varTitle+'" /></div><br /><br />' +
+                '<div class="form-group"><input id="max" type="checkbox" class="form-control theCheck" /><label style="margin-left:5px;" for="max">MAX</label><input type="text" style="width:  300px; margin-left:10px;" class="form-control" name="max" value="MAX -'+varTitle+'" /></div><br /><br />' +
+                '<br /><button id="valid-choose-func" class="button ce pi ahr">Valider</button></div></div>');
+
+            $("#valid-choose-func").click(function(){
+
+                //event.preventDefault();
+                canClose = 1;
+
+                calcFunc = [];
+                $(".theCheck").each(function(){
+                    if($(this).is(":checked")){
+                        le_id = this.id;
+						if($('[name="'+le_id+'"]').val().trim() != ""){
+                            calcFunc.push({func: le_id.toUpperCase(), title:$('[name="'+le_id+'"]').val()});
+                            $('#avgCalcs').css("display","none");
+						}else{
+                            canClose = 0;
+						}
+                    }
+                });
+
+                if(canClose == 1){
+                    $nwid.attr("data-func", JSON.stringify(calcFunc));
+                    console.log("Modification opere avec success");
+                }else{
+                    console.log("Le champs cocher ne doit pas etre vide!");
+                }
+            });
+
+        });
+
+
+
 	}
 	else 
 		if (dstp) {
@@ -862,27 +915,38 @@ sFrames.prototype.collector = function(filtersPlain){
 	};
 	$j("li", this.rtt).each(function(){
 		var $th=$j(this);
-		pres.rows.push({
-			id: $th.attr("data-hid"),
-			field:'wform_'+$th.attr("data-form")+'.'+$th.attr("data-field"),
-			type: $th.attr("data-type"),
-			sys: $th.attr("data-sys"),
-			title: $th.text()
-		});
+        objDic = {
+            id: $th.attr("data-hid"),
+            field:'wform_'+$th.attr("data-form")+'.'+$th.attr("data-field"),
+            type: $th.attr("data-type"),
+            sys: $th.attr("data-sys"),
+            title: $th.text(),
+
+        }
+        if(typeof $th.attr("data-func") !== typeof undefined && $th.attr("data-func") !== false){
+            objDic['func'] = JSON.parse($th.attr("data-func"));
+        }
+		pres.rows.push(objDic);
 	});
 	$j("li", this.ctt).each(function(){
 		var $th=$j(this);
-		pres.cols.push({
-			id: $th.attr("data-hid"),
-			field:'wform_'+$th.attr("data-form")+'.'+$th.attr("data-field"),
-			type: $th.attr("data-type"),
+        objDic = {
+            id: $th.attr("data-hid"),
+                field:'wform_'+$th.attr("data-form")+'.'+$th.attr("data-field"),
+            type: $th.attr("data-type"),
             sys: $th.attr("data-sys"),
-			title: $th.text()
-		});
+            title: $th.text(),
+
+        }
+        if(typeof $th.attr("data-func") !== typeof undefined && $th.attr("data-func") !== false){
+            objDic['func'] = JSON.parse($th.attr("data-func"));
+		}
+		pres.cols.push(objDic);
 		if($j("div.bfg",$th).hasClass("headf-connect")){
 			pres.cgroup.push($th.attr("data-hid"));
 		}
 	});
+	console.log(pres);
 	return pres;
 };
 urlData = null;
@@ -2446,7 +2510,7 @@ var grapher = (function(my){
                 //$j("#graph_tab_holder").clone(true).addClass("stabh_vis").prependTo("#graph_home");
                 setTimeout(function(){
                     $j("#graph_tab_holder").clone(true).addClass("stabh_vis").prependTo("#graph_home").show();
-				}, 10000);
+				}, 30000);
 
 					//.prependTo("#graph_home").show();
                 reporter.initGraph();

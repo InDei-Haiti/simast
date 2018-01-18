@@ -338,24 +338,25 @@ if($_POST['mode']=='save'){
     //var_dump($_POST);
 	$START = time();
 	$calcs = magic_json_decode($_POST['calcs'],true);
-	$rows = $calcs['row'];
-	$cols = $calcs['col'];
+    $svals = magic_json_decode($_POST['calcs2'],true);
+	//$rows = $calcs['row'];
+	//$cols = $calcs['col'];
 	$querysaveaj = $calcs['querysave'];
-	//echo $querysaveaj.'<br/>';
-	$svals = magic_json_decode($_POST['calcs2'],true);
-    //var_dump($rows);
-    //var_dump($cols);
-	//$allfld = arrayMerge($rows, $cols);
-	//var_dump($allfld);
-	$allfld = $rows;
-    foreach ($cols as $val){
-		$allfld[] = $val;
+    $colsvals = $svals['cols'];
+    $rowsvals = $svals['rows'];
+
+	$allfld = array();
+    foreach ($rowsvals as $val){
+        $allfld[] = $val['field'];
+    }
+    foreach ($colsvals as $val){
+		$allfld[] = $val['field'];
 	}
+
     $range = array();
     $svals['range'] = array_filter($svals['range'], function($value) { return $value !== null; });
 
-	$colsvals = $svals['cols'];
-	$rowsvals = $svals['rows'];
+
 	$range_fld = array();
 	/*echo '<pre>';
 	var_dump($svals);
@@ -407,135 +408,262 @@ if($_POST['mode']=='save'){
 	$tempsession = $_SESSION ['fileNameCsh'];
 	diskFile::init ();
 	$query = array();
-	foreach ($allfld as $fld){
-		$query[] = $fld.' AS '.str_replace('.', '_', $fld);
+	$funcPos = false;
+	foreach ($allfld as $i => $fld){
+        if($i<=(count($rowsvals)-1)){
+            $row = $rowsvals[$i];
+            if(isset($row['func'])){
+                foreach ($row['func'] as $func){
+                    $query[] = $func['func'].'(NULLIF('.$fld.',0)) AS '.$func['func'].'_'.str_replace('.', '_', $fld);
+                    $funcPos = 'row';
+                }
+            }else{
+                $query[] = $fld.' AS '.str_replace('.', '_', $fld);
+            }
+        }
+	}
+	$j = 0;
+	foreach ($allfld as $i => $fld){
+        if($i>(count($rowsvals)-1)){
+            $col = $colsvals[$j];
+            if(isset($col['func'])){
+                foreach ($col['func'] as $func){
+                    $query[] = $func['func'].'(NULLIF('.$fld.',0)) AS '.$func['func'].'_'.str_replace('.', '_', $fld);
+                    $funcPos = 'col';
+                }
+            }else{
+                $query[] = $fld.' AS '.str_replace('.', '_', $fld);
+            }
+            $j++;
+        }
 	}
 	$query = join(',', $query);
 	$sql = 'SELECT '.$query.' FROM '.$querysaveaj;
-	//echo $sql.'<br/>';
-	$res = db_exec($sql);
-	if($res) {
-        $_request = 0;
-        $keys_request = array();
-        $sql = 'SELECT COUNT(*) AS count FROM ' . $querysaveaj;
-        $res1 = db_exec($sql);
-        $count_request = db_free_result($res1);
-        $allfldq = array();
+
+    $vGroupBy = array();
+	if($funcPos){
         $wz = new Wizard('print');
-        foreach ($allfld as $field) {
-            $tab = explode('.', $field);
-            $tabform = explode('_', $tab[0]);
-            $fuid = $tabform[1];
-            $wz->loadFormInfo($fuid);
-            $fldinfo = $wz->findFieldName($tab[1]);
-            $keyn = str_replace('.', '_', $field);
-            $allfldq[$keyn]['info'] = $fldinfo;
-            if (isset($fldinfo['sysv']) && !empty($fldinfo['sysv'])) {
-                $sql = 'SELECT DISTINCT(' . $field . ') FROM ' . $querysaveaj;
-                $resdis = db_exec($sql);
-                while ($rowdatadis = db_fetch_assoc($resdis)) {
-                    $textVal = $wz->getValues($fldinfo['type'], $fldinfo['sysv'], $rowdatadis[$tab[1]]);
-                    $textVal = strval($textVal);
-                    $textVal = preg_replace('/\\\\/', '', $textVal);
-                    //$textVal = json_encode($textVal);
-                    $forStore = str_replace('"', '', $forStore);
-                    $textVal = str_replace('"', '', $textVal);
-                    $allfldq[$keyn]['value'][$rowdatadis[$tab[1]]] = $textVal;
-                    $tempsysStarter[$textVal] = $rowdatadis[$tab[1]];
-                }
+        if($funcPos == 'row'){
+            foreach ($colsvals as $col){
+                $vGroupBy[] = $col['field'];
+            }
+        }else if($funcPos == 'col'){
+            $vGroupBy = array();
+            foreach ($rowsvals as $row){
+                $vGroupBy[] = $row['field'];
             }
         }
-        /*echo '<pre>';
-        var_dump($allfldq);
-        echo '</pre>';*/
+        if(count($vGroupBy)>0){
+            $sql .= ' Group By '.implode(',', $vGroupBy);
+        }
+        if(count($colsvals) == 1 && count($rowsvals) >= 1){
+            //$addnum=(count($this->finalrow)+2);
+            $addd='<th colspan="#@!NTCOLS!@#" >&nbsp;</th></tr><tr>';
+        }else{
+            $addd='';
+        }
+        $html = '<table cellpadding=2 cellspacing=1 border="0" class="tbl sttable">'."\n";
+        $html.= '<thead><tr class="'.($addd != '' ? ' decor ': '').'"><th class="sblk " colspan="'.$ntcols.'" rowspan="' . $ntrows. '">Amount</th>'."\n\t".$addd;
+        $addnum = 0;
+        if ($funcPos == 'col') {
 
-        $tempsys = array();
-        while ($rowdata = db_fetch_assoc($res)) {
-            $keys_request[] = $_request;
-            //echo $forStore.'....';
-            $_request++;
+            if(count($rowsvals) > 0){
+                $htmlx = '';
+                foreach ( $svals ['rows'] as $rid => &$rhead ) {
+                    /// $this->tcomp['rows'][$dateDetail['rows']]->testYear()
+                    ($dateDetail['rows'] === $rid && !$checkTestYear) ? $caddd=1: $caddd=0;
+                    $tab_explode = explode(":",$rhead ['title']);
+                    $htmlx .= '<th data-ptitle="'.$rhead ['title'].'" colspan="'.($head_bonus+$caddd).'" class="missgr">' . trim($tab_explode[1]) . '</th>';
+                    $addnum++;
+                }
+                $html.=$htmlx;
+            }
+            $htmlx = '';
+            foreach ( $svals ['cols'] as $rid => &$rhead ) {
+                foreach ($rhead['func'] as $func){
+                    $htmlx .= '<th data-ptitle="'.$func['title'].'" colspan="'.($head_bonus+$caddd).'" class="missgr">' . $func['title'] . '</th>';
+                    $addnum++;
+                }
+                $html.=$htmlx;
+            }
+            //$html=str_replace('####@@@@@@####', $htmlx, $html);
+            $html .= '</tr></thead>';
+            $html .= '<tbody>';
+            $res = db_exec($sql);
+            if($res) {
+                while ($rowdata = db_fetch_assoc($res)) {
+                    $htmlx = '<tr>';
+                    if(count($rowsvals) > 0){
+
+                        foreach ( $svals ['rows'] as $rid => &$rhead ) {
+                            /// $this->tcomp['rows'][$dateDetail['rows']]->testYear()
+                            ($dateDetail['rows'] === $rid && !$checkTestYear) ? $caddd=1: $caddd=0;
+                            if (isset($rhead['sys']) && !empty($rhead['sys'])) {
+                                $textVal = $wz->getValues($rhead['type'], $rhead['sys'], $rowdata[str_replace('.', '_', $rhead['field'])]);
+                            }else{
+                                $textVal = $rowdata[str_replace('.', '_', $rhead['field'])];
+                            }
+                            if($textVal==null || $textVal==""){
+                                $htmlx = "blank";
+                                break;
+                            }
+                            $textVal = strval($textVal);
+                            $textVal = preg_replace('/\\\\/', '', $textVal);
+                            //$textVal = json_encode($textVal);
+                            $forStore = str_replace('"', '', $forStore);
+                            $textVal = str_replace('"', '', $textVal);
+                            $htmlx .= '<td class="rowhead sblk">' .$textVal. '</td>';
+                        }
+
+                    }
+                    if($htmlx=='blank'){
+                        $htmlx = '';
+                        continue;
+                    }
+                    foreach ( $svals ['cols'] as $rid => &$rhead ) {
+                        foreach ($rhead['func'] as $func){
+                            $htmlx .= '<td class="vdata">' . $rowdata[$func['func'].'_'.str_replace('.', '_', $rhead['field'])] . '</td>';
+
+                        }
+                    }
+                    $htmlx .= '</tr>';
+
+                    $html .= $htmlx;
+                }
+            }
+
+
+        }else{
+
+
+
+        }
+
+        $html .= '</table>';
+        $html=str_replace('#@!NTCOLS!@#', $addnum, $html);
+        echo $html;
+    }else{
+        $res = db_exec($sql);
+        if($res) {
+            $_request = 0;
+            $keys_request = array();
+            $sql = 'SELECT COUNT(*) AS count FROM ' . $querysaveaj;
+            $res1 = db_exec($sql);
+            $count_request = db_free_result($res1);
+            $allfldq = array();
+            $wz = new Wizard('print');
+            foreach ($allfld as $field) {
+                $tab = explode('.', $field);
+                $tabform = explode('_', $tab[0]);
+                $fuid = $tabform[1];
+                $wz->loadFormInfo($fuid);
+                $fldinfo = $wz->findFieldName($tab[1]);
+                $keyn = str_replace('.', '_', $field);
+                $allfldq[$keyn]['info'] = $fldinfo;
+                if (isset($fldinfo['sysv']) && !empty($fldinfo['sysv'])) {
+                    $sql = 'SELECT DISTINCT(' . $field . ') FROM ' . $querysaveaj;
+                    $resdis = db_exec($sql);
+                    while ($rowdatadis = db_fetch_assoc($resdis)) {
+                        $textVal = $wz->getValues($fldinfo['type'], $fldinfo['sysv'], $rowdatadis[$tab[1]]);
+                        $textVal = strval($textVal);
+                        $textVal = preg_replace('/\\\\/', '', $textVal);
+                        //$textVal = json_encode($textVal);
+                        $forStore = str_replace('"', '', $forStore);
+                        $textVal = str_replace('"', '', $textVal);
+                        $allfldq[$keyn]['value'][$rowdatadis[$tab[1]]] = $textVal;
+                        $tempsysStarter[$textVal] = $rowdatadis[$tab[1]];
+                    }
+                }
+            }
             /*echo '<pre>';
-            var_dump($rowdata);
-            echo '</pre>';
-            break;*/
-            foreach ($allfldq as $key => $fldinfo) {
-                $forStore = $rowdata[$key];
-                if (isset($fldinfo['info']['sysv']) && !empty($fldinfo['info']['sysv'])) {
-                    //$tval = $forStore;
-                    //$forStore = $wz->getValues($fldinfo['type'],$fldinfo['sysv'],$forStore);
-                    if (!in_array($key, $range_fld))
-                        $forStore = $fldinfo['value'][$forStore];
-                }
-                /*if($key=='wform_81_fld_24')
-                    echo strval($forStore).' ';*/
-                if (!is_numeric($forStore)) {
-                    $forStore = strval($forStore);
-                    if ($forStore == '0')
-                        $forStore = '-1';
-                    $forStore = utf8_encode($forStore);
-                    //$forStore = json_encode($forStore);
-                    //$forStore = str_replace('"', '', $forStore);
-                    //echo $forStore.' ';
-                } else {
-                    if ($forStore == 0)
-                        $forStore = -1;
-                }
-                $nfei->store($forStore);
-            }
-            $nfei->nextRow();
-        }
-        $bigtar_keys = (/*isset($dataRequest) && */
-            $count_request > 0) ? $keys_request : array();
-        $tddd = $nfei->getForStat();
+            var_dump($allfldq);
+            echo '</pre>';*/
 
-        diskFile::tableBodyWrite($tddd);
-        $nfei->purge();
+            $tempsys = array();
+            while ($rowdata = db_fetch_assoc($res)) {
+                $keys_request[] = $_request;
+                //echo $forStore.'....';
+                $_request++;
+                /*echo '<pre>';
+                var_dump($rowdata);
+                echo '</pre>';
+                break;*/
+                foreach ($allfldq as $key => $fldinfo) {
+                    $forStore = $rowdata[$key];
+                    if (isset($fldinfo['info']['sysv']) && !empty($fldinfo['info']['sysv'])) {
+                        //$tval = $forStore;
+                        //$forStore = $wz->getValues($fldinfo['type'],$fldinfo['sysv'],$forStore);
+                        if (!in_array($key, $range_fld))
+                            $forStore = $fldinfo['value'][$forStore];
+                    }
+                    /*if($key=='wform_81_fld_24')
+                        echo strval($forStore).' ';*/
+                    if (!is_numeric($forStore)) {
+                        $forStore = strval($forStore);
+                        if ($forStore == '0')
+                            $forStore = '-1';
+                        $forStore = utf8_encode($forStore);
+                        //$forStore = json_encode($forStore);
+                        //$forStore = str_replace('"', '', $forStore);
+                        //echo $forStore.' ';
+                    } else {
+                        if ($forStore == 0)
+                            $forStore = -1;
+                    }
+                    $nfei->store($forStore);
+                }
+                $nfei->nextRow();
+            }
+            $bigtar_keys = (/*isset($dataRequest) && */
+                $count_request > 0) ? $keys_request : array();
+            $tddd = $nfei->getForStat();
+
+            diskFile::tableBodyWrite($tddd);
+            $nfei->purge();
+        }
+
+        require_once('stater.class.php');
+        $fip=$_SESSION ['fileNameCsh'];
+        if ($fip  != '' && file_exists($baseDir.'/files/tmp/'.$fip.'.tst')) {
+            $fpath=$baseDir.'/files/tmp/'.$fip.'.tst';
+            $bar=unserialize(file_get_contents($fpath));
+            @unlink($baseDir.'/files/tmp/'.$fip.'.tss');
+            $allKeys = array_keys($bar['list']);
+            //var_dump($svals['list']);
+            if(is_array($svals['list'])){
+                $rowRules = $svals['list'];
+                if($rowRules[1] === 'hidden'){
+                    if(count($svals['list']) == 0){
+                        $svals['list']= $allKeys;
+                    }else{
+                        $svals['list'] = array_values (array_diff($allKeys, $rowRules[0]));
+                    }
+                }elseif ($rowRules[1] === 'visible'){
+                    $svals['list'] = $rowRules[0];
+                }
+            }
+            /*echo '<pre>';
+            var_export($svals['cols']);
+            //var_dump($svals);
+            echo '</pre>';*/
+            makeStat($bar,$svals);
+
+            //DiskStatCache($thtml);
+            //echo $thtml;
+            $fps=$baseDir.'/files/tmp/'.$fip.'.tss';
+            $sfh=fopen($fps,'r');
+            fpassthru($sfh);
+            fclose($sfh);
+            //unset($thtml);
+
+        }
+        $_SESSION ['fileNameCshBack'] = $_SESSION ['fileNameCsh'];
+        $END = time() - $START;
+        echo "<br/><br/>Process took $END seconds\n";
+        $_SESSION ['fileNameCsh'] = $tempsession;
     }
-	
-	require_once('stater.class.php');
-	//$cl=preg_replace('/\\\{1,}"/','"',$_POST['calcs']);
-	//$svals=json_decode(stripslashes($_POST['calcs']),true);
-	
-	//$_SESSION ['fileNameCsh']='8c4a5c4a7fe7d6bac9239b59d1818ed0';//759ee55ed403219e085c442c83be66e9';
-	$fip=$_SESSION ['fileNameCsh'];
-	//echo $fip;
-	if ($fip  != '' && file_exists($baseDir.'/files/tmp/'.$fip.'.tst')) {
-		$fpath=$baseDir.'/files/tmp/'.$fip.'.tst';
-		$bar=unserialize(file_get_contents($fpath));
-		@unlink($baseDir.'/files/tmp/'.$fip.'.tss');
-		$allKeys = array_keys($bar['list']);
-		//var_dump($svals['list']);
-		if(is_array($svals['list'])){
-			$rowRules = $svals['list'];
-			if($rowRules[1] === 'hidden'){
-				if(count($svals['list']) == 0){
-					$svals['list']= $allKeys;
-				}else{
-					$svals['list'] = array_values (array_diff($allKeys, $rowRules[0]));
-				}
-			}elseif ($rowRules[1] === 'visible'){
-				$svals['list'] = $rowRules[0];
-			}
-		}
-		/*echo '<pre>';
-		var_export($svals['cols']);
-        //var_dump($svals);
-        echo '</pre>';*/
-        makeStat($bar,$svals);
-	
-		//DiskStatCache($thtml);
-		//echo $thtml;
-		$fps=$baseDir.'/files/tmp/'.$fip.'.tss';
-		$sfh=fopen($fps,'r');
-		fpassthru($sfh);
-		fclose($sfh);
-		//unset($thtml); 
-		
-	}
-	$_SESSION ['fileNameCshBack'] = $_SESSION ['fileNameCsh'];
-	$END = time() - $START;
-	echo "<br/><br/>Process took $END seconds\n";
-	$_SESSION ['fileNameCsh'] = $tempsession;
+
+
 
 	return;
 }

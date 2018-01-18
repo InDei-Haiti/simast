@@ -468,7 +468,6 @@ class Wizard {
 	
 	public function getValues($type, $psv = false, $pvalue = false, $nosubz = false, $withOther = false, $parentValue = false, $form = false,$fieldform = false) {
 		$result = false;
-		
 		switch ($psv) {
 			/* case 'SysClients':
 				$q = new DBQuery();
