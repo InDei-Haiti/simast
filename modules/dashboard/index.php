@@ -1,4 +1,4 @@
-<?php 
+<?php
 GLOBAL $AppUI;
 $q = new DBQuery();
 $q->addTable('projects');
@@ -319,6 +319,30 @@ $hashList = $q->loadList();
                     ?>
                 </select>
             </div>
+
+<!--            <div class="col-md-3 col-md-offset-6">-->
+                <select id="reportSelector" class="selectpicker">
+                    <?php
+
+                    if(count($projects) > 0) {
+                        $i = 0;
+                        foreach ($projects as $pid => $project_name) {
+                            $i++;
+                            echo '<option>Projet numero | '.$i.'</option>';
+                        }
+                    }
+                    ?>
+                </select>
+<!--                <div class="col-lg-12">-->
+<!--                    <div class="button-group">-->
+<!--                        <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-cog"></span> <span class="caret"></span></button>-->
+<!--                        <ul class="dropdown-menu">-->
+<!--                            <li><a href="https://silviomoreto.github.io/bootstrap-select/examples/" target="_blank" class="small" data-value="option1" tabIndex="-1"><input type="checkbox"/>&nbsp;&nbsp;&nbsp;&nbsp;Rapport mois de janvier</a></li>-->
+<!---->
+<!--                        </ul>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
         </div>
         <div class="row">
             <div class="col-md-12">
@@ -368,7 +392,7 @@ $hashList = $q->loadList();
                             echo '<div class="row">';
                             foreach ($list as $index=>$grapher) {
                                 echo '<div class="col-md-6'.$offset.'">';
-                                echo "<span class='getInfo'><i class=\"fa fa-info-circle\" aria-hidden=\"true\" style=\"color: blue;\"></i></span>";
+                                // echo "<span class='getInfo'><i class=\"fa fa-info-circle\" aria-hidden=\"true\" style=\"color: blue;\"></i></span>";
 //                                echo "<div class='descrip' style='display:none;'>".$grapher['description']."</div>";
                                 if($grapher['description'] == ''){
                                     echo "<div class='descrip' style='display:none;'>Description indisponible</div>";
@@ -439,6 +463,11 @@ $hashList = $q->loadList();
 
 <!--Added by RPA-->
 <script src="<?php echo DP_BASE_URL?>/style/default/jquery-1.10.2.min.js"></script>
+<!-- <script src="<?php echo DP_BASE_URL?>/style/default/bootstrap-select/js/bootstrap-select.min.js"></script> -->
+<!-- <script type="text/javascript">
+    $('.selectpicker').selectpicker();
+
+</script> -->
 <script>
 //    var =
     function setCookie(cname, cvalue, exdays) {

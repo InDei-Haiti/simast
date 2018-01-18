@@ -2425,7 +2425,7 @@ saveClass.prototype.add2Table = function(rdata){
 		//.append(["<!--<td title='Edit' align='center'><div data-id='",rdata.id,"' class='",( ztype ),"'></div></td>-->"].join(""))
 		.append(["<td ",(tvn.n ===true? 'class="moreview"' : "") ," data-text='",rdata.name,"' title = '"+rdata.name+"'  data-id='"+rdata.id+"' ><span class='fhref flink' onclick='qurer.run(\"",nl,"\",\"", qurerAction ,"\");' >", tvn.s ,"</span></td>"].join(""))
 		.append("<td align='center'>"+(rdata.hasOwnProperty("type") ? rdata.type : "&nbsp;")+"</td>")
-		.append("<td align='center'>"+(rdata.hasOwnProperty("itemType") ? rdata.itemType : "&nbsp;")+"</td>") //added for report items extra column
+		//.append("<td align='center'>"+(rdata.hasOwnProperty("itemType") ? rdata.itemType : "&nbsp;")+"</td>") //added for report items extra column
 		.append(["<td ",(tvd.n ===true? 'class="moreview"' : "")  ," data-text='",rdata.desc,"'>",'<input type="hidden" id="start_',nl,'" value="',self.viewDate(rdata.sdate),'">', '<input type="hidden" id="end_', nl, '" value="', self.viewDate(rdata.edate)+ '">', tvd.s ,"</td>"].join(""))
 		/*.append(['<td ><div class="tdw">',
 				(rdata.hasOwnProperty("sdate") ?
@@ -2446,7 +2446,7 @@ saveClass.prototype.add2Table = function(rdata){
 			,'</td>'].join(""))//onclick="popTCalendar(\'end_',nl ,  '\')"
 		*/
 		//.append('<td ><span title="Run" class="fhref" <img src="/images/run1.png" weight=22 height=22 border=0 alt="Run"></span></td>')
-		.append(['<td align="center"><span title="Delete" style="color: blue;font-size: large" class="fhref fa fa-trash-o" onclick="qurer.delq(\'',nl,'\');" ><!--<img src="/images/delete1.png" width="16" height="16" border=0 alt="Delete">--></span> <span title="Export" style="color: blue;font-size: large" class="exportq fa fa-download" onclick="qurer.run(\'',nl,'\',\'export\');" ></span></td>'].join(""));
+		.append(['<td align="center"><span title="Desactive" style="color: #354c8c;display: inline-flex;margin:0; padding:0;width: 25px;float:left;font-size: smaller;" class="fa fa-ban showMain" data-id="'+rdata.id+'" onclick="cacheReport('+rdata.id+','+nl+',1)"></span><span title="Delete" style="color: #354c8c;display: inline-flex;margin:0; padding:0;width: 25px;float:left;font-size: smaller;" class="fhref fa fa-trash-o" onclick="qurer.delq(\'',nl,'\');" ><!--<img src="/images/delete1.png" width="16" height="16" border=0 alt="Delete">--></span> <span title="Editer" style="color: #ffffff00;display: inline-flex;margin:0; padding:0;width: 25px;float:left;" class="qreditor fa fa-pencil"></span></span><span title="Editer" style="color: #ffffff00;display: inline-flex;margin:0; padding:0;width: 25px;float:left;" class="qreditor fa fa-pencil"></span></td>'].join(""));
 		//.append(['<td align="center"><div title="Export" style="color: blue;font-size: large" class="exportq fa fa-download" onclick="qurer.run(\'',nl,'\',\'export\');" ></div></td>'].join(""));
 		
 	if(rdata.eaction && rdata.eaction == 'update'){

@@ -204,27 +204,141 @@ $("#submitButton").click(function(){
 
 });
 
-function cacheReport(id_report,cv){
-    if(confirm("You want desactive this report ?")){
-        // var $qr=$j("#qsr_"+cv);
-        // var data='mode=query&imode=del&stype='+$qr.find("td:eq(2)").text()+
-        //     '&sid='+$qr.find(".qeditor").attr("data-id");
-        $j.ajax({
-            url: "?m=outputs&a=reports&mode=desactive_report&suppressHeaders=1&idntf="+id_report,
-            type: 'get',
-            success: function(data){
-                if(data = 'ok'){
-                    // alert("Reussi");
-                    // $("[id^=qsr_][data-id = "+id_report+"]").html();
-                    // console.log($("#qsr_"+cv).html());
-                    $("#qsr_"+cv).fadeOut('slow',function(){
-                        $("#qsr_"+cv).remove();
-                    });
+function cacheReport(id_report,cv,chx){
+    if(chx == 0){
+        if(confirm("You want desactive this report ?")){
+            // var $qr=$j("#qsr_"+cv);
+            // var data='mode=query&imode=del&stype='+$qr.find("td:eq(2)").text()+
+            //     '&sid='+$qr.find(".qeditor").attr("data-id");
+            $j.ajax({
+                url: "?m=outputs&a=reports&mode=desactive_report&suppressHeaders=1&idntf="+id_report+"&chx="+chx,
+                type: 'get',
+                success: function(data){
+                    if(data = 'ok'){
+                        // alert("Reussi");
+                        // $("[id^=qsr_][data-id = "+id_report+"]").html();
+                        // console.log($("#qsr_"+cv).html());
+                        $("#qsr_"+cv).fadeOut('slow',function(){
+                            $("#qsr_"+cv).remove();
+                        });
+                    }
                 }
-            }
-        });
+            });
+        }
+    }else if(chx == 1){
+        if(confirm("You want desactive this item ?")){
+            $j.ajax({
+                url: "?m=outputs&a=reports&mode=desactive_report&suppressHeaders=1&idntf="+id_report+"&chx="+chx,
+                type: 'get',
+                success: function(data){
+                    if(data = 'ok'){
+                        // alert("Reussi");
+                        // $("[id^=qsr_][data-id = "+id_report+"]").html();
+                        // console.log($("#qsr_"+cv).html());
+                        $("#qsr_"+cv).fadeOut('slow',function(){
+                            $("#qsr_"+cv).remove();
+                        });
+                    }
+                }
+            });
+        }
     }
 }
 
 
+// Unhide Element Cached
 
+$(document).ready(function(){
+    $("#showCachedElms").click(function(ev){
+        ev.preventDefault();
+        $j.ajax({
+            url: "?m=outputs&a=reports&mode=getHidedElmts&cached=0&suppressHeaders=1",
+            type: 'get',
+            success: function(data){
+              $("#unn").empty();
+              data = JSON.parse(data);
+              console.log(data.reports);
+                $("#unn").append("<thead><tr><th>Nom</th><th>Type</th><th>Decacher</th></tr></thead>");
+              for(var i = 0; i < data.reports.length; i++){
+                  $("#unn").append("<tr><td>"+data.reports[i].title+"</td><td>Report</td><td id='clls_"+data.reports[i].id+"'><span onclick='unHideElmts("+data.reports[i].id+",0)'><i style='color: #354c8c;' class='fa fa-toggle-on fa-4' aria-hidden='true'></i></span></td></tr>");
+              }
+            }
+        });
+
+        $('input[type=radio][name=choix]').change(function() {
+            if (this.value == 'items') {
+              $j.ajax({
+                  url: "?m=outputs&a=reports&mode=getHidedElmts&cached=0&suppressHeaders=1",
+                  type: 'get',
+                  success: function(data){
+                    $("#unn").empty();
+                    data = JSON.parse(data);
+                    console.log(data.reports);
+                      $("#unn").append("<thead><tr><th>Nom</th><th>Type</th><th>Decacher</th></tr></thead>");
+                    for(var i = 0; i < data.items.length; i++){
+                        $("#unn").append("<tr><td>"+data.items[i].title+"</td><td>"+data.items[i].itype+"</td><td id='clls_"+data.reports[i].id+"'><span onclick='unHideElmts("+data.reports[i].id+",1)'><i style='color: #354c8c;' class='fa fa-toggle-on fa-4' aria-hidden='true'></i></span></td></tr>");
+                    }
+                  }
+              });
+            }
+            else if (this.value == 'reps') {
+              $j.ajax({
+                  url: "?m=outputs&a=reports&mode=getHidedElmts&cached=0&suppressHeaders=1",
+                  type: 'get',
+                  success: function(data){
+                    $("#unn").empty();
+                    data = JSON.parse(data);
+                    console.log(data.items);
+                      $("#unn").append("<thead><tr><th>Nom</th><th>Type</th><th>Decacher</th></tr></thead>");
+                    for(var i = 0; i < data.reports.length; i++){
+                        $("#unn").append("<tr><td>"+data.reports[i].title+"</td><td>Report</td><td id='clls_"+data.items[i].id+"'><span onclick='unHideElmts("+data.items[i].id+",0)'><i style='color: #354c8c;' class='fa fa-toggle-on fa-4' aria-hidden='true'></i></span></td></tr>");
+                    }
+                  }
+              });
+            }
+        });
+        var getModal = $("#unHideSelector");
+        getModal.css("display","block");
+        $("#closeUnHideSelector").click(function(){
+          getModal.css("display","none");
+            location.reload();
+        });
+    });
+});
+var cnts = 0;
+function unHideElmts(id,chx){
+
+    if(chx == 0){
+      $j.ajax({
+          url: "?m=outputs&a=reports&mode=getHidedElmts&cached=1&suppressHeaders=1&chx="+chx+"&id="+id,
+          type: 'get',
+          success: function(data){
+              cnts++;
+              if(data == "ok"){
+                  // location.reload();
+                  $("#clls_"+id).closest("tr").fadeOut('slow',function(){
+                      $("#clls_"+id).closest("tr").remove();
+                  });
+                  $("#countShowed p").html("<strong>"+cnts+" &eacute;l&eacute;ments ont &eacute;t&eacute; d&eacute;cach&eacute;. Cliquez sur la croix pour le/les voir.</strong>");
+
+              }
+          }
+      });
+    }else{
+      $j.ajax({
+          url: "?m=outputs&a=reports&mode=getHidedElmts&cached=1&suppressHeaders=1&chx="+chx+"&id="+id,
+          type: 'get',
+          success: function(data){
+              cnts++;
+            if(data == "ok"){
+                // location.reload();
+                $("#clls_"+id).closest("tr").fadeOut('slow',function(){
+                    $("#clls_"+id).closest("tr").remove();
+                });
+                $("#countShowed p").html("<strong>"+cnts+" &eacute;l&eacute;ments ont &eacute;t&eacute; d&eacute;cach&eacute;. Cliquez sur la croix pour le/les voir.</strong>");
+            }
+          }
+
+      });
+    }
+}

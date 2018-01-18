@@ -68,6 +68,12 @@ if($m=='outputs'){
 		google.charts.load('current', {mapsApiKey: myMapsApiKey, packages: ['corechart','bar','geomap']});
 	</script>
 
+	<style type="text/css">
+		.showMain {
+			cursor:pointer;
+		}
+	</style>
+
 	<?php
 }
 ?>

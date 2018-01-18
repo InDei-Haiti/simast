@@ -45,7 +45,8 @@ if(isset($_GET['mode'])){
 }
 
 ?>
-
+<script type="text/javascript" src="<?php echo DP_BASE_URL?>/style/default/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="<?php echo DP_BASE_URL?>/style/default/jquery-ui.min.js"></script>
 <script type="text/javascript">
 
 	/*
@@ -114,6 +115,7 @@ if(isset($_GET['mode'])){
 		 */
 		$.when(loadLevelBack(level))
 			.done(function(msg){
+				console.log("LevelBack");
 					if(msg && msg.length > 0){
 						var pts = $.parseJSON(msg),$tgt = $("#dear");
 						if(pts && pts.length > 0){

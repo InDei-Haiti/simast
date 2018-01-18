@@ -23,7 +23,7 @@ if($_POST['mode']=='save'){
 	//exit;
 	require_once $AppUI->getFileInModule($m, 'patch.func');
 	exportResultExcel();
-	
+
 	return ;
 }elseif($_POST['mode']=='savefile'){
     $is_save=$_POST['is_save'];
@@ -55,7 +55,7 @@ if($_POST['mode']=='save'){
    // db_fetch_assoc();
     $res=db_loadColumn($sql);
     $list = mysql_real_escape_string(gzencode(implode(',',$res), 9, FORCE_GZIP));
-    $stmpl = 'insert into `activity_queries`(qname, qdesc, created, activity_id, sector_id, st_area_id, beneficieries, amount, `prepare`, list, is_save, headers) 
+    $stmpl = 'insert into `activity_queries`(qname, qdesc, created, activity_id, sector_id, st_area_id, beneficieries, amount, `prepare`, list, is_save, headers)
                     values ("'.$qname.'","'.$qdesc.'",now(),'.$activity_id.','.$sector_id.','.$st_area_id.','.$beneficieries.','.$amount.',"'.$prepare.'","'.$list.'",'.$is_save.',"'.$headers.'")';
 
     //$res = mysql_query($sql);
@@ -87,7 +87,7 @@ if($_POST['mode']=='save'){
 		echo $res;
 		return ;
 }elseif ($_POST['mode'] == "setquery"){
-    $stmpl = 'insert into `sets`(setname) 
+    $stmpl = 'insert into `sets`(setname)
                     values ("'.$_POST['set'].'")';
     $zid = 0;
     $res = db_exec($stmpl);
@@ -136,7 +136,7 @@ if($_POST['mode']=='save'){
 }elseif ($_GET['mode'] == 'rowkill'){
 	$rid=(int)$_GET['row'];
 	if($rid >=0 && is_numeric($_GET['row'])){
-		//$fsaved=$_SESSION['table']['body']; 
+		//$fsaved=$_SESSION['table']['body'];
 		$fsaved=getFileBody('body');
 		//var_dump($fsaved);
 		if(count($fsaved) > 0){
@@ -215,7 +215,7 @@ if($_POST['mode']=='save'){
             $popup_fields[] = $popup_field;
         }
     }
-	
+
 	if($latlng){
         $query = join(',', $query);
 		$sql = 'SELECT '.$query.' FROM '.$querysaveaj;
@@ -298,7 +298,7 @@ if($_POST['mode']=='save'){
         header('Accept-Ranges: bytes'."\r\n");
         ob_end_flush();
     }else{
-		
+
 	}
 	//echo file_get_contents(diskFile::getJsonPath());
 	//$_SESSION ['fileNameCsh'] = $tempsession;
@@ -319,7 +319,7 @@ if($_POST['mode']=='save'){
     }
     //INSERT INTO `dashboard_grapher`(`id`, `set_id`, `project_id`, `type`, `query_save`, `data_item`)
     $describe = $_POST['describe'];
-    $sql = "INSERT INTO dashboard_grapher(`set_id`, project_id, `type`, query_save, data_item, description) VALUES 
+    $sql = "INSERT INTO dashboard_grapher(`set_id`, project_id, `type`, query_save, data_item, description) VALUES
     (".$_POST['setid'].",".$_POST['project'].",'".$_POST['type']."',null,'".mysql_real_escape_string(gzencode(var_export($_POST['data_item'],true), 9, FORCE_GZIP))."', '".$describe."')";
     //echo $sql;
     $zid = 0;
@@ -336,37 +336,37 @@ if($_POST['mode']=='save'){
 }elseif($_POST['mode'] == 'btable'){
     $tempsysStarter = array();
     //var_dump($_POST);
-	$START = time();
-	$calcs = magic_json_decode($_POST['calcs'],true);
+    $START = time();
+    $calcs = magic_json_decode($_POST['calcs'],true);
     $svals = magic_json_decode($_POST['calcs2'],true);
-	//$rows = $calcs['row'];
-	//$cols = $calcs['col'];
-	$querysaveaj = $calcs['querysave'];
+    //$rows = $calcs['row'];
+    //$cols = $calcs['col'];
+    $querysaveaj = $calcs['querysave'];
     $colsvals = $svals['cols'];
     $rowsvals = $svals['rows'];
 
-	$allfld = array();
+    $allfld = array();
     foreach ($rowsvals as $val){
         $allfld[] = $val['field'];
     }
     foreach ($colsvals as $val){
-		$allfld[] = $val['field'];
-	}
+        $allfld[] = $val['field'];
+    }
 
     $range = array();
     $svals['range'] = array_filter($svals['range'], function($value) { return $value !== null; });
 
 
-	$range_fld = array();
-	/*echo '<pre>';
-	var_dump($svals);
+    $range_fld = array();
+    /*echo '<pre>';
+    var_dump($svals);
     echo '</pre>';*/
-	foreach ($allfld as $i => $v){
-		for ($x = 0;$x<count($colsvals);$x++){
-		    //echo $svals['cols'][$x][id];
-			if($colsvals[$x]['field']==$v){
-			    //echo strval($i);
-				$colsvals[$x]['id']= strval($i);
+    foreach ($allfld as $i => $v){
+        for ($x = 0;$x<count($colsvals);$x++){
+            //echo $svals['cols'][$x][id];
+            if($colsvals[$x]['field']==$v){
+                //echo strval($i);
+                $colsvals[$x]['id']= strval($i);
                 foreach ($svals['range'] as $val){
                     if($val['fld']==$v) {
                         $range_fld[] = str_replace('.', '_', $v);
@@ -379,11 +379,11 @@ if($_POST['mode']=='save'){
                         $range[$i] = $val;
                     }
                 }
-			}
-		}
-		for ($x = 0;$x<count($rowsvals);$x++){
-			if($rowsvals[$x]['field']==$v){
-				$rowsvals[$x]['id']= strval($i);
+            }
+        }
+        for ($x = 0;$x<count($rowsvals);$x++){
+            if($rowsvals[$x]['field']==$v){
+                $rowsvals[$x]['id']= strval($i);
                 foreach ($svals['range'] as $val) {
                     if ($val['fld'] == $v){
                         $range_fld[] = str_replace('.', '_', $v);
@@ -396,20 +396,20 @@ if($_POST['mode']=='save'){
                         $range[$i] = $val;
                     }
                 }
-			}
-		}
-	}
-	$svals['range'] = $range;
+            }
+        }
+    }
+    $svals['range'] = $range;
     $svals['cols'] = $colsvals;
-	$svals['rows'] = $rowsvals;
-	//var_dump($allfld);
-	require_once('result.func.php');
-	$nfei= new evolver();
-	$tempsession = $_SESSION ['fileNameCsh'];
-	diskFile::init ();
-	$query = array();
-	$funcPos = false;
-	foreach ($allfld as $i => $fld){
+    $svals['rows'] = $rowsvals;
+    //var_dump($allfld);
+    require_once('result.func.php');
+    $nfei= new evolver();
+    $tempsession = $_SESSION ['fileNameCsh'];
+    diskFile::init ();
+    $query = array();
+    $funcPos = false;
+    foreach ($allfld as $i => $fld){
         if($i<=(count($rowsvals)-1)){
             $row = $rowsvals[$i];
             if(isset($row['func'])){
@@ -421,9 +421,9 @@ if($_POST['mode']=='save'){
                 $query[] = $fld.' AS '.str_replace('.', '_', $fld);
             }
         }
-	}
-	$j = 0;
-	foreach ($allfld as $i => $fld){
+    }
+    $j = 0;
+    foreach ($allfld as $i => $fld){
         if($i>(count($rowsvals)-1)){
             $col = $colsvals[$j];
             if(isset($col['func'])){
@@ -436,12 +436,12 @@ if($_POST['mode']=='save'){
             }
             $j++;
         }
-	}
-	$query = join(',', $query);
-	$sql = 'SELECT '.$query.' FROM '.$querysaveaj;
+    }
+    $query = join(',', $query);
+    $sql = 'SELECT '.$query.' FROM '.$querysaveaj;
 
     $vGroupBy = array();
-	if($funcPos){
+    if($funcPos){
         $wz = new Wizard('print');
         if($funcPos == 'row'){
             foreach ($colsvals as $col){
@@ -665,7 +665,7 @@ if($_POST['mode']=='save'){
 
 
 
-	return;
+    return;
 }
 
 
@@ -766,7 +766,7 @@ if(isset($_GET['map'])){
 					$row[$index] = $q->loadList();
 					$tasks[$ir] = $row;
 				}
-			}			
+			}
 		}
 	}
 	//var_dump(json_encode($tasks));
@@ -774,7 +774,7 @@ if(isset($_GET['map'])){
 	    $json = json_encode($tasks);
 	}
 	/*if($json){
-		$script = ' 
+		$script = '
 				  var json = '.$json.';
 				  for (var i = 0, length = json.length; i < length; i++) {
 					  var data = json[i];
@@ -799,18 +799,18 @@ if(isset($_GET['map'])){
 						    infowindow.open(map,marker);
 						  });///
 						 var infowindow = new google.maps.InfoWindow();
-						 google.maps.event.addListener(marker,"click", (function(marker,content,infowindow){ 
+						 google.maps.event.addListener(marker,"click", (function(marker,content,infowindow){
 						        return function() {
 						           infowindow.setContent(contentString);
 						           infowindow.open(map,marker);
 						        };
-						    })(marker,contentString,infowindow)); 
-						
+						    })(marker,contentString,infowindow));
+
 						  }
 					}
 		';
 	}*/
-	
+
 }else if (/* $_SERVER ['CONTENT_LENGTH'] > 0 &&  */count ( $_POST ) > 0) {
 	//$rustart = getrusage(null);
 	$lpost = array ();
@@ -819,8 +819,8 @@ if(isset($_GET['map'])){
 	$show_start='';
 	$show_end='';
 	$final = array();
-	
-	
+
+
 	require_once('result.func.php');
 	$nfei= new evolver();
 
@@ -1030,23 +1030,23 @@ echo '<br/>
 		<!-- <select onchange="rebootQTable(this);" data-items="">
 			<option value="queries" selected>Queries</option>
 			<option value="items">Report Items</option>
-		</select> 
+		</select>
 		<br> -->
-		
+
         <p>
-            <span onclick="$j(\'#importbox\').toggle();" class="fhref flink">'.$AppUI->_('Import query').'</span><span class="offwall msgs" id="msg_place"></span>
+           <!-- <span onclick="$j(\'#importbox\').toggle();" class="fhref flink">'.$AppUI->_('Import query').'</span><span class="offwall msgs" id="msg_place"></span>
             <div id="importbox" class="myimporter">
                 <form name="upq" action="/?m=outputs&suppressHeaders=1" enctype="multipart/form-data" method="POST" onsubmit="return AIM.submit(this, {\'onStart\' : startCallback, \'onComplete\' : qurer.extractRow})">
                     <input type="file" name="qfile" id="fultra" data-ext="qbn|rbn|ibn">
                     <input type="submit" value="Import query/item" class="button" disabled="disabled" >
                     <input type="hidden" name="mode" value="importquery">
                 </form>
-            </div>
-            
-            
-            
-            
-            
+            </div>-->
+
+
+
+
+
             <!--Haiti-->
             <div align="left" style="background:white;margin-top:2px;padding: 10px"><form id="filterform" name="filterform" action="" method="get">
 					<fieldset id="filters" style="margin-left:-7px; width: 88%" class="collapsible collapsed header_collapsible">
@@ -1054,7 +1054,8 @@ echo '<br/>
 					<table id="filterstab" style="display: none;"><tbody><tr><td colspan="4">
 					&nbsp;Add filter: <select id="select_field" onchange="setTableFilter_output()"><option></option></select></td></tr></tbody></table></fieldset><fieldset id="options" style="margin-left: -7px; width: 88%" class="collapsible collapsed header_collapsible">
 			</fieldset>
-	                <input type="button" class="ce pi ahr" value="Apply" id="submitButton" ></form></div>
+	                <input type="button" class="ce pi ahr" value="Apply" id="submitButton" > <button class="ce pi ahr pull-right" style="margin-right: 58px;" id="showCachedElms">Decacher Elements</button></form></div>
+
             <!--Haiti-->
             <table cellspacing="1" cellpadding="2" border="0" class="tbl tablesorter moretable" id="ittable" style="display: none;">
                 <thead>
@@ -1064,19 +1065,19 @@ echo '<br/>
                 </thead>
                 <tbody></tbody>
             </table>
-    
+
             <!--<table cellspacing="1" cellpadding="2" border="0" class="tbl tablesorter moretable ck" id="qtable" style="width: 100%">-->
             <table cellspacing="1" cellpadding="2" border="0" class="tbl moretable ck" id="qtable" style="width: 95%">
                 <thead>
                     <tr>
                         <!--<th class="phead">&nbsp;</th>-->
                         <th class="phead">'.$AppUI->_('Name').'</th>
-                        <th class="phead">'.$AppUI->_('Type').'</th>
-                        <th class="phead">'.$AppUI->_('Item Type').'</th>
-                        <th class="phead">'.$AppUI->_('Description').'</th>
+                        <th class="phead showMain">'.$AppUI->_('Type').'</th>
+                        <!--<th class="phead">'.$AppUI->_('Item Type').'</th>-->
+                        <th class="phead showMain">'.$AppUI->_('Description').'</th>
                         <!--<th class="phead">'.$AppUI->_('Start Date').'</th>
                         <th class="phead">'.$AppUI->_('End Date').'</th>-->
-                        <th class="phead">&nbsp;</th>
+                        <th class="phead showMain">Actions&nbsp;</th>
                         <!--<th class="phead">&nbsp;</th>-->
                     </tr>
                 </thead>';
@@ -1098,14 +1099,14 @@ echo '<br/>
                     $edClass='qreditor';
                     $pnameOut='Report';
                 }else{
-                    $pnameOut='Table'.$pname;
+                    $pnameOut='TableQuery';
                 }
                 $qsr.='<tr id="qsr_'.$trid.'" data-showr="'.$sr.'">
                 <!--<td title="Edit" align="center"><div class="'.$edClass.' fa fa-pencil" data-id="'.$row['id'].'" style="color: blue;font-size: large"></div></td>-->';
                 $st=trimView($row['qname']);
                 $qsr.='<td title ="'.$st['orig'].'" data-text="'.$st['orig'].'" '.($st['show'] === true ? ' class="moreview"' : '').' data-id="'.$row['id'].'"><span class="fhref flink" onclick="qurer.run(\''.$trid.'\',\'run\');">'.$st['str'].'</span></td>
                 <td align="center">'.$pnameOut.'</td>
-                <td>&nbsp;</td>';
+                <!--<td>&nbsp;</td>-->';
                 $st=trimView($row['qdesc']);
                 $qsr.='<td data-text="'.$st['orig'].'"'.($st['show'] === true ? ' class="moreview"' : '').' style="width: 130px;">'.$st['str'].'</td>';
                 $sdateClean=viewDate($row['sdate']);
@@ -1134,14 +1135,14 @@ echo '<br/>
                 $qsr.='
                 <!-- <td ><span title="Run" class="fhref"><img src="/images/run1.png" weight=22 height=22 border=0 alt="Run"></span></td> -->
                 <td align="center">
-                <span title="'.$AppUI->_('Desactive').'" style="color: blue;font-size: large" class="fa fa-ban" data-id="'.$row['id'].'" onclick="cacheReport('.$row['id'].','.$trid.')"></span>
-                <span title="'.$AppUI->_('Delete').'" class="fhref fa fa-trash-o" style="color: blue;font-size: large" onclick="qurer.delq(\''.$trid.'\');" >
-                <!-- <img src="/images/delete1.png" weight=16 height=16 border=0 alt="Delete"> -->
-                </span>
-                <span title="'.$AppUI->_('Export').'" style="color: blue;font-size: large" class="exportq fa fa-download" onclick="qurer.run(\''.$trid.'\',\'export\');" ></span>
-                <span title="'.$AppUI->_('Edit').'" style="color: blue;font-size: large" class="qreditor fa fa-pencil" data-id="'.$row['id'].'"></span>
+                <span title="'.$AppUI->_('Edit').'" style="color: #354c8c;display: inline-flex;margin:0; padding:0;width: 25px;float:left;font-size: smaller;" class="qreditor fa fa-edit" data-id="'.$row['id'].'"></span>                
+                <span title="'.$AppUI->_('Export').'" style="color: #354c8c;display: inline-flex;margin:0; padding:0;width: 25px;float:left;font-size: smaller;" class="exportq fa fa-download" onclick="qurer.run(\''.$trid.'\',\'export\');" ></span>
+                <span title="'.$AppUI->_('Desactive').'" style="color: #354c8c;display: inline-flex;margin:0; padding:0;width: 25px;float:left;font-size: smaller;" class="fa fa-ban showMain" data-id="'.$row['id'].'" onclick="cacheReport('.$row['id'].','.$trid.',0)"></span>
+                <span title="'.$AppUI->_('Delete').'" class="fhref fa fa-trash-o" style="color: #354c8c;display: inline-flex;margin:0; padding:0;width: 25px;float:left;font-size: smaller;" onclick="qurer.delq(\''.$trid.'\');" ></span>
+                
+                
                 </td>
-                <!--<td align="center"><div title="'.$AppUI->_('Export').'" style="color: blue;font-size: large" class="exportq fa fa-download" onclick="qurer.run(\''.$trid.'\',\'export\');" ></div></td>-->
+                
                 </tr>';
                 $trid++;
                 echo $qsr;
@@ -1217,7 +1218,7 @@ echo '<br/>
 
 echo '<h3 style="padding: 5px;">&emsp;&emsp;'.$AppUI->_('Forms').'<div id="imgloader" style="display:none;width:25px;height:25px"><img src="/modules/outputs/images/ajax-loader.gif"/></div></h3>';
 echo '<div  id="forms" style="height:auto !important;min-height: 500px">
-						
+
 		</div>';
 
 echo 	'</div>';
@@ -1337,7 +1338,7 @@ unset($rhtml);
 /*Report to be here*/
 echo '<div  id="tabs-6" class="mtab" style="100%">';
 echo '<style>
-		
+
 #div1{
   height: 30px;
   width: 20%;
@@ -1351,13 +1352,13 @@ echo '<style>
   border: solid 1px #000000;
   background-color: #66CC00;
 }
-		
+
 .left {
 	  float: left;
 	  width: 125px;
 	  text-align: right;
 	  height: 800px;
-	  width:20%; 
+	  width:20%;
 	  padding: 2px;
 	  margin: 3px;
 	  border: 2px solid #DCDBD8;
@@ -1371,40 +1372,40 @@ echo '<style>
 	  width:75%;
 	  height:1000px;
 	  border: 2px solid #DCDBD8;
-	  display: inline;    
+	  display: inline;
 }
 .mapfieldbox{
 	  margin: 1px;
 	  min-height:100px;
 	  height: auto;
 	  border: 2px solid #DCDBD8;
-      		
+
 }
 .mapmarkergroup{
       margin: 1px;
 	  height:100px;
-	  border: 2px solid #DCDBD8;		
+	  border: 2px solid #DCDBD8;
 }
 .maplonlatbox{
       margin: 1px;
       padding: 5px;
 	  /*height:300px;*/
 	  border: 2px solid #DCDBD8;
-			
+
 }
 .mapadminlocbox{
       margin: 1px;
 	  height:100px;
-	  border: 2px solid #DCDBD8;		
+	  border: 2px solid #DCDBD8;
 }
 .mapdatamappingbox{
       margin: 1px;
 	  height:100px;
-	  border: 2px solid #DCDBD8;		
+	  border: 2px solid #DCDBD8;
 }
 .mappopupinfogbox{
       margin: 1px;
-	  border: 2px solid #DCDBD8;		
+	  border: 2px solid #DCDBD8;
 }
 
 
@@ -1425,7 +1426,7 @@ echo '<style>
 .legend {
     line-height: 18px;
     color: #555;
-    
+
     background: white;
     background: rgba(255,255,255,0.8);
     box-shadow: 0 0 15px rgba(0,0,0,0.2);
@@ -1453,9 +1454,9 @@ echo '<style>
     margin-left: 30px;
     width: 33px;
     margin-top: 30px;
-}		
+}
 </style>';
-	
+
 
 echo "<style>
 
@@ -1496,7 +1497,7 @@ line-height: 800px;
 			  z-index: 99999;
 			  background: red
 			}
-			
+
 	</style>";
 	/* echo ' <p>
 
@@ -1525,7 +1526,7 @@ line-height: 800px;
         </form>
     </div>
     </p> '; */
-	
+
 	//echo '<div style="width: 20%;color:red;">';
 /*echo '<div style="100%">';
 echo '<div class="left">
@@ -1853,7 +1854,7 @@ if($_POST['stype'] ===  'Stats' || $_POST['stype'] ===  'Chart'){
 	echo '</pre>'; */
 	//echo json_encode($svals);
 	$tpl->append('extraCode','fstatp='.json_encode($svals).';');
-	
+
 	/* echo 'extraCode: '.$tpl->extraCode;
 	exit; */
 }
@@ -1868,13 +1869,13 @@ echo '<!--<link rel="stylesheet" type="text/css" href="http://cdn.leafletjs.com/
 		<!--<link rel="stylesheet" type="text/css" href="http://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/0.4.0/MarkerCluster.css" />
     <link rel="stylesheet" type="text/css" href="http://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/0.4.0/MarkerCluster.Default.css" />
 -->
-      
+
       <!--<script type="text/javascript" src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js?2"></script>
       <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-ajax/2.1.0/leaflet.ajax.min.js"></script>-->
       <!--<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/0.4.0/leaflet.markercluster.js"></script>-->
       <link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css" integrity="sha512-M2wvCLH6DSRazYeZRIm1JnYyh22purTM+FDB5CsyxtQJYeKq83arPe5wgbNmcFXGqiSH2XR8dT/fJISVA1r/zQ==" crossorigin=""/>
       <script type="text/javascript" src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js" integrity="sha512-lInM/apFSqyy1o6s89K4iQUKg6ppXEgsVxT35HbzUupEVRh2Eu9Wdl4tHj7dZO0s1uvplcYGmt3498TtHq+log==" crossorigin=""></script>
-      
+
       <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.4.4/proj4.js"></script>
       <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/proj4leaflet/1.0.2/proj4leaflet.js"></script>
       ';
@@ -1882,7 +1883,7 @@ echo '<!--<link rel="stylesheet" type="text/css" href="http://cdn.leafletjs.com/
 ?>
 
 	<script type="text/javascript">
-	
+
 	function mapProjects(){
 		checkedValue = $('.projects:checked');
 		projects = "";
@@ -1914,14 +1915,14 @@ echo '<!--<link rel="stylesheet" type="text/css" href="http://cdn.leafletjs.com/
 			 //google.maps.event.addListener(map, 'zoom_changed', function() {
 			    //zoomLevel = map.getZoom();
 			  //  console.log(map.getCenter());
-			//}); 
+			//});
 		//}
 		//initialize();
 		</script>
-	
-	
-	
-	
+
+
+
+
 	<!-- <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true&callback=initialize">
 	</script> -->
 	<?php }?>
@@ -2002,6 +2003,35 @@ echo '<!--<link rel="stylesheet" type="text/css" href="http://cdn.leafletjs.com/
         </div>
         <div class="modal-body">
 
+        </div>
+        <div class="modal-footer">
+
+        </div>
+    </div>
+
+</div>
+
+<div id="unHideSelector" class="modal">
+
+    <div class="modal-content">
+        <div class="modal-header">
+            <span id="closeUnHideSelector" class="close">&times;</span>
+            <h2></h2>
+        </div>
+        <div class="modal-body">
+          <form style="float:left;">
+              <input id="items" type="radio" name="choix" value="items"> <label for="items">Items </label><br>
+              <input id="reps" type="radio" name="choix" value="reps" checked> <label for="reps"> Reports</label> <br>
+          </form>
+
+        <div id="countShowed" style="margin-top: 29px;margin-left: 300px;font-weight: bold;">
+            <p></p>
+        </div>
+          
+
+          <table id="unn" class="table">
+
+          </table>
         </div>
         <div class="modal-footer">
 
