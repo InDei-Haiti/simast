@@ -429,7 +429,7 @@ function resultBuilder($qmode) {
 		if ($qmode != 'mas') {
 			$rhtml .= '<input type="button" class="ce pi ahr button adcbutt" value="Save Table Query" onclick="qurer.saveDialog()">
 			<input id="go2stats" type="button" class="ce pi ahr button adcbutt" value="Build Stats" onclick="gpgr.startss();">
-			<input type="button" class="ce pi ahr button adcbutt" value="Build Maps" onclick="gpgr.mapss();"> <!--onclick="gpgr.mapss();"-->';
+			<!--<input type="button" class="ce pi ahr button adcbutt" value="Build Maps" onclick="gpgr.mapss()-->;"> <!--onclick="gpgr.mapss();"-->';
 
 		}
 		//$rhtml .= '<input type="button" class="button adcbutt" value="Add to form" onclick="dialogForm()">';
@@ -463,7 +463,7 @@ function resultBuilder($qmode) {
         <input type="hidden" name="amount"/>
         <input type="hidden" name="token" value="'.$token.'"/>
         <input type="hidden" name="querysave" value="'.$querysaveall.'">
-		<input type="button" class="ce pi ahr button adcbutt" value="Save To File" onclick="gpgr.saveToFile()"  class="button adcbutt">
+		<!--<input type="button" class="ce pi ahr button adcbutt" value="Save To File" onclick="gpgr.saveToFile()"  class="button adcbutt">-->
 		</form></div>';
 		$tfhtml = '<ul>';
 		foreach ($forms as $form){

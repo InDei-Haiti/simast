@@ -988,6 +988,11 @@ var v = null;
     });
 
     $(document).ready(function(){
+      //$(document).ready(function(){
+        $("switchx").on("click",function(ev){
+            ev.preventDefault();
+            alert("switch");
+        });
         $("#dxsave,#saving").click(function(){
             setTimeout(function(){
                  $('a[href="#tabs-1"]').closest("li").addClass("tabs-selected");
@@ -1158,7 +1163,6 @@ if($m=='system' || $m == 'wizard'){
 if($m=='outputs' AND isset($_GET['rep'])){
 ?>
 <script type="text/javascript">
-    $(document).ready(function(){
 setTimeout(function(){
      $('a[href="#tabs-1"]').closest("li").removeClass("tabs-selected");
      $('a[href="#tabs-5"]').closest("li").addClass("tabs-selected");
