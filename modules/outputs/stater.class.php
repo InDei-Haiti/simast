@@ -2063,8 +2063,9 @@ class Stater {
 				}
 				$ni=0;
 				$cntc=$levax[($ci-1)][$rx];
+
 				foreach ( $ht  as $hit => &$khead ) {
-					if(isset($khead['val']['parid'])){
+				    if(isset($khead['val']['parid'])){
 						$lcolFakes =  &$this->colFakes[$ci][$khead['val']['parid']];
 						$lctshown = &$this->ctshown[$khead['val']['parid']];
 						$vparid=$khead['val']['parid'];
@@ -2089,7 +2090,6 @@ class Stater {
 						$parentName = $khead['parent'];
 						$colcode=($khead ['cols']  > 0 ? $khead['cols'] : 1);
 					}
-
 
 
 					if(($allLevels > 0 && $ci < $allLevels && count($khead['kids']) > 0) ||
@@ -2421,6 +2421,7 @@ class Stater {
 						}
 					}
 				}
+
 				$row.='<tr>'.(!$yearShown[$yearTD]  ?  $yearCode[$yearTD] : '').$rowcode;
 				if($colspans == ''){
 					$xtmp=$this->tcomp['rows'][0]->getRName($param);
@@ -2802,6 +2803,7 @@ class Stater {
 		$ttx='';
 		if(strlen($html) > 0){
 			for($ix=0,$il=($rti +1);$ix < $il; $ix++){
+			    var_dump($rowcount);
 				if($rowcount[$ix] > 2){
 					preg_match('/#@#'.$ix.'#@#">([^<]*)</',$html,$umatch);
 					if(count($umatch) >= 1){
@@ -2962,7 +2964,6 @@ class Stater {
 
 				$this->bgrid[$this->by][]=$td;
 				++$ax;
-
 				while (is_numeric($this->finalrow[$ax])) {
 					$finax=$this->finalrow[$ax];
 					$tht=$ltots[$finax];

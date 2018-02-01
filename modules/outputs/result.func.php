@@ -264,7 +264,6 @@ function resultBuilder($qmode) {
                             $headers[$table.'_'.$trowact['COLUMN_NAME']]['fld'] = $trowact['COLUMN_NAME'];
                         }
 
-
                     }
                 }
 
@@ -856,7 +855,7 @@ function resultBuilder($qmode) {
 									$q->addQuery('administration_com_lat,administration_com_lng');
 									$q->addWhere('administration_com_code="'.$tempforStore.'"');
 									$result = $q->loadList();
-										
+
 									if(is_numeric($result[0]['administration_com_lat'])){
 										$json_data_subs[$hcode.'_lat'] = (float)$result[0]['administration_com_lat'];
 									}else{

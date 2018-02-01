@@ -304,6 +304,7 @@ var reporter = (function (my) {
     }
 
     function refreshRowSet() {
+
     }
 
     function loadRepData(e) {

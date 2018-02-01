@@ -885,7 +885,7 @@ sFrames.prototype.collector = function(filtersPlain){
         datapercent:	this.chState("datapercent"),
 		sunqs: this.chState("sunqs"),
 		sblanks: this.chState("sblanks"),
-		brest: $j("#brest",$j("#dbox")[0]).is(":checked"),
+		/*brest: $j("#brest",$j("#dbox")[0]).is(":checked"),*/
 		gsums: this.groupSum,
 		gmetd: (function(x){
 				return x.groupMS();		
@@ -1220,8 +1220,7 @@ var grapher = (function(my){
 				}
 			}
 			ncolb = [];
-		}
-		else {
+		} else {
 			ndataset = dataset.slice(0);
 			ncols = cols.slice(0);
 			ncolb = colb.slice(0);
