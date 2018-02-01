@@ -8,12 +8,12 @@ var sFrames = function (){
 	this.cols=[];this.rows=[];this.$rbox;this.$cbox;this.ctt=$j("#cbox");this.rtt=$j("#rbox");
 	this.periods=[];this.leader;this.ntype;this.nfld;this.ltext;
 	this.times = ['none','All','weekly','monthly','quarterly','annually'];this.$gbox=$j("#gbox");
-	this.lf;this.launch=false;this.title;this.dobc= new RegExp("dob",'ig');	
+	this.lf;this.launch=false;this.title;this.dobc= new RegExp("dob",'ig');
 	this.ddvi = $j("<div class='kill_area' title='Delete'><i class='fa fa-close' style='font-size:24px;color:red'></i></div>");
-	this.ranges = [];	
+	this.ranges = [];
 	this.groupSum={visual:{},title:''};
 	this.boxMode;
-	this.plurchoise = [];	
+	this.plurchoise = [];
 }
 
 function chartz (){
@@ -25,7 +25,7 @@ extend(sFrames,saveClass);
 extend(chartz,saveClass);
 
 sFrames.prototype.init = function(){
-	
+
 	this.extra='<label><input type="checkbox" id="brest">Build result table</label><br><br>';
 	var self=this;
 	if(this.lauch){
@@ -48,7 +48,7 @@ sFrames.prototype.init = function(){
 			.appendTo($hapt);
 	}
 	$hapt = null;
-	this.launch=true;	
+	this.launch=true;
 	$j("#vbox").sortable().disableSelection();
     $j("#rbox").sortable({
         tolerance: 'pointer',
@@ -71,12 +71,12 @@ sFrames.prototype.init = function(){
 		stop: function(){
 			var result = $j("#selected-result").empty(),cnt=0;
 			$j("li > .bfg",this).removeClass("headf-connect");
-			$j(".ui-selected", this).filter(".fbox2").each(function(){				
+			$j(".ui-selected", this).filter(".fbox2").each(function(){
 				$j(this).parent().find(".bfg").addClass("headf-connect").end()
-					.find(".kill_area").selectable("destroy");				
+					.find(".kill_area").selectable("destroy");
 				++cnt;
-			});	
-			self.grouper();		
+			});
+			self.grouper();
 		}
 	})
 	.disableSelection();
@@ -88,7 +88,7 @@ sFrames.prototype.init = function(){
         greedy: true,
         tolerance: 'intersect',
         drop: function(ev, $ui){
-            self.rcvField($ui, "rbox", ev);			
+            self.rcvField($ui, "rbox", ev);
             return true;
         }
     });
@@ -104,8 +104,8 @@ sFrames.prototype.init = function(){
 			$j("#cbox",this).selectable('refresh');
             return true;
         }
-    });	
-	
+    });
+
 	$j(".fcheck").live("focusout",function(e){
 		var $li=$j(this).closest("tr"),
 			zid=$li.attr("id").replace("piod_",''),
@@ -118,11 +118,11 @@ sFrames.prototype.init = function(){
 			self.ranges[self.lf].val[zid].n=$j(this).val();
 		}
 	});
-	
+
 	$j("#fperiod").live("change",function(e){
-		self.ranges[self.lf].val=$j(this).val();		
+		self.ranges[self.lf].val=$j(this).val();
 	});
-	
+
 	if(fstatp && typeof fstatp === "object"){
 		this.ranges = fstatp.range;
 		self.turnSwitch(fstatp);
@@ -135,7 +135,7 @@ sFrames.prototype.init = function(){
 		fstatp=null;
 		$j(".stab_let").attr("disabled",false);
 	}
-	
+
 	$j(".head-field",$j(".dgetter")).live("mouseenter mouseleave",function(e){
 		var hover = (e.type === 'mouseenter' || e.type === 'mouseover'),$subj=$j(".kill_area",this);
 		if (hover) {
@@ -150,19 +150,19 @@ sFrames.prototype.dataBox = function(way){
 	if(way === undefined){
 		return this.boxMode;
 	}else{
-		this.boxMode=way;		
+		this.boxMode=way;
 	}
 };
 
 sFrames.prototype.destroy = function(){
 	this.$bh.children().hide();
 	this.$gbox.empty();
-	$j("#tthome").empty();	
+	$j("#tthome").empty();
 };
 
 sFrames.prototype.findcopy = function (dfn){
     var tfn, fob,
-		tar=$j("li",$j("#box-home")[0]),tl=tar.length;    
+		tar=$j("li",$j("#box-home")[0]),tl=tar.length;
 	while(tl--){
 		var tli=tar[tl];
         tfn = $j(tli).attr('data-hid');
@@ -206,7 +206,7 @@ sFrames.prototype.checkCurr =  function (cdiv, $nval){
             }
         });
     }
-    else 
+    else
         if (cdiv === "vbox") {
             var dbv = $j("#" + cdiv + " > li").size();
             if (dbv > 0 || (dbv == 0 && $j.inArray(nxt, datapos) < 0)) {
@@ -222,16 +222,16 @@ sFrames.prototype.recruiter = function(id,area){
 			tvl = 'row';
 			tdl = 'col';
 		}
-		else 
+		else
 			if (area === 'cbox') {
 				tvl = 'col';
 				tdl = 'row';
 			}
-	areas[tvl].push(id);			
+	areas[tvl].push(id);
 	pos=$j.inArray(id,areas[tdl]);
 	if (pos >= 0) {
 		areas[tdl].splice(pos, 1);
-	}	
+	}
 };
 
 sFrames.prototype.groupKiller = function(id){
@@ -255,12 +255,12 @@ sFrames.prototype.findGrouped = function(area,me){
 
 sFrames.prototype.rcvField = function ($pitem, udiv, pev){
 	var self=this,$item,fromer,df,aclass;
-	
+
     if (pev != "emul") {
-        $item = $pitem.draggable;		
+        $item = $pitem.draggable;
     }
     else {
-        $item = $pitem;		
+        $item = $pitem;
     }
     fromer = $pitem.sender;
 	df = $item.attr('data-hid');
@@ -306,7 +306,7 @@ sFrames.prototype.rcvField = function ($pitem, udiv, pev){
 			$nwid.bind('click', function(e){
 				if (e.shiftKey) {
 					//$j("div",this).addClass("ui-selected");
-					
+
 					var bclass = "headf-connect", $obj = $j(".bfg", this), inClass = $obj.hasClass(bclass);
 					if (inClass) {
 						$obj.removeClass(bclass);
@@ -320,8 +320,8 @@ sFrames.prototype.rcvField = function ($pitem, udiv, pev){
 				}else if ($j(".headf-connect", this).length == 1 && self.groupMS() == 'summ') {
 						self.dataBox('group');
 						$j(this).closest("ul").find(".fbox2").removeClass("thisli").end().end().find(".fbox2").addClass("thisli");
-						
-						var lid = $j(this).attr('data-hid'), list = gpgr.getLects(lid), ltext = $j(this).text(), defval = -100, 
+
+						var lid = $j(this).attr('data-hid'), list = gpgr.getLects(lid), ltext = $j(this).text(), defval = -100,
 						ml = $j("<select id='gpoptions' class='selgroup'></select>").bind('change', {
 							oid: lid,
 							otxt: ltext
@@ -342,7 +342,7 @@ sFrames.prototype.rcvField = function ($pitem, udiv, pev){
 								self.groupKiller(lx);
 							}
 						});
-						
+
 						$j(ml).append("<option value='-100'> none </option>");
 						if (list.length > 0) {
 							for (var i = 0, j = list.length; i < j; i++) {
@@ -362,7 +362,7 @@ sFrames.prototype.rcvField = function ($pitem, udiv, pev){
 							if (self.groupSum.title.length > 0) {
 								return self.groupSum.title;
 							}
-							else 
+							else
 								if (v.length > 0) {
 									self.groupSum.title = v;
 									return v;
@@ -377,14 +377,14 @@ sFrames.prototype.rcvField = function ($pitem, udiv, pev){
 						});
 						var $dfl = $j("<div/>"), $gsl = $j("<span id='gslist'></span>");
 						$dfl.append("<span>Name of the group</span>").append(vlin).append("<br>").append(ml);
-						
+
 						var vbs = self.groupSum.visual;
 						for (var df in vbs) {
 							$gsl.append(["<p class='fld_" , df , "'>" , vbs[df] , '</p>'].join(""));
 						}
 						$gsl.appendTo($dfl);
 						self.$gbox.empty().append($dfl);
-						
+
 					} else {
 						self.Leader(this);
 					}
@@ -443,13 +443,13 @@ sFrames.prototype.rcvField = function ($pitem, udiv, pev){
 
 
 	}
-	else 
+	else
 		if (dstp) {
 			$j($item).draggable({
 				revert: 'valid'
 			});
 		}
-	$j("#launchbut").attr("disabled",false);   
+	$j("#launchbut").attr("disabled",false);
 };
 
 sFrames.prototype.setFree = function(obj,mode,area){
@@ -496,7 +496,7 @@ sFrames.prototype.grouper = function(){
 	else {
 		$j("#colgroupz").hide();
 		this.$gbox.empty();
-		this.groupSum={visual:{},title:''};	
+		this.groupSum={visual:{},title:''};
 	}
 	return cnt;
 };
@@ -510,7 +510,7 @@ sFrames.prototype.turnSwitch = function(tobel){
 				$j("#"+ld).attr('checked', true);
 			}
 		}
-	}	
+	}
 };
 
 sFrames.prototype.arrangeFields = function(t){
@@ -529,7 +529,7 @@ sFrames.prototype.arrangeFields = function(t){
 			});
 		});
 	}
-	
+
 	for (var x = 0; x < al; x++) {
 		var i = areas[x];
 		if (t.hasOwnProperty(i) && t[i].length > 0) {
@@ -548,7 +548,7 @@ sFrames.prototype.arrangeFields = function(t){
 			}
 		}
 	}
-	fromlist = true;	
+	fromlist = true;
 };
 
 sFrames.prototype.launchQuery = function (udiv){}
@@ -556,12 +556,12 @@ sFrames.prototype.launchQuery = function (udiv){}
 sFrames.prototype.pclean = function(){
 	var self=this,ordr=[this.rtt,this.ctt];
 	this.ranges=[];
-	this.$gbox.empty();	
+	this.$gbox.empty();
 	$j(ordr).each(function(){
 		$j("li",this).each(function(){
 			self.setFree(this,'fake');
 		});
-	});	
+	});
 	this.lf=null;
 	$j("#tthome").empty();
 	$j(".stab_let").attr("disabled",true);
@@ -579,8 +579,8 @@ sFrames.prototype.fillRange = function(nl){
 			type: self.ntype,
 			title: self.title,
 			fld: self.nfld
-		};		
-	}	
+		};
+	}
 	if(!self.ranges[nl].val){
 		self.ranges[nl].val=[];
 	}
@@ -595,10 +595,10 @@ sFrames.prototype.DCG = function(nl){
 		});
 		$j("#crem").before("<span>To</span>").before($padd);
 		$j("#crem").val("Del");
-		
+
 		self.fillRange(nl);
 		//self.ranges[nl].val=[null,null,null];
-		
+
 		if(self.ranges[nl].val.length === 2){
 			self.ranges[nl].val[2]=null;
 		}
@@ -634,7 +634,7 @@ sFrames.prototype.emuLeader = function (l){
 
 sFrames.prototype.Leader = function(obj){
 	var self = this, abort = false,$nl = $j(obj), exx = false, fval = false, nlead = $nl.attr("data-hid"), deltas = $j("#delta-count").is(":checked"),pluse;
-	
+
 	$j("#bclean").show();
 	//self.ntype = $nl.attr("data-type");
 	self.ntype = $nl.attr("type");
@@ -677,7 +677,7 @@ sFrames.prototype.Leader = function(obj){
 					delete self.ranges[nlead];
 					abort = true;
 				}
-				else 
+				else
 					if (deltas === true && isArray(selects[nlead])) {
 						var deltac = selects[nlead];
 						$tadd = $j("<select id='fdelta_0' class='text' data-stage='0'></select>").bind("change", {
@@ -689,7 +689,7 @@ sFrames.prototype.Leader = function(obj){
 							}
 							self.ranges[par]['val'][zpart] = nval;
 						/*if (nval != 'none') {
-					 
+
 					 }*/
 						});
 						$tadd.append("<option value='-1'> ---- </option>");
@@ -711,7 +711,7 @@ sFrames.prototype.Leader = function(obj){
 									});
 									$tadd.append("<span>To</span>").append($padd);
 									$padd = null;
-									
+
 								}
 								for (var ind in exval) {
 									if (!isNaN(ind)) {
@@ -743,7 +743,7 @@ sFrames.prototype.Leader = function(obj){
 					var par = e.data.dpid, nval = $j(this).val();
 					self.ranges[par]['val'] = nval;
 					if (nval != 'none') {
-					
+
 					}
 				});
 				for (var i = 0, l = this.times.length; i < l; i++) {
@@ -762,7 +762,7 @@ sFrames.prototype.Leader = function(obj){
 				break;
 			case "number":
 				//$tadd = $j("<ul id='oledr'></ul>");
-				$tadd = $j("<table cellpadding=1 cellspacing=1 border=0 id='oledr'></table>");
+				$tadd = $j('<table cellpadding=1 cellspacing=1 border=0 id="oledr"></table>');
 				$tadd.append("<thead><tr><th>From</th><th>&nbsp;</th><th>To</th><th>Name</th><th>&nbsp;</th><th>&nbsp;</th></tr></thead><tbody></tbody>");
 				edue = 'this.addRow(0,false);';
 				if (exx) {
@@ -774,7 +774,7 @@ sFrames.prototype.Leader = function(obj){
 			default:
 				break;
 		}
-		this.$gbox.empty().append($tadd).show().data("active-period", nlead);
+		this.$gbox.empty().append('<span class="switchx" href="#" style="cursor:pointer;display: block;color: #0b0b0b;width: 40px;height: 40px;top: 0;right: 0;position: relative;text-align: center;line-height: 40px;"><i class="fa fa-refresh" aria-hidden="true"></i></span>').append($tadd).show().data("active-period", nlead);
 		self.lf = nlead;
 		if (!isArray(self.ranges[self.lf]) && !exx) {
 			if (abort === false) {
@@ -792,8 +792,8 @@ sFrames.prototype.Leader = function(obj){
 			}
 		}
 		eval(edue);
-		eval(epost);		
-	}	
+		eval(epost);
+	}
 }
 
 sFrames.prototype.refill = function(id){
@@ -817,12 +817,12 @@ sFrames.prototype.addRow = function(pid,cold,cvo){
 		lto=cvo.s;
 	}else{
 		cvo={s:'',e:'',n:''};
-	}	
+	}
 	var tst=["<tr id='piod_",cl,"'>",
 			"<td><input class='nfrom fcheck text' type='text'  value='",lto,"' size='5'></td><td> - </td>",
 			"<td><input class='nto fcheck text' type='text' size='5' value='",cvo.e,"'>",
 			"<td><input class='nname fcheck binput text' type='text' size='5' value='",cvo.n,"'></td>",
-			"<td>",				
+			"<td>",
 				//"<span class='fbutton addbutt' onclick='stater.addRow(",cl,",false);' title='Add'></span>",
 				"<span class='fa fa-plus' style='color: #354c8c' onclick='stater.addRow(",cl,",false);' title='Add'></span>",
 				//"<span class='fbutton delbutt' onclick='stater.delRow(",cl,");' title='Delete'></span>",
@@ -833,7 +833,7 @@ sFrames.prototype.addRow = function(pid,cold,cvo){
 	}
 	else if(cl == 0 || cold){
 		$j("tbody", this.$gbox).append(tst);
-	}	
+	}
 	//self.ranges[self.lf].push(pid);
 	if (!cold) {
 		self.ranges[self.lf].val[cl] = {
@@ -865,7 +865,7 @@ sFrames.prototype.chState = function(id){
 }
 
 sFrames.prototype.collector = function(filtersPlain){
-	var $rcr=$j("#rctrl"),	
+	var $rcr=$j("#rctrl"),
 	pres = {
 		rows: [],
 		cols: [],
@@ -888,19 +888,19 @@ sFrames.prototype.collector = function(filtersPlain){
 		/*brest: $j("#brest",$j("#dbox")[0]).is(":checked"),*/
 		gsums: this.groupSum,
 		gmetd: (function(x){
-				return x.groupMS();		
+				return x.groupMS();
 		})(this),
 		pluralchoice: this.plurchoise,
 		plurals : (function(){
 			var res=false;
 			if(plus && amnt(plus) > 0){
-				res=[];				
+				res=[];
 				for(var z in plus){
 					if(plus[z] !== null){
 						res[z]=plus[z];
 						res[z].data=null;
 					}
-				}				
+				}
 			}
 			return res;
 		})(),
@@ -911,7 +911,7 @@ sFrames.prototype.collector = function(filtersPlain){
 		actives: this.chState("ashow"),
 		filters: filtersPlain ? filar : JSON.stringify(filar),
 		relft: rels,
-		resultq: rqid				
+		resultq: rqid
 	};
 	$j("li", this.rtt).each(function(){
 		var $th=$j(this);
@@ -952,10 +952,10 @@ sFrames.prototype.collector = function(filtersPlain){
 urlData = null;
 sFrames.prototype.run = function(){
 	var self=this;
-	
+
 	if((areas.col.length + areas.row.length) == 0 ){
-		$j(".stab_let").attr("disabled",true);			
-		return false;		
+		$j(".stab_let").attr("disabled",true);
+		return false;
 	}
 	if (this.groupMS() == 'summ') {
 		var groupsm = this.grouper();
@@ -975,8 +975,8 @@ sFrames.prototype.run = function(){
 		}
 	}
 	var wrong=false;
-	
-	
+
+
 	if (!wrong) {
 		$j("#load_progress").show();
 		$j("#launchbut").attr("disabled",true);
@@ -1044,9 +1044,9 @@ sFrames.prototype.run = function(){
 				$j("#launchbut").attr("disabled",false);
 				$j("#load_progress").hide();
 			}
-			
+
 		});
-	}	
+	}
 }
 
 sFrames.prototype.doSave = function(pdata){
@@ -1058,13 +1058,13 @@ sFrames.prototype.doSave = function(pdata){
 		success: function(data){
 			if (data.length > 0) {
 				if (data != "fail") {
-					//we saved query					
+					//we saved query
 					if (parseInt(data) > 0) {
 						$j("#slogo").hide();
 						self.mode = 'save';
 						self.dialogNote("Query saved");
 						self.cid = 0;
-						
+
 						setTimeout(function(){
 							$j("#dbox").dialog('close').remove();
 						}, 1500);
@@ -1072,7 +1072,7 @@ sFrames.prototype.doSave = function(pdata){
 							'data': data,
 							'type': 'Stats'
 						};
-						self.saveQuery(t);						
+						self.saveQuery(t);
 					}
 				}
 			}
@@ -1081,7 +1081,7 @@ sFrames.prototype.doSave = function(pdata){
 		}
 	});
 }
- 
+
 chartz.prototype.doSave = function(pdata){
 	var self = this,legt='';
 	if(rrr === 0 && rqid > 0){
@@ -1094,12 +1094,12 @@ chartz.prototype.doSave = function(pdata){
 		success: function(data){
 			if (data.length > 0) {
 				if (data != "fail") {
-					//we saved query					
+					//we saved query
 					if (parseInt(data) > 0) {
 						$j("#slogo").hide();
 						self.mode = 'save';
 						self.dialogNote("Query saved");
-						self.cid = 0;						
+						self.cid = 0;
 						setTimeout(function(){
 							$j("#dbox").dialog('close').remove();
 						}, 1500);
@@ -1265,7 +1265,7 @@ var grapher = (function(my){
 			nrows = rows.slice(0);
 			nrowb = rowb.slice(0);
 		}
-		
+
 		return JSON.stringify({
 			"data": ndataset,
 			'cols': ncols,
@@ -1277,7 +1277,7 @@ var grapher = (function(my){
 			'col_use': $j("#col_big").val()
 		});
 	};
-	
+
 	var outData = function(){
 		boxes = stater.collector();
 		return {
@@ -1285,7 +1285,7 @@ var grapher = (function(my){
 			'cols': boxes.cols
 		};
 	}
-	
+
 	var collect = function(){
 		cols = [];
 		rows = [];
@@ -1335,7 +1335,7 @@ var grapher = (function(my){
 							 }*/
 							rpos = rows.push([rsp, tdtxt]);
 							if (yd == 0 /*&& crsp == rsp*/) {
-							
+
 								//crsp--;
 								$nobj = $j(this).next();
 								noclass = $nobj.attr("class");
@@ -1346,7 +1346,7 @@ var grapher = (function(my){
 								}
 							}
 						}
-						else 
+						else
 							if (((!colall && !scs) || (colall === true && scs === true && !vcs)) && !tcs && !pcs && use_next === true) {
 								if (!isArray(dataset[y])) {
 									dataset[y] = [];
@@ -1357,7 +1357,7 @@ var grapher = (function(my){
 								}
 								dataset[y].push(td);
 							}
-						
+
 					}
 					else {
 						use_next = true;
@@ -1373,7 +1373,7 @@ var grapher = (function(my){
 				dataset[0].push($j(this).text());
 			});
 		}
-		
+
 		if (rowb.length > 0) {
 			$j(".rsbox").remove();
 			var $rcase = $j("<div class='rsbox'><div class='btext'>Rows</div></div>");
@@ -1385,7 +1385,7 @@ var grapher = (function(my){
 			$rsel.find("option:first").attr("selected", true).end().appendTo($rcase);
 			$rcase.insertBefore("#chart_pref > span");
 		}
-		
+
 		if (colb.length > 0) {
 			$j(".csbox").remove();
 			var $ccase = $j("<div class='csbox'><div class='btext'>Columns</div></div>");
@@ -1401,7 +1401,7 @@ var grapher = (function(my){
 			grapher.pieOpts();
 		});
 	};
-	
+
 	var extractRows = function(){
 		if (rowb.length > 0) {
 			var brow = $j("#row_big").val(), zrows = [], dinclude = 0;
@@ -1420,7 +1420,7 @@ var grapher = (function(my){
 		}
 		return zrows;
 	};
-	
+
 	var zinit = function(){
 		dataset = [];
 		outData();
@@ -2034,7 +2034,7 @@ var grapher = (function(my){
 				uvrow: $j("#pieChoke").find("option:selected").text()
 			}
 		}
-		
+
 		var tbpost = dataSend(), ctype = $j("#chart_type").val(),
 			dataStr = {
 				cmode: ctype,
@@ -2044,7 +2044,7 @@ var grapher = (function(my){
 			}; //"&urow=",$j("#pieChoke").val()
 		return [tbpost, dataStr];
 	}
-	
+
 	return {
 		init: function(){
 			zinit();
@@ -2085,7 +2085,7 @@ var grapher = (function(my){
 			}else{
 				delete pgData[1].palette;
 			}
-			
+
 			if (pgData[0].length > 0) {
 				$j("#chart_pref").find(":button").attr("disabled", true).end().find(".chrt_load").show();
 				//$j("#graph_home").html(pgData[1]);
@@ -2540,18 +2540,18 @@ var grapher = (function(my){
 							msg=null;
 							if (!palettes[currentPalette]) {
 								palettes[currentPalette] = parts[0];
-							}							
+							}
 							$j("#graph_home").html(["<img src='data:image/png;base64," , parts[1] , "' class='grer' data-rep_item='graph'><br><div class='bottom-buts'><div id='prev_color' class='buthi' title='Back' onclick='grapher.color(\"prev\");'></div><div id='fwd_color' class='buthi' title='Forward' onclick='grapher.color(\"next\");'></div></div><input type='button' value='Save Chart Query' onclick='chface.saveDialog()' style='float:left;' class='text'>"].join(""));
-							parts = null;							
-							reporter.initGraph();							
-							$ghome.find(".bottom-buts")							
+							parts = null;
+							reporter.initGraph();
+							$ghome.find(".bottom-buts")
 							.hover(function(){
 								$j(this).find("div").fadeTo("fast", 1);
 							}, function(){
 								$j(this).find("div").fadeTo("fast", 0.1);
 							});
-							
-							if (currentPalette === 0) {								
+
+							if (currentPalette === 0) {
 								$j("#prev_color").css("visibility",'collapse');
 							}else{
 								$j("#prev_color").css("visibility",'visible');
@@ -2562,13 +2562,13 @@ var grapher = (function(my){
 							$j("#graph_home").empty();
 							alert("Chart drawing failed");
 						}
-						$j("#chart_pref").find(":button").attr("disabled", false).end().find(".chrt_load").hide();					
+						$j("#chart_pref").find(":button").attr("disabled", false).end().find(".chrt_load").hide();
 						colorLock = false;
 					}
 				});*/
 			}
 		},
-		
+
 		color: function(mode){
 			if (colorLock === true) {
 				return false;
@@ -2579,7 +2579,7 @@ var grapher = (function(my){
 				}
 				--currentPalette;
 			}
-			else 
+			else
 				if (mode === 'next') {
 					++currentPalette;
 				}
@@ -2606,7 +2606,7 @@ var grapher = (function(my){
 					}
 					for (var i = 0, j = useRows.length; i < j; i++) {
 						$j(["<option value='", i, "'>", useRows[i][1], "</option>"].join("")).appendTo($selb1);
-					}					
+					}
 					$selb1.insertBefore($j("#chart_pref > span "));
 				}
 			}

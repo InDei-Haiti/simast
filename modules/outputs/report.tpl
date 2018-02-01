@@ -34,7 +34,7 @@
 				    <td>Department:</td>
 				    <td>@@dept_selector@@</td>
                                 </tr>-->
-                                
+
                                 <tr>
                                     <td>Start Date:</td>
                                     <td>@@cal_start@@</td>

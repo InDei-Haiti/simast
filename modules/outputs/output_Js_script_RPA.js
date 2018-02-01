@@ -276,7 +276,7 @@ $(document).ready(function(){
                     console.log(data.reports);
                       $("#unn").append("<thead><tr><th>Nom</th><th>Type</th><th>Decacher</th></tr></thead>");
                     for(var i = 0; i < data.items.length; i++){
-                        $("#unn").append("<tr><td>"+data.items[i].title+"</td><td>"+data.items[i].itype+"</td><td id='clls_"+data.reports[i].id+"'><span onclick='unHideElmts("+data.reports[i].id+",1)'><i style='color: #354c8c;' class='fa fa-toggle-on fa-4' aria-hidden='true'></i></span></td></tr>");
+                        $("#unn").append("<tr><td>"+data.items[i].title+"</td><td>"+data.items[i].itype+"</td><td id='clls_"+data.items[i].id+"'><span onclick='unHideElmts("+data.items[i].id+",1)'><i style='color: #354c8c;' class='fa fa-toggle-on fa-4' aria-hidden='true'></i></span></td></tr>");
                     }
                   }
               });
@@ -291,7 +291,7 @@ $(document).ready(function(){
                     console.log(data.items);
                       $("#unn").append("<thead><tr><th>Nom</th><th>Type</th><th>Decacher</th></tr></thead>");
                     for(var i = 0; i < data.reports.length; i++){
-                        $("#unn").append("<tr><td>"+data.reports[i].title+"</td><td>Report</td><td id='clls_"+data.items[i].id+"'><span onclick='unHideElmts("+data.items[i].id+",0)'><i style='color: #354c8c;' class='fa fa-toggle-on fa-4' aria-hidden='true'></i></span></td></tr>");
+                        $("#unn").append("<tr><td>"+data.reports[i].title+"</td><td>Report</td><td id='clls_"+data.reports[i].id+"'><span onclick='unHideElmts("+data.reports[i].id+",0)'><i style='color: #354c8c;' class='fa fa-toggle-on fa-4' aria-hidden='true'></i></span></td></tr>");
                     }
                   }
               });
