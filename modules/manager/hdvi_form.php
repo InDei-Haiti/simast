@@ -66,11 +66,11 @@ foreach ( $rows as $k => $v ) {
                 </select>
             </td>
 		</tr>
-		<tr>
+		<!--<tr>
 			<td> Sart date:</td>
             <td><input type="date" class="text spCals  hasDatepick" name="beginner" value="" size="10"></td>
-		</tr>
-		<tr>
+		</tr>-->
+		<tr style="display: none">
 			<td>Section Membre:</td>
 			<td><select name="section" id="member" style="width: auto;"></select></td>
 		</tr>

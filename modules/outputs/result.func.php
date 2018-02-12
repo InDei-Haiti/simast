@@ -634,7 +634,9 @@ function resultBuilder($qmode) {
 			}
 		}
 		//$tab_head .= "</tr></thead>" . "\n";
-		$tab_head .= "</tr>\n<tr>" . $tab_src . '</tr></thead>' . "\n";
+		$tab_head .= "</tr>";
+        //$tab_headCopy = $tab_head;
+        //$tab_head .= "\n<tr>" . $tab_src . '</tr></thead>' . "\n";
 		$rhtml .= $tab_start . $colz . $tab_head;
 		unset ( $tab_start, $colz );
 		$rhtml .= '<tbody>';
