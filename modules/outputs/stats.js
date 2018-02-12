@@ -3,6 +3,7 @@ var chart = null;
 var map;
 var geoDataDic = {};
 var geoData = null;
+graph_data = {};
 var sFrames = function (){
 	this.$bh=$j("#shome");
 	this.cols=[];this.rows=[];this.$rbox;this.$cbox;this.ctt=$j("#cbox");this.rtt=$j("#rbox");
@@ -2094,7 +2095,7 @@ var grapher = (function(my){
 				var options = null;
 				var data = null;
 				type = pgData[1]['cmode'];
-				graph_data = {};
+
 				if(pgData[1]['cmode']=='bars' || pgData[1]['cmode']=='pbars' || pgData[1]['cmode']=='sbars' ){
 					categories = [];
                     if($j('#col_big:visible').length > 0){
@@ -2509,6 +2510,7 @@ var grapher = (function(my){
                 //$j("#graph_tab_holder").clone(true).addClass("stabh_vis").prependTo("#graph_home");
                 setTimeout(function(){
                     $j("#graph_tab_holder").clone(true).addClass("stabh_vis").prependTo("#graph_home").show();
+										$("#graph_home #pick_graph").removeAttr("style");
 				}, 30000);
 
 					//.prependTo("#graph_home").show();

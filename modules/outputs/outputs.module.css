@@ -185,7 +185,7 @@
 }
 
 .mflt {
-    list-style: none;    
+    list-style: none;
     width: 850px;
     position: relative;
     top: -30px;
@@ -217,7 +217,7 @@
     width: 13px;
     height: 15px;
     float: left;
-    margin: 0px 3px;   
+    margin: 0px 3px;
 }
 
 .dates {
@@ -454,7 +454,7 @@ div#mbox {
 
 /* ================================================================
  This copyright notice must be untouched at all times.
- 
+
  The original version of this stylesheet and the associated (x)html
  is available at http://www.cssplay.co.uk/menus/dl-flyout.html
  Copyright (c) 2005-2009 Stu Nicholls. All rights reserved.
@@ -1346,7 +1346,7 @@ div#shadow{
 }
 
 .blind{
-	display: none;	
+	display: none;
 	width: 17px;
 	height: 17px;
 	margin: 0px 5px;
@@ -1474,7 +1474,7 @@ ul.statcolx li{
 }
 
 .hide_butt{
-	/*height: 1px !important;*/	
+	/*height: 1px !important;*/
 	visibility:hidden;
 }
 
@@ -1490,7 +1490,7 @@ ul.statcolx li{
 #cboxes{
 	margin-top: 15px;
 	border-bottom: 1px solid #cfcfcf;
-	height: 70px;	
+	height: 70px;
 }
 
 #cboxes > label{
@@ -1529,12 +1529,12 @@ ul.statcolx li{
 	vertical-align: top;
 }
 
-.outbox{	
-	position: absolute;	
+.outbox{
+	position: absolute;
 }
 
-.footbox{	
-	position: relative;	
+.footbox{
+	position: relative;
 	width: 259px;
 	background-color: #D9D9D9;
 	height: 25px;
@@ -1544,7 +1544,7 @@ ul.statcolx li{
 .lbutt{
 	border: 1px solid #7F848A;
 	padding: 1px;
-	font-size: 8pt;	
+	font-size: 8pt;
 }
 
 .lbutt:hover{
@@ -1575,7 +1575,7 @@ ul.statcolx li{
 	margin : 3px;
 	padding: 2px;
 	border: 1px solid #b9b9b9;
-	float: left; 
+	float: left;
 }
 
 #chart_pref > select{
@@ -1596,7 +1596,7 @@ ul.statcolx li{
 	width: 18px;
 	height:18px;
 	margin: 1px 3px;
-	background: url("/images/zload.gif") no-repeat;	
+	background: url("/images/zload.gif") no-repeat;
 	float: left;
 }
 
@@ -1607,19 +1607,19 @@ ul.statcolx li{
 }
 
 @media screen and (-webkit-min-device-pixel-ratio:0){
-	.listmat { 
+	.listmat {
 		margin-top: -285px !important;
-	}    
+	}
 }
 
 @media all and (width) {
 	.listmat{
 			margin-top: -285px !important;
-	}	
+	}
 }
 .listmat, x:-moz-any-link, x:default{
 	margin-top: -285px !important;
-} 
+}
 
 *:first-child+html .listmat{
 	margin-top: -300px !important;
@@ -1632,11 +1632,11 @@ ul.statcolx li{
 	color: red;
 	font-weight: 800;
 }
-.fk{	
+.fk{
 	color:#bababa !important;
 }
 .enum{
-	font-weight: 800;	
+	font-weight: 800;
 }
 
 /*#reportBag > p{
@@ -1691,26 +1691,27 @@ ul.statcolx li{
 	padding: 10px;
 	margin: 5px;
 	list-style: none;
-	border: 2px solid #96a19f;	
+	border: 2px solid #96a19f;
 }
 
 #graph_tab_holder{
 	/*width: 16px;
 	height: 16px;
 	background: url("images/chart.png") no-repeat;
-	margin: 3px;	
+	margin: 3px;
 	display:none;*/
 
     margin: 3px;
     margin-left: 0px;
-    display:none;
+    /* display:none; */
 }
 
 #pick_graph{
-    display: block;
+    /* display: block;
     width: 16px;
-    height: 16px;
+    height: 16px; */
     /*background: url("images/table.png") no-repeat;*/
+    /* margin-left: -105px; */
 }
 
 #stat_tab_holder{
@@ -1723,9 +1724,9 @@ ul.statcolx li{
 }
 
 #pick_table{
-    display: block;
-    width: 16px;
-    height: 16px;
+    /*display: block;*/
+    /*width: 16px;*/
+    /*height: 16px;*/
     /*background: url("images/table.png") no-repeat;*/
 }
 
@@ -1767,7 +1768,7 @@ ul.statcolx li{
 
 .femptyc{
 	width: 175px;
-	float: left;  
+	float: left;
 }
 
 .rtit{
@@ -1840,7 +1841,7 @@ ul.statcolx li{
 	float:left;*/
 	padding-left: 178px;
 	width: 1195px;
-	display: block;	
+	display: block;
 }
 
 .sec_text{
@@ -1861,7 +1862,7 @@ ul.statcolx li{
 	border: 2px solid #e5e3e9;
 	width: 24px;
 	height: 24px;
-	float: left;	
+	float: left;
 }
 
 .col_add{
@@ -1877,7 +1878,7 @@ ul.statcolx li{
 	white-space: nowrap;
 }
 
-.rep_name  a{	
+.rep_name  a{
 	white-space: nowrap;
 }
 
@@ -1894,14 +1895,14 @@ ul.statcolx li{
 .rep_name > .fader{
 	top: -15px;
 	height: 15px;
-	right: -108px;	
+	right: -108px;
 }
 .sec_type:hover, .col_type:hover{
-	border: 2px solid #d0cbd8; 
+	border: 2px solid #d0cbd8;
 	background-color: #fafcfe;
 }
 
-.big_size{	
+.big_size{
 	font-size: 14pt;
 	padding: 10px;
 }
@@ -1911,7 +1912,7 @@ ul.statcolx li{
 }
 
 .stat_back{
-	background: url("images/table-back.png") repeat;	
+	background: url("images/table-back.png") repeat;
 }
 
 #graph_home{
@@ -1923,12 +1924,12 @@ ul.statcolx li{
 }
 
 .grer:hover{
-	border: 3px solid #96A19F;	
+	border: 3px solid #96A19F;
 }
 
 .grer{
 	border: 3px solid #F0F0F0;
-	float:left;		
+	float:left;
 }
 
 #rep_note{
@@ -1956,7 +1957,7 @@ ul.statcolx li{
 	float:right;
 	position: relative;
 	display: none;
-	/*top: -20px;*/	
+	/*top: -20px;*/
 }
 	.result_opts-more{
 		background-position: 0 -230px;
@@ -1968,10 +1969,10 @@ ul.statcolx li{
 @-moz-document url-prefix(){
 	.femptyc{
 		width: 185px;
-	}	
+	}
 	.rtit{
 		width: 152px;
-	}	
+	}
 	.sec_type,.col_type{
 		width: 18px;
 		height: 18px;
@@ -1979,7 +1980,7 @@ ul.statcolx li{
 	}
 	.head_home{
 		padding-left: 188px;
-	}	
+	}
 	.rowdrops{
 		margin: 0 2px;
 	}
@@ -1988,7 +1989,7 @@ ul.statcolx li{
 		width: 1215px;
 	}
 	.result_opts{
-		top: -20px;	
+		top: -20px;
 	}
 	.clfld{
 		top: -15px;
@@ -2000,7 +2001,7 @@ ul.statcolx li{
 	min-width: 755px;
     padding-left: 110px;
 	/*left: 500px;
-	position: absolute; 
+	position: absolute;
 	top: 140px;*/
 }
 
@@ -2040,8 +2041,8 @@ ul.statcolx li{
 
 .buthi{
 	width: 24px;
-	height: 25px;	
-	margin: 2px;	
+	height: 25px;
+	margin: 2px;
 	border: 1px solid #BAC1C9;
 	background: url("images/chart_nav.png") no-repeat;
 }
@@ -2050,18 +2051,18 @@ ul.statcolx li{
 	cursor: pointer;
 	border: 1px solid #A4A3A5;
 	background-color: #D5D4D7;
-	
+
 }
 
-#prev_color{	
-	float: left;	
+#prev_color{
+	float: left;
 	visibility:hidden;
 	background-position: 0 1px;
 	margin-left: 25px;
 }
 
-#fwd_color{	
-	float: right;	
+#fwd_color{
+	float: right;
 	background-position: -22px 1px;
 	margin-right: 25px;
 }
@@ -2074,10 +2075,10 @@ ul.statcolx li{
 .bottom-buts{
 	position: relative;
 	/*bottom: -94%;*/
-	width: 150px;	
+	width: 150px;
 	height: 40px;
 	/*clear: both;-*/
-	float:left;	
+	float:left;
 	z-index: 5;
 }
 
@@ -2092,12 +2093,12 @@ ol#rules{
 .out_block{
 	border: 1px solid #e5e5e5;
 	padding: 3px 2px;
-	color: #3d3d3d;	
+	color: #3d3d3d;
 }
 
 .out_block:hover{
 	border: 1px solid #dedede;
-	background-color: #fff8f8;	
+	background-color: #fff8f8;
 	color: #000;
 }
 
@@ -2524,7 +2525,7 @@ ol#rules{
 .ui-datepicker .ui-datepicker-title { margin: 0 2.3em; line-height: 1.8em; text-align: center; }
 .ui-datepicker .ui-datepicker-title select { float:left; font-size:1em; margin:1px 0; }
 .ui-datepicker select.ui-datepicker-month-year {width: 100%;}
-.ui-datepicker select.ui-datepicker-month, 
+.ui-datepicker select.ui-datepicker-month,
 .ui-datepicker select.ui-datepicker-year { width: 49%;}
 .ui-datepicker .ui-datepicker-title select.ui-datepicker-year { float: right; }
 .ui-datepicker table {width: 100%; font-size: .9em; border-collapse: collapse; margin:0 0 .4em; }
@@ -2575,7 +2576,7 @@ ol#rules{
 ----------------------------------*/
 .ui-dialog { position: relative; padding: .2em; width: 300px; }
 .ui-dialog .ui-dialog-titlebar { padding: .5em .3em .3em 1em; position: relative;  }
-.ui-dialog .ui-dialog-title { float: left; margin: .1em 0 .2em; } 
+.ui-dialog .ui-dialog-title { float: left; margin: .1em 0 .2em; }
 .ui-dialog .ui-dialog-titlebar-close { position: absolute; right: .3em; top: 50%; width: 19px; margin: -10px 0 0 0; padding: 1px; height: 18px; }
 .ui-dialog .ui-dialog-titlebar-close span { display: block; margin: 1px; }
 .ui-dialog .ui-dialog-titlebar-close:hover, .ui-dialog .ui-dialog-titlebar-close:focus { padding: 0; }
@@ -2649,10 +2650,10 @@ ol#rules{
 
 .maplist > li:hover{
 	background-color: #eee;
-} 
+}
 
 .bblock{
-	 height: 500px; 
+	 height: 500px;
 	 padding: 2px;
 	 margin: 3px;
 	 border: 2px solid #DCDBD8;
@@ -2664,8 +2665,8 @@ ol#rules{
 	padding: 1px;
 	color: #000;
 	display:none;
-	background: url("images/loader.gif") no-repeat 64px 1px;	
-	margin-right: 10px;		
+	background: url("images/loader.gif") no-repeat 64px 1px;
+	margin-right: 10px;
 	position: relative;
 	left: -10px;
 }
@@ -2702,8 +2703,8 @@ ol#rules{
 
 .innerrow{
 	border: 1px solid #403d4c;
-	margin: 3px 1px;	
-	float: left; 
+	margin: 3px 1px;
+	float: left;
 }
 
 .bottom-buts{
@@ -2711,14 +2712,14 @@ ol#rules{
 	bottom: -94%;
 	width: 100%;
 	height: 40px;
-	clear: both;	
-	z-index: 5;	
+	clear: both;
+	z-index: 5;
 }
 
 .buthi{
 	width: 24px;
-	height: 25px;	
-	margin: 2px;	
+	height: 25px;
+	margin: 2px;
 	border: 1px solid #BAC1C9;
 	background: url("images/chart_nav.png") no-repeat;
 }
@@ -2727,18 +2728,18 @@ ol#rules{
 	cursor: pointer;
 	border: 1px solid #A4A3A5;
 	background-color: #D5D4D7;
-	
+
 }
 
-#prev{	
-	float: left;	
+#prev{
+	float: left;
 	visibility:hidden;
 	background-position: 0 1px;
 	margin-left: 25px;
 }
 
-#fwd{	
-	float: right;	
+#fwd{
+	float: right;
 	background-position: -22px 1px;
 	margin-right: 25px;
 }
@@ -2763,7 +2764,7 @@ ol#rules{
 }
 
 .ul_widget{
-	margin-left:-30px; 
+	margin-left:-30px;
 	z-index: 10;
 	list-style: none;
 }
@@ -2938,4 +2939,3 @@ ol#rules{
     /* background-image: none; */
 }
 /*ajout pour modification des selections*/
-

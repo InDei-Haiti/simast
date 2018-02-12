@@ -2802,9 +2802,9 @@ qlHandler.prototype.edit = function(id_edit,nomSet){
 				console.log("Pas de donnees");
 			}
 		}});
-	var getModal = $("#setModal");
+	var getModal = $("#getItemAttr");
 	getModal.css("display","block");
-	$("#closeSetModal").click(function(){
+	$("#getItemAttrModal").click(function(){
 		getModal.css("display","none");
 	});
 };

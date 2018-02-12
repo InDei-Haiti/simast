@@ -302,13 +302,13 @@ if ($_POST ['mode'] == 'save' || $_POST ['mode'] == 'update') {
 			//$_SESSION ['fileNameCshfBack']
 			//var_dump($_POST);
             $html = mysql_real_escape_string($html);
-			$sql = 'insert into report_items (title,itype,idata,html,data_item,project_id) values ("%s","%s","%s","%s","%s","%s")';
-			$res = mysql_query(sprintf($sql, $idata['n'], $idata['c'], mysql_real_escape_string(json_encode($idata)),$html,mysql_real_escape_string(gzencode(var_export($html,true), 9, FORCE_GZIP)),$_POST['project_id']));
+			$sql = 'insert into report_items (title,itype,idata,html,data_item,project_id,actif) values ("%s","%s","%s","%s","%s","%s","%s")';
+			$res = mysql_query(sprintf($sql, $idata['n'], $idata['c'], mysql_real_escape_string(json_encode($idata)),$html,mysql_real_escape_string(gzencode(var_export($html,true), 9, FORCE_GZIP)),$_POST['project_id'],1));
 			if ($res) {
 				$new_id = mysql_insert_id();
 			}
 			//echo mysql_errno().':'.mysql_error();
-			echo $new_id;
+			echo $new_id."|||".$_GET["descriptionItem"];
 			break;
 		case 'get_item_list':
             $is_superAdmin = false;
@@ -352,6 +352,9 @@ if ($_POST ['mode'] == 'save' || $_POST ['mode'] == 'update') {
 						if ($res) {
 							$html = mysql_fetch_row($res);
 							echo $html[0];
+							// echo "<pre>";
+							// var_dump($irdata);
+							// echo "</pre>";
 						}
 
 					}else
@@ -544,8 +547,11 @@ if ($_POST ['mode'] == 'save' || $_POST ['mode'] == 'update') {
 								);
 				echo json_encode($rslt);
 			}elseif(isset($_GET["cached"]) AND $_GET["cached"] == 1){
-						if(isset($_GET["chk"]) AND $_GET["chk"]==0){
-							$sql = "UPDATE report_items SET actif = 1 WHERE id = ".$_GET["id"];
+//				echo "La valeur de chx = ".$_GET["chx"];exit;
+						if(isset($_GET["chx"]) AND $_GET["chx"]==0){
+
+							$sql = "UPDATE reports SET actif = 1 WHERE id = ".$_GET["id"];
+//							$sql = "UPDATE report_items SET actif = 1 WHERE id = ".$_GET["id"];
 							$res=mysql_query($sql);
 							if($res){
 								echo "ok";
@@ -557,11 +563,13 @@ if ($_POST ['mode'] == 'save' || $_POST ['mode'] == 'update') {
 
 
 						}else{
-							$sql = "UPDATE reports SET actif = 1 WHERE id = ".$_GET["id"];
-							$res=mysql_query($sql);
+//							$sql = "UPDATE reports SET actif = 1 WHERE id = ".$_GET["id"];
+							$sql = "UPDATE report_items SET actif = 1 WHERE id = ".$_GET["id"];
+							$res = mysql_query($sql);
 							if($res){
 								echo "ok";
 							}else{
+								echo "okChk = 1";
 								echo "no";
 	//							echo mysql_errno().':'.mysql_error();
 	//							echo "<br />".$sql;

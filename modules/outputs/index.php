@@ -2039,3 +2039,22 @@ echo '<!--<link rel="stylesheet" type="text/css" href="http://cdn.leafletjs.com/
     </div>
 
 </div>
+
+
+
+<div id="getItemAttr" class="modal">
+
+    <div class="modal-content">
+        <div class="modal-header">
+            <span id="getItemAttrModal" class="close">&times;</span>
+            <h2></h2>
+        </div>
+        <div class="modal-body">
+
+        </div>
+        <div class="modal-footer">
+
+        </div>
+    </div>
+
+</div>

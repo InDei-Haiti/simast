@@ -37,38 +37,39 @@ function uniqueID() {
     return  Math.round(new Date().getTime() / 10);
 }
 
-var reporter = (function (my) {
+var reporter;
+reporter = (function (my) {
     var rows = [], rcell = 0, $visualRowSet, rowIndex = 1, $statHead, $statBody, $statTable, dBox, curRow, self = this, $rform = $j("#datareport"), $breport = $j("#breport", $rform),
         $brbody = $j("tbody", $breport), sections = [], sIndex = 0, lastdbox = 0, rowsPart = 0, lastFoundItem, anyColumnitem = false, $cbrbody, $rhouse = $j("#reportHouse"),
         delLink = '<span onclick="reporter.delr(this);" class="fhref" title="Delete"><img height="16" border="0" alt="Delete" width="16" src="/images/delete1.png"></span>',
-        $replist = $j("#reportList"), $rlbody = $replist.find("tbody") , sdbox = [], loadSrc, curChoice = false, choice_det, ndtitle, tempAreaText = '', sitemSelector = '',
+        $replist = $j("#reportList"), $rlbody = $replist.find("tbody"), sdbox = [], loadSrc, curChoice = false, choice_det, ndtitle, tempAreaText = '', sitemSelector = '',
         activated = false, $rnote = $j("#rep_note"), inBays = [], startAddPoint = '', sectionsCount = 0, lastPicked, buildingSample = false, textStore = '', prevPicked = false,
         dropDOptions = {
-            accept:'#box-home li, li.head-field',
-            activeClass:'ui-state-hover',
-            hoverClass:'ui-state-active',
-            addClasses:"head-field hfc",
-            greedy:true,
-            tolerance:'pointer',
-            drop:function (ev, $ui) {
+            accept: '#box-home li, li.head-field',
+            activeClass: 'ui-state-hover',
+            hoverClass: 'ui-state-active',
+            addClasses: "head-field hfc",
+            greedy: true,
+            tolerance: 'pointer',
+            drop: function (ev, $ui) {
                 pasteToRowPlace($ui, ev, this);
                 return true;
             }
         }, sortableOptions = {
-            scroll:true,
-            tolerance:'pointer',
-            cursorAt:{
-                top:-2,
-                left:-2
+            scroll: true,
+            tolerance: 'pointer',
+            cursorAt: {
+                top: -2,
+                left: -2
             },
-            stop:function (event, ui) {
+            stop: function (event, ui) {
                 $j(this).find(".moreview").trigger("mouseout");
             },
-            deactivate:function (event, ui) {
+            deactivate: function (event, ui) {
                 $j(".moreview").trigger("mouseout");
             }
         },
-        $sectionTypes = $j("<select/>", {"class":"section_typer text form-control","style":"width:310px"})
+        $sectionTypes = $j("<select/>", {"class": "section_typer text form-control", "style": "width:310px"})
             .append("<option value='-1'>----</option>")
             .append("<option value='text'>Text</option>")
             .append("<option value='stat'>Stat table</option>")
@@ -103,8 +104,8 @@ var reporter = (function (my) {
             $rowClone
                 .attr("data-rid", rowIndex)
                 .find("input:not([type='button'])").val("").end().html(function (ixh, code) {
-                    return code.replace(/rep\[\d{1,}\]/gi, "rep[" + rowIndex + "]");
-                })
+                return code.replace(/rep\[\d{1,}\]/gi, "rep[" + rowIndex + "]");
+            })
                 .find(".demobox").text("").end()
                 .find(".rtit").val("").end()
                 .find(".indata").val(amnt(+sdbox) - 1);
@@ -181,7 +182,7 @@ var reporter = (function (my) {
                 "<span class='section_move section_move_down' title='Move DOWN'/></span>",
                 "</div><div class='sec_cont_view'/><input type='hidden' name='sec[", sIndex, "][content]' class='sec_cont_all'>",
                 "<input type='hidden' name='sec[", sIndex, "][type]' class='sec_cont_type'></td>" +
-                "<td style='width: 120px;'><span class='fbutton delbutt fhref fa fa-trash-o' onclick='reporter.delSection(",sIndex,",true)' title='Remove Section'></span><span class='fbutton sceditor fa fa-pencil' onclick='reporter.editSection(",sIndex,",this)' title='Edit Section'></span><span class='section_move section_move_up fa fa-arrow-up' title='Move UP'></span><span class='section_move section_move_down fa fa-arrow-down' title='Move DOWN'></span>"+
+                "<td style='width: 120px;'><span class='fbutton delbutt fhref fa fa-trash-o' onclick='reporter.delSection(", sIndex, ",true)' title='Remove Section'></span><span class='fbutton sceditor fa fa-pencil' onclick='reporter.editSection(", sIndex, ",this)' title='Edit Section'></span><span class='section_move section_move_up fa fa-arrow-up' title='Move UP'></span><span class='section_move section_move_down fa fa-arrow-down' title='Move DOWN'></span>" +
                 "</td></tr>"];
         ++sIndex;
 
@@ -195,7 +196,7 @@ var reporter = (function (my) {
             $j(xtxt).insertAfter(["tr.", (startAddPoint.replace("_", "sub_")), ":last"].join(""), $cbrbody);//.slideDown("fast");
         }
 
-        $j("<tr/>", {"class":"secsub_" + (sIndex - 1)})
+        $j("<tr/>", {"class": "secsub_" + (sIndex - 1)})
             .append("<td/>").find("td")
             .html($j("#secadder > input").clone(true)).end().insertAfter($j(".secsub_" + (sIndex - 1) + ":last", $cbrbody));
 
@@ -211,7 +212,7 @@ var reporter = (function (my) {
         var sctype = $sec.attr("data-stype"), sname = $j(backup).find(".longwrite").val();
         sname = sname ? sname : "";
         sctype = sctype ? sctype : "-1";
-        var $new_data = $j("<table/>", {"class":"table_edit_cell"})
+        var $new_data = $j("<table/>", {"class": "table_edit_cell"})
             .append("<tr><td>Section Name:</td> <td><input type='text' class='text form-control' value='" + sname + "'></td></tr>")
             .append("<tr><td>Section Type:</td> <td></td></tr>");
         $new_data.find("tr:eq(1) > td:eq(1)").append($sectionTypes.clone(true).val(sctype));
@@ -238,7 +239,7 @@ var reporter = (function (my) {
 
         if (xmode == 'text') {
             var localtxt = 'loc_' + uniqueID();
-            rtxt = rtxt.concat(["<td></td><td><textarea id='" , localtxt , "' name='rows", srid, "[title]' class='rte_box' cols=60 rows=2>", textStore, "</textarea></td></tr>"]);
+            rtxt = rtxt.concat(["<td></td><td><textarea id='", localtxt, "' name='rows", srid, "[title]' class='rte_box' cols=60 rows=2>", textStore, "</textarea></td></tr>"]);
         }
         else if (xmode == 'graph' || xmode == 'stat') {
             var localitems = "<tr class='sec_cont'><td>Section Element</td><td>" + sitemSelector + "</td></tr>";
@@ -266,7 +267,7 @@ var reporter = (function (my) {
             /*$j("#" + localtxt).val(textStore).cleditor(lopts);*/
             $j("#" + localtxt).val(textStore).cleditor();
             /*$j("#" + localtxt).val(textStore);
-            CKEDITOR.replace( localtxt );*/
+             CKEDITOR.replace( localtxt );*/
         }
         $j(["<tr class='sec_ctrl'><td><input type='button' class='text sec_app do_save button ce pi ahr' value='Apply'></td>",
             "<td style='text-align: right;'><input type='button' class='text sec_app do_cancel button ce pi ahr' value='Cancel'></td></tr>"].join(""))
@@ -293,13 +294,13 @@ var reporter = (function (my) {
             },
             function () {
                 $statTable.css("background-color", "inherit");
-            }).live("dblclick", function (e) {
-            	
-            	statTableHtmlData = 'table';//$j('#tthome table').html();
-            	itemClick = 'stat';
-            	//console.log(statTableHtmlData);
-                pickerAct(e);
-            });
+            }).live("click", function (e) {//replace dblclick by click
+
+            statTableHtmlData = 'table';//$j('#tthome table').html();
+            itemClick = 'stat';
+            //console.log(statTableHtmlData);
+            pickerAct(e);
+        });
 
     }
 
@@ -313,8 +314,8 @@ var reporter = (function (my) {
         e.stopPropagation();
         $j("#tabs").toTab(4);
         $j.get("?m=outputs&a=reports&mode=loadinfo&suppressHeaders=1", {
-            "dbrid":rid
-        }, function (rdata,status,xhr) {
+            "dbrid": rid
+        }, function (rdata, status, xhr) {
             // console.log(status);
             //console.log(rdata);
             rdata = JSON.parse(rdata);
@@ -341,17 +342,17 @@ var reporter = (function (my) {
                     for (var i = 0, l = bdata.columns[colm].length; i < l; i++) {
                         var cursec = bdata.columns[colm][i],
                             pprow = secs[cursec], vcont;
-                        if(pprow==null){
+                        if (pprow == null) {
                             continue;
                         }
                         console.log(cursec);
                         console.log(secs);
                         console.log(pprow);
-                        if(pprow.type === -1){
+                        if (pprow.type === -1) {
                             continue;
                         }
                         pprow_name = "";
-                        if(pprow.hasOwnProperty('name')) {
+                        if (pprow.hasOwnProperty('name')) {
                             pprow_name = pprow.name;
                         }
                         if (bdata.types[i] === 'text') {
@@ -369,7 +370,7 @@ var reporter = (function (my) {
                         console.log(pprow);
 
                         /*console.log($pcell.find(".rte_fld").html()
-                            .prev("input:hidden"));*/
+                         .prev("input:hidden"));*/
                         $pcell.find(".rte_fld").html(pprow_name)
                             .prev("input:hidden").val(pprow_name).end()
                             .end()
@@ -396,11 +397,11 @@ var reporter = (function (my) {
                         .find(".indata").val(crow.bdid).end()
                         .find(".demobox").text(rdata.backdoor.rows[crow.rid].n).end()
                         .html(
-                        function (inx, code) {
-                            var rcode = code.replace(/rep\[\d{1,}\]/gi, "rep[" + (parseInt(i) + 1) + "]");
-                            $j($j(rcode)[0]).val(crow.title);
-                            return rcode;
-                        }).attr('data-rid', crow.rid)
+                            function (inx, code) {
+                                var rcode = code.replace(/rep\[\d{1,}\]/gi, "rep[" + (parseInt(i) + 1) + "]");
+                                $j($j(rcode)[0]).val(crow.title);
+                                return rcode;
+                            }).attr('data-rid', crow.rid)
                         .appendTo("ol", $j("#reportBag"));
                 }
             }
@@ -409,15 +410,15 @@ var reporter = (function (my) {
             $j("#rep_name").val(rdata.title);
             $j("#rep_dept").val(rdata.rep_dept);
             $j("#rep_desc").val(rdata.rep_desc);
-            if(rdata.start_date == ""){
+            if (rdata.start_date == "") {
                 $j("#rep_start").val("0000-00-00");
-            }else{
+            } else {
                 $j("#rep_start").val(rdata.start_date);
             }
 
-            if(rdata.end_date == ""){
+            if (rdata.end_date == "") {
                 $j("#rep_end").val("0000-00-00");
-            }else{
+            } else {
                 $j("#rep_end").val(rdata.end_date);
             }
 
@@ -451,8 +452,8 @@ var reporter = (function (my) {
         for (var i in arr) {
             if (ind == zind) {
                 return {
-                    field:i,
-                    table:arr[i]
+                    field: i,
+                    table: arr[i]
                 };
             }
             ++zind;
@@ -462,117 +463,165 @@ var reporter = (function (my) {
     function pickerOff(mode) {
         rcvField(rcell);
     }
-    function returnMapPicture(err,canvas){
+
+    function returnMapPicture(err, canvas) {
         imgBase64 = canvas.toDataURL();
         statTableHtmlData = 'maps';
         itemClick = 'maps';
         pickerAct(e);
     }
+
     function pickerAct(e) {
         var lthis = e.target;
         console.log("Je suis la");
-        if (lthis === lastPicked) {
-            //if(!confirm("This item was already selected as report item, do u want repeat?")){
-            return false;
-            //}
-        } else {
-            prevPicked = lastPicked;
-            lastPicked = lthis;
-        }
-        if (ndtitle = prompt("Enter name for selected item")) {
-            if (!ndtitle || trim(ndtitle).length == 0) {
-                info("You should enter name of item before save it", 0);
-                return false;
-            }
-            curChoice = lthis.tagName.toLowerCase();
-            choice_det = $j(lthis).attr("data-rep_item");
-            console.log(ndtitle+": "+choice_det+" "+curChoice);
-            if (curChoice == "td") {
-                choice_det = 'cell';
-                $j(lthis).addClass("cseled");
-                $j("#tthome").css("cursor", "auto");
-                reporter.detectParents(lthis);
-            }
-            else {
-                var rtabd = form2object("sendAll"); // result table form data
-                rcell = findMaxKey(rows);//amnt(rows);
-                if (curChoice === "span" && choice_det === 'stat') {
-                    // we got selected stat table
-                    var spiv = ['cols', 'rows'], stxt = [];
-                    for (var si = 0, sl = spiv.length; si < sl; si++) {
-                        var ssi = spiv[si];
-                        stxt.push(si);
-                        stxt[si] = [];
-                        for (var aitem in dBox[ssi]) {
-                            if (typeof dBox[ssi][aitem].title === 'string') {
-                                stxt[si].push(dBox[ssi][aitem].title);
+        // if (lthis === lastPicked) {
+        //     //if(!confirm("This item was already selected as report item, do u want repeat?")){
+        //     return false;
+        //     //}
+        // } else {
+        //     prevPicked = lastPicked;
+        //     lastPicked = lthis;
+        // }
+
+        var tsave = true;
+
+        // added for SaveItemsDescription
+        var getModal = $("#getItemAttr");
+        $("#getItemAttr .modal-body").empty();
+        $("#getItemAttr .modal-body").append('<div class="row">'
+            +'<div class="col-md-6 col-md-offset-3">'
+            +'<form>'
+            +'<label for="nom">Nom ITEM</label>'
+            +'<input class="form-control" id="nom_item" type="text" name="nom_item" placeholder="Entrer le nom de l ITEM">'
+            +'<label for="desc">Description ITEM</label>'
+            +'<textarea placeholder="Description du ITEM" class="form-control" id="desc_item" name="description" style="margin-top: 0px; margin-bottom: 0px; height: 88px;" rows="6"></textarea><br>'
+            +'<button id="getSaved" class="button ce pi ahr">SAVE ITEM</button>'
+            +'</form>'
+            +'</div>'
+            +'</div>');
+        getModal.css("display","block");
+        $("#getItemAttrModal").click(function(){
+            getModal.css("display","none");
+            tsave = false;
+        });
+
+        $("#getSaved").click(function(e){
+            e.preventDefault();
+            // alert("Vive Haiti");
+
+            //imported
+            ndtitle = $("#nom_item").val();
+            reportDesc =  $("#desc_item").val();
+            alert(reportDesc);
+            // if (ndtitle = prompt("Enter name for selected item")) {
+            if (tsave) {
+                if (!ndtitle || trim(ndtitle).length == 0) {
+                    info("You should enter name of item before save it", 0);
+                    return false;
+                }
+                curChoice = lthis.tagName.toLowerCase();
+                choice_det = $j(lthis).attr("data-rep_item");
+                console.log(ndtitle + ": " + choice_det + " " + curChoice);
+                if (curChoice == "td") {
+                    choice_det = 'cell';
+                    $j(lthis).addClass("cseled");
+                    $j("#tthome").css("cursor", "auto");
+                    reporter.detectParents(lthis);
+                }
+                else {
+                    var rtabd = form2object("sendAll"); // result table form data
+                    rcell = findMaxKey(rows);//amnt(rows);
+                    if (curChoice === "span" && choice_det === 'stat') {
+                        // we got selected stat table
+                        var spiv = ['cols', 'rows'], stxt = [];
+                        for (var si = 0, sl = spiv.length; si < sl; si++) {
+                            var ssi = spiv[si];
+                            stxt.push(si);
+                            stxt[si] = [];
+                            for (var aitem in dBox[ssi]) {
+                                if (typeof dBox[ssi][aitem].title === 'string') {
+                                    stxt[si].push(dBox[ssi][aitem].title);
+                                }
                             }
+                            stxt[si] = stxt[si].join(",");
                         }
-                        stxt[si] = stxt[si].join(",");
+                        var $ztab = $j(lthis).parent().children("table");
+                        rows[rcell] = {
+                            "v": stxt.join("; "),
+                            "r": rtabd,
+                            "n": ndtitle,
+                            "m": reportDesc,
+                            "d": (findMaxKey(sdbox) - 1),
+                            "c": choice_det,
+                            "s": {
+                                'width': $ztab.width(),
+                                'height': $ztab.height()
+                            },
+                            "t": uniqueID()
+                        };
+
+                        console.log("beforeGraphData_X");
                     }
-                    var $ztab = $j(lthis).parent().children("table");
-                    rows[rcell] = {
-                        "v":stxt.join("; "),
-                        "r":rtabd,
-                        "n":ndtitle,
-                        "d":(findMaxKey(sdbox) - 1),
-                        "c":choice_det,
-                        "s":{
-                            'width':$ztab.width(),
-                            'height':$ztab.height()
-                        },
-                        "t":uniqueID()
-                    };
+                    else if (curChoice === 'span' && choice_det === 'graph') {
+                        //we have selected graph
+                        var graphData = grapher.emulSend(true);
+                        rows[rcell] = {
+                            "v": "Graph",
+                            "n": ndtitle,
+                            "m": reportDesc,
+                            "r": [rtabd, graphData],
+                            "d": (findMaxKey(sdbox) - 1),
+                            'c': choice_det,
+                            'g': graph_data,
+                            's': {
+                                'width': $j(lthis).width(),
+                                'height': $j(lthis).height()
+                            },
+                            "t": uniqueID()
+                        };
+                        console.log("beforeGraphData_Y");
+                        console.log(graph_data);
+                    }
+                    else if (curChoice === 'a' && choice_det === 'maps') {
+                        //we have selected graph
+                        var graphData = grapher.emulSend(true);
+                        rows[rcell] = {
+                            "v": "Maps",
+                            "n": ndtitle,
+                            "m": reportDesc,
+                            "r": [rtabd, graphData],
+                            "d": (findMaxKey(sdbox) - 1),
+                            'c': choice_det,
+                            's': {
+                                'width': $j(lthis).width(),
+                                'height': $j(lthis).height()
+                            },
+                            "t": uniqueID()
+                        };
+
+                        console.log("beforeGraphData_Z");
+                    }
+                    //rcvField(rcell);
+                    // console.log("Welcome");
+                    // console.log(rcell);
+                    saveFieldItem(rcell);
 
                 }
-                else if (curChoice === 'span' && choice_det === 'graph') {
-                    //we have selected graph
-                    var graphData = grapher.emulSend(true);
-                    rows[rcell] = {
-                        "v":"Graph",
-                        "n":ndtitle,
-                        "r":[rtabd, graphData],
-                        "d":(findMaxKey(sdbox) - 1),
-                        'c':choice_det,
-                        's':{
-                            'width':$j(lthis).width(),
-                            'height':$j(lthis).height()
-                        },
-                        "t":uniqueID()
-                    };
-                }
-                else if (curChoice === 'a' && choice_det === 'maps') {
-                    //we have selected graph
-                    var graphData = grapher.emulSend(true);
-                    rows[rcell] = {
-                        "v":"Maps",
-                        "n":ndtitle,
-                        "r":[rtabd, graphData],
-                        "d":(findMaxKey(sdbox) - 1),
-                        'c':choice_det,
-                        's':{
-                            'width':$j(lthis).width(),
-                            'height':$j(lthis).height()
-                        },
-                        "t":uniqueID()
-                    };
-                }
-                //rcvField(rcell);
-                saveFieldItem(rcell);
-
+            } else {
+                lastPicked = prevPicked;
             }
-        } else {
-            lastPicked = prevPicked;
-        }
-        return false;
+            return false;
+        });
+
+
     }
 
     function saveFieldItem(rcid) {
-        datatt = ["itemfo=", JSON.stringify(rows[rcid]), "&html="+statTableHtmlData, "&sddata=", JSON.stringify(stater.collector()),"&project_id=",project].join("");
-        if(statTableHtmlData=='img'){
+        datatt = ["itemfo=", JSON.stringify(rows[rcid]), "&html=" + statTableHtmlData, "&sddata=", JSON.stringify(stater.collector()), "&project_id=", project].join("");
+        if (statTableHtmlData == 'img') {
             $j.ajax({
-                url:"/?m=outputs&a=reports&mode=save_item&suppressHeaders=1",
-               /* data:["itemfo=", JSON.stringify(rows[rcid]), "&html="+statTableHtmlData, "&sddata=", JSON.stringify(stater.collector())].join(""),*/
+                url: "/?m=outputs&a=reports&mode=save_item&suppressHeaders=1",
+                /* data:["itemfo=", JSON.stringify(rows[rcid]), "&html="+statTableHtmlData, "&sddata=", JSON.stringify(stater.collector())].join(""),*/
                 data: {
                     itemfo: JSON.stringify(rows[rcid]),
                     html: statTableHtmlData,
@@ -580,40 +629,42 @@ var reporter = (function (my) {
                     imgBase64: imgBase64,
                     project_id: project
                 },
-                type:'post',
-                success:function (msg) {
+                type: 'post',
+                success: function (msg) {
                     if (msg && msg.length > 0) {
                         if (parseInt(msg) > 0) {
                             //request fresh list of items
                             refreshItemsList();
-                            info("Report item saved", 1);
+                            swal("Report item saved", "", "success");
+                            // info("Report item saved", 1);
                         } else {
-                            info("Failed to save report item", 0);
+                            // info("Failed to save report item", 0);
                         }
                     } else {
-                        info("Failed to save report item", 0);
+                        // info("Failed to save report item", 0);
                     }
                 }
             });
-        }else{
+        } else {
             // console.log(project);
+            console.log("C ici que j'enregistre");
             $j.ajax({
-                url:"/?m=outputs&a=reports&mode=save_item&suppressHeaders=1",
-                data:["itemfo=", JSON.stringify(rows[rcid]), "&html="+statTableHtmlData, "&sddata=", JSON.stringify(stater.collector()),"&project_id=",project].join(""),
-                type:'post',
-                success:function (msg) {
+                url: "/?m=outputs&a=reports&mode=save_item&suppressHeaders=1",
+                data: ["itemfo=", JSON.stringify(rows[rcid]), "&html=" + statTableHtmlData, "&sddata=", JSON.stringify(stater.collector()), "&project_id=", project,"&descriptionItem=",reportDesc].join(""),
+                type: 'post',
+                success: function (msg) {
                     console.log(msg);
                     if (msg && msg.length > 0) {
                         if (parseInt(msg) > 0) {
                             //request fresh list of items
                             refreshItemsList();
                             swal("Report item saved", "", "success");
-                            info("Report item saved", 1);
+                            // info("Report item saved", 1);
                         } else {
-                            info("Failed to save report item", 0);
+                            // info("Failed to save report item", 0);
                         }
                     } else {
-                        info("Failed to save report item", 0);
+                        // info("Failed to save report item", 0);
                     }
                 }
             });
@@ -639,7 +690,7 @@ var reporter = (function (my) {
                                 //sdbox[ti] = eval(''tval + '');
                                 tval = eval('(' + ttype[ti] + ')');
                                 sdbox[ti] = tval;
-                                localselects.push(["<option class='", optClass, "' value='", tval.t , "'>", tval.n, "</option>"].join(""));
+                                localselects.push(["<option class='", optClass, "' value='", tval.t, "'>", tval.n, "</option>"].join(""));
                             }
                         }
                         //localselects.push("</optgroup>");
@@ -659,9 +710,9 @@ var reporter = (function (my) {
             return xhr;
         });
         $j.ajax({
-            type:'get',
-            url:'?m=outputs&a=reports&mode=delete&suppressHeaders=1&dbrid=' + dbrid[0],
-            success:function (msg) {
+            type: 'get',
+            url: '?m=outputs&a=reports&mode=delete&suppressHeaders=1&dbrid=' + dbrid[0],
+            success: function (msg) {
                 if (msg && msg.length > 0) {
                     if (msg === 'ok') {
                         //popMsg('Report template deleted.', 'ok');
@@ -752,7 +803,7 @@ var reporter = (function (my) {
             /// not all items were used and we need clear report from trash data
             for (var u in sdbox) {
                 if (sdbox.hasOwnProperty(u) && sdbox[u]) {
-                    var tv = sdbox[ u ];
+                    var tv = sdbox[u];
                     if ($j.inArray(parseInt(tv.t), used) >= 0) {
                         if (tv && tv.filters) {
                             tv.filters = $j.parseJSON(tv.filters);
@@ -781,7 +832,7 @@ var reporter = (function (my) {
     }
 
     return {
-        init:function () {
+        init: function () {
             if (activated === false) {
                 inOrder();
 
@@ -804,9 +855,9 @@ var reporter = (function (my) {
                         test_2 = $(".table_edit_cell tbody tr:eq(0) td:eq(1) input").val();
                         console.log(test_2);
 
-                        if(test_2 === ''){
+                        if (test_2 === '') {
                             alert("Il faut un titre pour chaque section");
-                        }else{
+                        } else {
                             var sok = true, sltype, content, vcontent, sname;
                             //We go save this section
                             $j(this).closest(".table_edit_cell").find("tr").each(function (row) {
@@ -857,11 +908,11 @@ var reporter = (function (my) {
                     function () {
                         $j(this).removeClass("head_hint");
                     }).live('focusout', function () {
-                        var tval = $j(this).val();
-                        if (tval.length == 0) {
-                            $j(this).addClass("head_hint");
-                        }
-                    });
+                    var tval = $j(this).val();
+                    if (tval.length == 0) {
+                        $j(this).addClass("head_hint");
+                    }
+                });
                 activated = true;
 
                 $j(".section_move").live("click", function () {
@@ -902,7 +953,7 @@ var reporter = (function (my) {
                         delete lopts.height;
                         $j(".area_subst").each(function () {
                             var $ti = $j(this), nid = $ti.attr("id");
-                            var $n = $j(["<textarea id='", nid , "' name='", $ti.attr("name") , "' class='rte_box' cols=60 rows=3>", $ti.val(), "</textarea>"].join(""));
+                            var $n = $j(["<textarea id='", nid, "' name='", $ti.attr("name"), "' class='rte_box' cols=60 rows=3>", $ti.val(), "</textarea>"].join(""));
                             $ti.replaceWith($n);
 
                             $j("#" + nid).cleditor(lopts);
@@ -930,7 +981,7 @@ var reporter = (function (my) {
                 inOrder();
             }
         },
-        pickerOn:function (e) {
+        pickerOn: function (e) {
             curRow = findIndex(this)[0];
             $j("#tthome").css("cursor", "crosshair");
             tabPrepare(3);
@@ -942,7 +993,7 @@ var reporter = (function (my) {
                 }
             });
         },
-        reget:function () {
+        reget: function () {
             if (activated === false) {
                 reporter.init();
             }
@@ -950,13 +1001,13 @@ var reporter = (function (my) {
                 inOrder();
             }
         },
-        addRow:function (obj) {
+        addRow: function (obj) {
             rowActions("add", obj);
         },
-        delRow:function (obj) {
+        delRow: function (obj) {
             rowActions("del", obj);
         },
-        saveReport:function (but, tryCase) {
+        saveReport: function (but, tryCase) {
             if (buildingSample === true) {
                 return false;
             } else {
@@ -991,15 +1042,15 @@ var reporter = (function (my) {
                 startD = $j("#rep_start").val(), endD = $j("#rep_end").val(), res = false, indb = $j("#reportHouse").data("fromdb"), //indb = $breport.data("fromdb"),
                 postAction,
                 dfp = {
-                    entries:entries,
-                    start:startD,
-                    end:endD,
-                    bdata:psdbox,
-                    rows:rows,
-                    order:order,
-                    types:stypez,
-                    columns:columnItems,
-                    second:1//$j("#scol_view:checked").length
+                    entries: entries,
+                    start: startD,
+                    end: endD,
+                    bdata: psdbox,
+                    rows: rows,
+                    order: order,
+                    types: stypez,
+                    columns: columnItems,
+                    second: 1//$j("#scol_view:checked").length
                 };
             if (isNaN(indb) || indb === null || tryCase === true) {
                 postAction = 'save';
@@ -1012,10 +1063,10 @@ var reporter = (function (my) {
             strpre.unshift("mode=" + postAction + "&");				//sdbox.push(dBox);
             // alert(postAction);
             $j.ajax({
-                url:'?m=outputs&a=reports&suppressHeaders=1',
-                data:strpre.join("") + "bps=" + encodeURIComponent(JSON.stringify(dfp)), //dfp.join(""),
-                type:'post',
-                success:function (msg) {
+                url: '?m=outputs&a=reports&suppressHeaders=1',
+                data: strpre.join("") + "bps=" + encodeURIComponent(JSON.stringify(dfp)), //dfp.join(""),
+                type: 'post',
+                success: function (msg) {
                     if (msg && msg.length > 0) {
                         if (msg != 'fail' && !isNaN(parseInt(msg))) {
                             if (tryCase === false) {
@@ -1024,14 +1075,14 @@ var reporter = (function (my) {
                                 msg = (postAction == 'update' ? indb : msg);
                                 console.log(entries);
                                 chface.add2Table({
-                                    id:(msg ? parseInt(msg) : 0),
-                                    name:entries.rep_name,
-                                    desc:'',
-                                    type:'Report',
-                                    sdate:startD,
-                                    edate:endD,
-                                    brest:true,
-                                    eaction:postAction
+                                    id: (msg ? parseInt(msg) : 0),
+                                    name: entries.rep_name,
+                                    desc: '',
+                                    type: 'Report',
+                                    sdate: startD,
+                                    edate: endD,
+                                    brest: true,
+                                    eaction: postAction
                                 });
                                 res = true;
                                 inBays = [];
@@ -1046,7 +1097,7 @@ var reporter = (function (my) {
                                 if (parseInt(msg) > 0) {
                                     $j("#rpdata_preview")
                                         .html("<img src='/modules/outputs/images/report-load.gif'>")
-                                        .load(['/?m=outputs&a=reports&mode=wfrm&itid=' , msg , "&ds=", startD, "&de=", endD, "&kadze=kami&suppressHeaders=1" ].join(""), function () {
+                                        .load(['/?m=outputs&a=reports&mode=wfrm&itid=', msg, "&ds=", startD, "&de=", endD, "&kadze=kami&suppressHeaders=1"].join(""), function () {
                                             buildingSample = false;
                                         });
                                 }
@@ -1063,25 +1114,25 @@ var reporter = (function (my) {
 
 
         },
-        delr:function (obj) {
+        delr: function (obj) {
             delReport(obj);
         },
-        newSection:function () {
+        newSection: function () {
             buildSection2();
         },
-        freshRow:function (x, y) {
+        freshRow: function (x, y) {
             SectionAddRow(x, y);
         },
-        delSection:function (x, tforce) {
+        delSection: function (x, tforce) {
             killSection(x, tforce);
         },
-        editSection:function (i, x) {
+        editSection: function (i, x) {
             proceedEdit(i, x);
         },
-        getItemsList:function () {
+        getItemsList: function () {
             return sdbox;
         },
-        newSectionPre:function (obj, rightAfter, justNew) {
+        newSectionPre: function (obj, rightAfter, justNew) {
             $cbrbody = getColumn(obj, rightAfter);
             if (rightAfter && rightAfter === true) {
                 startAddPoint = $j(obj).closest("tr").attr("class").replace("zxrow", "").replace("sub", "");
@@ -1091,11 +1142,11 @@ var reporter = (function (my) {
             }
             buildSection2(justNew);
         },
-        colFrm:function (x, y) {
+        colFrm: function (x, y) {
             columnWork(x, y);
         },
-        initGraph:function () {
-            $j("#graph_tab_holder").live("dblclick", function(e){
+        initGraph: function () {
+            $j("#graph_tab_holder span#pick_graph").live("click", function (e) {
                 var element = $('#graph_home');
                 statTableHtmlData = 'img';
                 canvas = document.createElement('canvas'); // Create an empty canvas
@@ -1104,9 +1155,10 @@ var reporter = (function (my) {
                 itemClick = 'graph';
                 pickerAct(e);
             });
+
         },
-        initMaps:function () {
-            $j("#savemaps").live("click", function(e){
+        initMaps: function () {
+            $j("#savemaps").live("click", function (e) {
                 statTableHtmlData = 'img';
                 canvas = document.createElement('canvas'); // Create an empty canvas
                 canvg(canvas, $('#graph_home').html()); // Render the SVG on the canvas
@@ -1143,4 +1195,3 @@ function popupDescStats(){
     }).prev(".ui-dialog-titlebar").css("background","#aed0ea").css("border","1px solid #aed0ea");
 }
 reporter.initMaps();
-
