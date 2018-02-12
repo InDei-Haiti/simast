@@ -2107,7 +2107,7 @@ var grapher = (function(my){
                             categories.push(masterdata.rows[idx][1]);
                         }
                     }
-					categories.reverse();
+					//categories.reverse();
 					series = [];
 					if(masterdata.cols[1].length>0){
                         for (idx = 0; idx < masterdata.cols[1].length; idx++) {
@@ -2119,7 +2119,7 @@ var grapher = (function(my){
                                     itemseries.push(parseInt(masterdata.data[idy][idx]));
                                 }
                             }
-                            itemseries.reverse();
+                            //itemseries.reverse();
                             series.push({name:masterdata.cols[1][idx][1],data:itemseries});
                         }
 					}else{
@@ -2133,7 +2133,7 @@ var grapher = (function(my){
                         }
                         categories=null;
 					}
-                    series.reverse();
+                    //series.reverse();
                     //chart = bars(categories,series,title);
                     if(pgData[1]['cmode']=='bars') {
                     	if(categories!=null) {
@@ -2222,7 +2222,7 @@ var grapher = (function(my){
                             categories.push(masterdata.rows[idx][1]);
                         }
                     }
-                    categories.reverse();
+                    //categories.reverse();
                     series = [];
                     if(masterdata.cols[1].length>0){
                         for (idx = 0; idx < masterdata.cols[1].length; idx++) {
@@ -2234,7 +2234,7 @@ var grapher = (function(my){
                                     itemseries.push(parseInt(masterdata.data[idy][idx]));
                                 }
                             }
-                            itemseries.reverse();
+                            //itemseries.reverse();
                             series.push({name:masterdata.cols[1][idx][1],data:itemseries});
                         }
                     }else{
@@ -2248,7 +2248,7 @@ var grapher = (function(my){
                         }
                         categories=null;
                     }
-                    series.reverse();
+                    //series.reverse();
                     //chart = bars(categories,series,title);
                     if(pgData[1]['cmode']=='columns') {
                         if(categories!=null) {
@@ -2335,14 +2335,14 @@ var grapher = (function(my){
 						for(idx=0;idx<masterdata.rows[1].length;idx++){
 							categories.push(masterdata.cols[1][idx][1]);
 						}
-                        categories.reverse();
+                        //categories.reverse();
                         tempseries = {name: 'Brands',data:[]};
                         for(idx=0;idx<masterdata.data.length;idx++) {
                             if (parseInt($('#pieChoke').val()) == idx) {
                                 for(idy=0;idy<masterdata.data[idx].length;idy++) {
                                     tempseries['data'].push({name: masterdata.cols[1][idx][1],y: parseFloat(masterdata.data[idx][idy])});
                                 }
-                                tempseries['data'].reverse();
+                                //tempseries['data'].reverse();
                             }
                         }
                         series.push(tempseries);
@@ -2350,7 +2350,7 @@ var grapher = (function(my){
                         for (idx = 0; idx < masterdata.rows.length; idx++) {
                             categories.push(masterdata.rows[idx][1]);
                         }
-                        categories.reverse();
+                        //categories.reverse();
                         for (idx = 0; idx < masterdata.cols[1].length; idx++) {
                             itemseries = [];
                             for(idy=0;idy<masterdata.data.length;idy++){
@@ -2360,7 +2360,7 @@ var grapher = (function(my){
                                     itemseries.push(parseInt(masterdata.data[idy][idx]));
                                 }
                             }
-                            itemseries.reverse();
+                            //itemseries.reverse();
                             series.push({name:masterdata.cols[1][idx][1],data:itemseries});
                         }
                     }
@@ -2424,7 +2424,7 @@ var grapher = (function(my){
                                         y: parseFloat(masterdata.data[idx][idy])
                                     });
                                 }
-                                tempseries['data'].reverse();
+                                //tempseries['data'].reverse();
                             }
                         }
                     }
