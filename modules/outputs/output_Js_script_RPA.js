@@ -309,13 +309,17 @@ var cnts = 0;
 function unHideElmts(id,chx){
 
     if(chx == 0){
+        console.log("MonChoix ="+chx);
+        console.log("?m=outputs&a=reports&mode=getHidedElmts&cached=1&suppressHeaders=1&chx="+chx+"&id="+id);
       $j.ajax({
           url: "?m=outputs&a=reports&mode=getHidedElmts&cached=1&suppressHeaders=1&chx="+chx+"&id="+id,
           type: 'get',
           success: function(data){
               cnts++;
+              console.log(data);
               if(data == "ok"){
                   // location.reload();
+                  console.log(data);
                   $("#clls_"+id).closest("tr").fadeOut('slow',function(){
                       $("#clls_"+id).closest("tr").remove();
                   });
@@ -330,6 +334,7 @@ function unHideElmts(id,chx){
           type: 'get',
           success: function(data){
               cnts++;
+              console.log(data);
             if(data == "ok"){
                 // location.reload();
                 $("#clls_"+id).closest("tr").fadeOut('slow',function(){
