@@ -1468,7 +1468,6 @@ var grapher = (function(my){
         /* Highcharts.setOptions({
              colors: colors
          });*/
-		alert(subTitle);
         chartOption = {
             chart: {
                 type: 'column',

@@ -467,6 +467,7 @@ function exportResultExcel($returnPath = false){
 		$tdl=json_decode(str_replace ( '\\"', '"', $dlist));
 	}*/
 	$table=$_SESSION['table']['head'];
+	//var_dump(htmlentities($table));exit;
 	//$blist=$_SESSION['table']['body'];
 	$fsname=str_replace(' ','_',trim($_POST['fname']));
 	if($fsname == ''){
