@@ -633,6 +633,58 @@ sFrames.prototype.emuLeader = function (l){
 	}
 };
 
+var elemtSwitchToAdd= '<tr>'+
+	'<td><input type="text" name="nomChamps" width="75px" style="width: 80px;"></td>'+
+	'<td><input type="text" name="rangex" width="75px" style="width: 120px;"></td>'+
+	'<td>'+
+	'<span class="fa fa-plus switchx_add" style="color: #354c8c" title="Add"></span>'+
+	'<span class="fa fa-remove switchx_remove" style="color: red" title="Remove"></span>'+
+	'</td>'+
+	'</tr>';
+var replacementTable = '<table id="rangeTable">'+
+	'<thead>'+
+	'<tr>'+
+	'<th>En tete</th>'+
+'<th>Rang</th>'+
+'<th>Action</th>'+
+'</tr>'+
+'</thead>'+
+'<tbody>'+
+		'<tr>'+
+		'<td><input type="text" name="nomChamps" width="75px" style="width: 80px;"></td>'+
+		'<td><input type="text" name="rangex" width="75px" style="width: 120px;"></td>'+
+		'<td>'+
+		'<span class="fa fa-plus switchx_add" style="color: #354c8c" title="Add"></span>'+
+		'<span class="fa fa-remove switchx_remove" style="color: red" title="Remove"></span>'+
+		'</td>'+
+		'</tr>'+
+'</tbody>'+
+'</table>';
+$(document).ready(function(e){
+	$(document).on("click",".switchx",function(e){
+		if(!$("#oledr").attr('style')){
+			$("#oledr").css("display","none");
+			if($('#oledr').parent("div.gsmall").find("table#rangeTable")){
+				$('#oledr').parent("div.gsmall").find("table#rangeTable").remove();
+			}
+			$('#oledr').parent("div.gsmall").append(replacementTable);
+		}else{
+			$("#oledr").removeAttr("style");
+			$("#rangeTable").css("display","none");
+		}
+
+
+	});
+
+	$(document).on("click","span.switchx_add",function(e){
+		$("table#rangeTable tbody").append(elemtSwitchToAdd);
+	});
+
+	$(document).on("click","span.switchx_remove",function(e){
+		$(this).closest("tr").remove();
+	});
+});
+
 sFrames.prototype.Leader = function(obj){
 	var self = this, abort = false,$nl = $j(obj), exx = false, fval = false, nlead = $nl.attr("data-hid"), deltas = $j("#delta-count").is(":checked"),pluse;
 
@@ -775,7 +827,7 @@ sFrames.prototype.Leader = function(obj){
 			default:
 				break;
 		}
-		this.$gbox.empty().append('<span class="switchx" href="#" style="cursor:pointer;display: block;color: #0b0b0b;width: 40px;height: 40px;top: 0;right: 0;position: relative;text-align: center;line-height: 40px;"><i class="fa fa-refresh" aria-hidden="true"></i></span>').append($tadd).show().data("active-period", nlead);
+		this.$gbox.empty().append('<span class="switchx" style="cursor:pointer;display: block;color: #0b0b0b;width: 40px;height: 40px;top: 0;right: 0;position: relative;text-align: center;line-height: 40px;"><i class="fa fa-refresh" aria-hidden="true"></i></span>').append($tadd).show().data("active-period", nlead);
 		self.lf = nlead;
 		if (!isArray(self.ranges[self.lf]) && !exx) {
 			if (abort === false) {
@@ -1021,6 +1073,8 @@ sFrames.prototype.run = function(){
 			data: urlData,
 			url: "/?m=outputs&&suppressHeaders=1",
 			success: function(msg){
+				msg = msg.replace(msg.substring(0,msg.indexOf("<table")),"");
+				console.log(msg);
 				if (msg.length > 0) {
 				    $j("#tthome").html(msg);
 				    msg=null;

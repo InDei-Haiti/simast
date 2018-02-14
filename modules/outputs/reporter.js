@@ -566,7 +566,7 @@ reporter = (function (my) {
                             "t": uniqueID()
                         };
 
-                        console.log("beforeGraphData_X");
+                        // console.log("beforeGraphData_X");
                     }
                     else if (curChoice === 'span' && choice_det === 'graph') {
                         //we have selected graph
@@ -585,8 +585,8 @@ reporter = (function (my) {
                             },
                             "t": uniqueID()
                         };
-                        console.log("beforeGraphData_Y");
-                        console.log(graph_data);
+                        // console.log("beforeGraphData_Y");
+                        // console.log(graph_data);
                     }
                     else if (curChoice === 'a' && choice_det === 'maps') {
                         //we have selected graph
@@ -605,7 +605,7 @@ reporter = (function (my) {
                             "t": uniqueID()
                         };
 
-                        console.log("beforeGraphData_Z");
+                        // console.log("beforeGraphData_Z");
                     }
                     //rcvField(rcell);
                     // console.log("Welcome");
@@ -641,6 +641,7 @@ reporter = (function (my) {
                         if (parseInt(msg) > 0) {
                             //request fresh list of items
                             refreshItemsList();
+                            $("#getItemAttr").css("display","none");
                             swal("Report item saved", "", "success");
                             // info("Report item saved", 1);
                         } else {

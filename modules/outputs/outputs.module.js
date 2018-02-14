@@ -2634,7 +2634,8 @@ qlHandler.prototype.delq = function(cv){
 						$qr.remove();
 					});
 				}else{
-					info("Failed to delete query, try again later",0);
+					swal("Failed to delete query, try again later", "", "info");
+					// info("Failed to delete query, try again later",0);
 				}
 			},
 			error: function (error) {
