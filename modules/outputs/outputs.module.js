@@ -2628,7 +2628,8 @@ qlHandler.prototype.delq = function(cv){
 			success: function(data){
 				console.log(data);
 				if(trim(data) == 'ok'){
-					info("Query deleted ",1);
+					swal("Query deleted", "", "success");
+					// info("Query deleted ",1);
 					$qr.fadeOut('fast',function(){
 						$qr.remove();
 					});
