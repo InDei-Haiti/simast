@@ -1,6 +1,6 @@
 
 
-var entetes = ["Nom","Type","Item Type","Description"], i;
+var entetes = ["Nom","Type","Description"], i;
 var elements;
 // var typeSelection = Object.keys(elements);
 
@@ -36,7 +36,7 @@ function buildSelection (title,optSlct,chx){
             '<input type="text" name="name_string" />'
         ;
         break;
-        case '3':
+        case '2':
             strSlector = '<select name="desc_equality">' +
                 '<option value="in">content</option>' +
                 '<option value="notIn">not content</option>' +
@@ -46,23 +46,23 @@ function buildSelection (title,optSlct,chx){
                 '<input type="text" name="desc_string" />'
             ;
             break;
-        case '2':
-            alert("En developpement");
-            // strSlector = '<select name="choiceselector">' +
-            //     '<option value="=">is</option>' +
-            //     '<option value="<>">is not</option>' +
-            //     '</select>' +
-            //     '</td>' +
-            //     '<td style="padding:3px">' +
-            //     '<select name="optSelection">' +
-            //     '<option value="---"></option>'
-            // ;
-            // for (i = 0; i < optSlct.length; i++) {
-            //     strSlector += '<option value="09" >' + optSlct[i] + '</option>';
-            // }
-            // strSlector += '</select>';
-            strSlector = '';strLine='';
-            break;
+        // case '2':
+        //     alert("En developpement");
+        //     // strSlector = '<select name="choiceselector">' +
+        //     //     '<option value="=">is</option>' +
+        //     //     '<option value="<>">is not</option>' +
+        //     //     '</select>' +
+        //     //     '</td>' +
+        //     //     '<td style="padding:3px">' +
+        //     //     '<select name="optSelection">' +
+        //     //     '<option value="---"></option>'
+        //     // ;
+        //     // for (i = 0; i < optSlct.length; i++) {
+        //     //     strSlector += '<option value="09" >' + optSlct[i] + '</option>';
+        //     // }
+        //     // strSlector += '</select>';
+        //     strSlector = '';strLine='';
+        //     break;
         default :
             strSlector = '';strLine=''; break;
 
@@ -74,6 +74,7 @@ function buildSelection (title,optSlct,chx){
 
 $(document).ready(function(){
     $.get( "?m=outputs&a=reports&mode=forfilter&suppressHeaders=1", function( data ) {
+        console.log("temoin");
         elements = JSON.parse(data);
         console.log(elements);
         console.log(Object.keys(elements));
@@ -97,11 +98,13 @@ function setTableFilter_output(){
         $("#select_field option").each(function(){
             if($(this).val() == val){
                 leText = $(this).text();
+                console.log(Object.keys(elements));
             }
         });
 
 
-        $('#filterstab  tbody').append(buildSelection(leText,Object.keys(elements),val));
+        $('#filterstab  tbody').append(buildSelection(leText,["Report","Report Item", "TableQuery"],val));
+        // $('#filterstab  tbody').append(buildSelection(leText,Object.keys(elements),val));
     $j(".classflddate").datepick({dateFormat: "yyyy-mm-dd"});
 }
 
@@ -170,22 +173,24 @@ $("#submitButton").click(function(){
             if(sttr != ""){
                 // alert(type_equality);
                 if(type_equality == '='){
-                    if(sttr.toLowerCase().search(type_value.toLowerCase())== -1){
+                    // if(sttr.toLowerCase().search(type_value.toLowerCase())== -1){
+                    if(sttr.toLowerCase() != type_value.toLowerCase()){
                         $(this).css("display","none");
                     }
                 }else{
-                    if(sttr.toLowerCase().search(type_value.toLowerCase())!= -1){//
+                    $(this).css("display","none");
+                    if(sttr.toLowerCase() != type_value.toLowerCase()){//
+                    // if(sttr.toLowerCase().search(type_value.toLowerCase())!= -1){//
                         $(this).removeAttr("style");
                     }
                 }
             }else{
                 // $(this).removeAttr("style");
-                // alert("Merde");
             }
         }else if(desc_equality && desc_equality!=''){
             var sttr = $(this).find("td:eq(3)").text();
             if(sttr != ""){
-                alert(desc_equality);
+                // alert(desc_equality);
                 if(desc_equality == 'in'){
                     if(sttr.toLowerCase().search(desc_string.toLowerCase())== -1){
                         $(this).css("display","none");

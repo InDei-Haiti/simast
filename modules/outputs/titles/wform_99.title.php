@@ -1,7 +1,7 @@
 <?php
 $titles["wform_99"]=
 		array(
-			"title" => "Mon Test Perso",
+			"title" => "GTk",
 			"db"=>"wform_99",
 			"uid"=>"tbw99",
 			"date"=>"entry_date",

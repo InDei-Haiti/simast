@@ -659,6 +659,12 @@ var replacementTable = '<table id="rangeTable">'+
 		'</td>'+
 		'</tr>'+
 '</tbody>'+
+	'<tfoot>'+
+	'<tr>'+
+	'<td></td>'+
+	'<td></td>'+
+	'<td><span class="fa fa-save switchx_saveRange" style="color: #354c8c" title="Save Range"></span></td>'+
+	'</tr>'
 '</table>';
 $(document).ready(function(e){
 	$(document).on("click",".switchx",function(e){
@@ -682,6 +688,27 @@ $(document).ready(function(e){
 
 	$(document).on("click","span.switchx_remove",function(e){
 		$(this).closest("tr").remove();
+	});
+
+var rangeArray = [];
+	$(document).on("click","span.switchx_saveRange",function(e){
+		$("table#rangeTable tbody tr").each(function(e){
+			var nom = valeurs = '';
+			$(this).find("td").each(function(e){
+				if($(this).index()<2){
+					if($(this).index()== 0){
+						console.log("nom :"+$(this).find("input:eq(0)").val());
+						nom = $(this).find("input:eq(0)").val();
+					}else{
+						console.log("rangevalue :"+$(this).find("input:eq(0)").val());
+						valeurs = $(this).find("input:eq(0)").val();
+					}
+				}
+
+			});
+			rangeArray.push({"nom":nom,"valeurs":valeurs});
+		});
+		console.log(rangeArray);
 	});
 });
 
