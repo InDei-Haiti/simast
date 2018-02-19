@@ -345,7 +345,7 @@ if ($oldtemplate) {
 					{title:"' . $AppUI->_('Partner Agencies') . '"},
 					{title:"' . $AppUI->_('Donor Agencies') . '"},
 					{title: "' . $AppUI->_('Sectors') . '"},
-					{title:"' . $AppUI->_('Str. Areas') . '"},
+					{title:"' . $AppUI->_('Structure Areas') . '"},
 					{title:"' . $AppUI->_('Start') . '"},
 					{title:"' . $AppUI->_('End') . '"}		
 				]				

@@ -968,7 +968,8 @@ function resultBuilder($qmode) {
             $ind ++;
             $addcl = ' forsize';
         }
-        $tab_head .= "</tr>\n<tr>" . $tab_src . '</tr></thead>' . "\n";
+        //$tab_head .= "</tr>\n<tr>" . $tab_src . '</tr></thead>' . "\n";
+        $tab_head .='</tr></thead>' . "\n";
         $rhtml .= $tab_start . $colz . $tab_head;
         unset ( $tab_start, $colz );
         $rhtml .= '<tbody>';

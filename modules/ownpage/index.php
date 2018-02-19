@@ -31,7 +31,7 @@ $projects = $q->loadList();//border-bottom: 1px solid #bbbbbb;
     <div class="mtab">
         <table border="0" cellpadding="3" cellspacing="1" style="width: 100%;" class="tbl ck">
             <thead>
-            <tr><th nowrap="nowrap" class="head header" width="auto">Project Name</th><th nowrap="nowrap" class="head" width="auto">Activity Name</th><th nowrap="nowrap" class="head" width="auto">Form Name</th></tr>
+            <tr><th nowrap="nowrap" class="head header" width="auto"><?php echo $AppUI->__('Project Name')?></th><th nowrap="nowrap" class="head" width="auto"><?php echo $AppUI->__('Activity Name')?></th><th nowrap="nowrap" class="head" width="auto"><?php echo $AppUI->__('Form Name')?></th></tr>
             </thead>
             <tbody>
             <?php
