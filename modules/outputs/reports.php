@@ -352,9 +352,9 @@ if ($_POST ['mode'] == 'save' || $_POST ['mode'] == 'update') {
 						if ($res) {
 							$html = mysql_fetch_row($res);
 							echo $html[0];
-							// echo "<pre>";
-							// var_dump($irdata);
-							// echo "</pre>";
+							 echo "<pre>";
+							 var_dump($irdata);
+							 echo "</pre>";
 						}
 
 					}else

@@ -1,4 +1,71 @@
 <?php
+$q = new DBQuery();
+$q->addQuery("id, set_id, project_id, type, query_save, data_item,description");
+$q->addTable('dashboard_grapher');
+$result = $q->loadList();
+/*echo '<pre>';
+var_dump($result);
+echo '</pre>';*/
+$counter = 0;
+foreach ($result as $row){
+    $title = '';
+    $itype = '';
+    $idata = '';
+    $html = '';
+    $data_item = '';
+    if($row['type']=='GRAPH') {
+        $graph_data = gzdecode($row['data_item']);
+        $graph_data = json_decode(str_replace("\\", "", str_replace("'", "", $graph_data)), true);
+        /*echo '<pre>';
+        var_dump($graph_data);
+        echo '</pre>';*/
+        $title = $graph_data["title"];
+        $itype = strtolower($row['type']);
+        $idata = array(
+            'v' => ucfirst(strtolower($row['type'])),
+            'n' => $graph_data["title"],
+            'g' => $graph_data
+        );
+
+//        echo '<pre>';
+//        var_dump($idata);
+//        echo '</pre>';
+    }else if($row['type']=='TABLE'){
+        $counter++;
+        $title = "Table #".$counter;
+        $itype = 'stat';
+        $graph_data = gzdecode($row['data_item']);
+        $html = mysql_real_escape_string($graph_data);
+        echo "<pre>";
+        var_dump($html);
+        echo "</pre>";
+        $idata = array(
+            'v' => ucfirst(strtolower("Idata #".$counter)),
+            'n' => "Table #".$counter,
+            'g' => ""
+        );
+        $data_item = mysql_real_escape_string(gzencode(var_export($html,true), 9, FORCE_GZIP));
+    }
+
+    $sql = "INSERT INTO report_items (title,itype,idata,html,data_item,project_id,actif,query_save)
+              VALUES('".$title."','".$itype."','".mysql_real_escape_string(json_encode($idata))."','".$html."','".$data_item."',".$row['project_id'].",'1','')
+             ";
+    //echo $sql.'<br/><br/>';
+    $res = mysql_query($sql);
+//    echo '<br/><br/><br/><br/><br/>'.$sql;
+//    echo mysql_errno().':'.mysql_error();
+//    exit;
+    if ($res) {
+        $new_id = mysql_insert_id();
+        $sql_link = "INSERT INTO simast.set_report_items(setId,itemId)VALUES('".$row["set_id"]."','".$new_id."')";
+        $res = mysql_query($sql_link);
+    }
+
+
+}
+
+exit;
+
 GLOBAL $AppUI;
 $q = new DBQuery();
 $q->addTable('projects');
