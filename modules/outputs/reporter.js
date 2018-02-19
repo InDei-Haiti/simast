@@ -294,11 +294,11 @@ reporter = (function (my) {
             },
             function () {
                 $statTable.css("background-color", "inherit");
-            }).live("click", function (e) {//replace dblclick by click
+            }).live("click", function (e) {//replaced dblclick by click
 
             statTableHtmlData = 'table';//$j('#tthome table').html();
             itemClick = 'stat';
-            //console.log(statTableHtmlData);
+            // console.log(statTableHtmlData);
             pickerAct(e);
         });
 
@@ -512,7 +512,13 @@ reporter = (function (my) {
             //imported
             ndtitle = $("#nom_item").val();
             reportDesc =  $("#desc_item").val();
-            alert(reportDesc);
+            $j("#tthome table.tbl thead tr:eq(0) th:eq(1)").remove();
+            $j("#tthome table.tbl thead tr:eq(0) th:eq(0)").attr("colspan",$j("#tthome table.tbl tbody tr:eq(0)").children().length);
+            // console.log("La valeur est de:  "+$j("#tthome table.tbl thead tr:eq(0) th:eq(0)").html());
+            // console.log(ndtitle);
+            $j("#tthome table.tbl thead tr.decor th:eq(0)").html(ndtitle);
+            // console.log("La valeur est de:  "+$j("#tthome table.tbl thead tr:eq(0) th:eq(0)").html());
+            // alert(reportDesc);
             // if (ndtitle = prompt("Enter name for selected item")) {
             if (tsave) {
                 if (!ndtitle || trim(ndtitle).length == 0) {
@@ -560,7 +566,7 @@ reporter = (function (my) {
                             "t": uniqueID()
                         };
 
-                        console.log("beforeGraphData_X");
+                        // console.log("beforeGraphData_X");
                     }
                     else if (curChoice === 'span' && choice_det === 'graph') {
                         //we have selected graph
@@ -579,8 +585,8 @@ reporter = (function (my) {
                             },
                             "t": uniqueID()
                         };
-                        console.log("beforeGraphData_Y");
-                        console.log(graph_data);
+                        // console.log("beforeGraphData_Y");
+                        // console.log(graph_data);
                     }
                     else if (curChoice === 'a' && choice_det === 'maps') {
                         //we have selected graph
@@ -599,7 +605,7 @@ reporter = (function (my) {
                             "t": uniqueID()
                         };
 
-                        console.log("beforeGraphData_Z");
+                        // console.log("beforeGraphData_Z");
                     }
                     //rcvField(rcell);
                     // console.log("Welcome");
@@ -635,6 +641,7 @@ reporter = (function (my) {
                         if (parseInt(msg) > 0) {
                             //request fresh list of items
                             refreshItemsList();
+                            $("#getItemAttr").css("display","none");
                             swal("Report item saved", "", "success");
                             // info("Report item saved", 1);
                         } else {
@@ -648,6 +655,7 @@ reporter = (function (my) {
         } else {
             // console.log(project);
             console.log("C ici que j'enregistre");
+            console.log(statTableHtmlData);
             $j.ajax({
                 url: "/?m=outputs&a=reports&mode=save_item&suppressHeaders=1",
                 data: ["itemfo=", JSON.stringify(rows[rcid]), "&html=" + statTableHtmlData, "&sddata=", JSON.stringify(stater.collector()), "&project_id=", project,"&descriptionItem=",reportDesc].join(""),
@@ -658,6 +666,7 @@ reporter = (function (my) {
                         if (parseInt(msg) > 0) {
                             //request fresh list of items
                             refreshItemsList();
+                            $("#getItemAttr").css("display","none");
                             swal("Report item saved", "", "success");
                             // info("Report item saved", 1);
                         } else {

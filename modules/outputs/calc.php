@@ -140,7 +140,7 @@ elseif($_POST['mode'] == 'btable' && trim($_POST['calcs']) != ''){
 		$svals=json_decode($_POST['calcs'],true);
 		
 	}*/
-	var_dump($_POST['calcs']);
+//	var_dump($_POST['calcs']);
 	$fip=$_SESSION ['fileNameCsh'];
 	if ($fip  != '' && file_exists($baseDir.'/files/tmp/'.$fip.'.tst')) {
 		$fpath=$baseDir.'/files/tmp/'.$fip.'.tst';

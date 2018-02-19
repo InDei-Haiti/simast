@@ -321,18 +321,18 @@ $hashList = $q->loadList();
             </div>
 
 <!--            <div class="col-md-3 col-md-offset-6">-->
-                <select id="reportSelector" class="selectpicker">
-                    <?php
-
-                    if(count($projects) > 0) {
-                        $i = 0;
-                        foreach ($projects as $pid => $project_name) {
-                            $i++;
-                            echo '<option>Projet numero | '.$i.'</option>';
-                        }
-                    }
-                    ?>
-                </select>
+<!--                <select id="reportSelector" class="selectpicker">-->
+<!--                    --><?php
+//
+//                    if(count($projects) > 0) {
+//                        $i = 0;
+//                        foreach ($projects as $pid => $project_name) {
+//                            $i++;
+//                            echo '<option>Projet numero | '.$i.'</option>';
+//                        }
+//                    }
+//                    ?>
+<!--                </select>-->
 <!--                <div class="col-lg-12">-->
 <!--                    <div class="button-group">-->
 <!--                        <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-cog"></span> <span class="caret"></span></button>-->

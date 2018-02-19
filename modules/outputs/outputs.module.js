@@ -2628,12 +2628,14 @@ qlHandler.prototype.delq = function(cv){
 			success: function(data){
 				console.log(data);
 				if(trim(data) == 'ok'){
-					info("Query deleted ",1);
+					swal("Query deleted", "", "success");
+					// info("Query deleted ",1);
 					$qr.fadeOut('fast',function(){
 						$qr.remove();
 					});
 				}else{
-					info("Failed to delete query, try again later",0);
+					swal("Failed to delete query, try again later", "", "info");
+					// info("Failed to delete query, try again later",0);
 				}
 			},
 			error: function (error) {

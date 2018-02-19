@@ -1006,6 +1006,9 @@ var v = null;
 
 </script>
 <script type="text/javascript" src="<?php echo DP_BASE_URL;?>/modules/outputs/output_Js_script_RPA.js"></script>
+<script type="text/javascript" src="<?php echo DP_BASE_URL;?>/js/sweetalert.js"></script>
+<script type="text/javascript" src="<?php echo DP_BASE_URL;?>/js/sweetalert.min.js"></script>
+
 <?php
 
 }
