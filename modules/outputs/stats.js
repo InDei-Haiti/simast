@@ -704,7 +704,6 @@ var rangeArray = [];
 						valeurs = $(this).find("input:eq(0)").val();
 					}
 				}
-
 			});
 			rangeArray.push({"nom":nom,"valeurs":valeurs});
 		});
