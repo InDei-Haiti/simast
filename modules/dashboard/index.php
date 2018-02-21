@@ -1,70 +1,80 @@
 <?php
-$q = new DBQuery();
-$q->addQuery("id, set_id, project_id, type, query_save, data_item,description");
-$q->addTable('dashboard_grapher');
-$result = $q->loadList();
-/*echo '<pre>';
-var_dump($result);
-echo '</pre>';*/
-$counter = 0;
-foreach ($result as $row){
-    $title = '';
-    $itype = '';
-    $idata = '';
-    $html = '';
-    $data_item = '';
-    if($row['type']=='GRAPH') {
-        $graph_data = gzdecode($row['data_item']);
-        $graph_data = json_decode(str_replace("\\", "", str_replace("'", "", $graph_data)), true);
-        /*echo '<pre>';
-        var_dump($graph_data);
-        echo '</pre>';*/
-        $title = $graph_data["title"];
-        $itype = strtolower($row['type']);
-        $idata = array(
-            'v' => ucfirst(strtolower($row['type'])),
-            'n' => $graph_data["title"],
-            'g' => $graph_data
-        );
 
-//        echo '<pre>';
-//        var_dump($idata);
-//        echo '</pre>';
-    }else if($row['type']=='TABLE'){
-        $counter++;
-        $title = "Table #".$counter;
-        $itype = 'stat';
-        $graph_data = gzdecode($row['data_item']);
-        $html = mysql_real_escape_string($graph_data);
-        echo "<pre>";
-        var_dump($html);
-        echo "</pre>";
-        $idata = array(
-            'v' => ucfirst(strtolower("Idata #".$counter)),
-            'n' => "Table #".$counter,
-            'g' => ""
-        );
-        $data_item = mysql_real_escape_string(gzencode(var_export($html,true), 9, FORCE_GZIP));
-    }
-
-    $sql = "INSERT INTO report_items (title,itype,idata,html,data_item,project_id,actif,query_save)
-              VALUES('".$title."','".$itype."','".mysql_real_escape_string(json_encode($idata))."','".$html."','".$data_item."',".$row['project_id'].",'1','')
-             ";
-    //echo $sql.'<br/><br/>';
-    $res = mysql_query($sql);
-//    echo '<br/><br/><br/><br/><br/>'.$sql;
-//    echo mysql_errno().':'.mysql_error();
-//    exit;
-    if ($res) {
-        $new_id = mysql_insert_id();
-        $sql_link = "INSERT INTO simast.set_report_items(setId,itemId)VALUES('".$row["set_id"]."','".$new_id."')";
-        $res = mysql_query($sql_link);
-    }
-
-
-}
-
-exit;
+//Migration donnees Dashboard Grapher vers report Items
+//$q = new DBQuery();
+//$q->addQuery("id, set_id, project_id, type, query_save, data_item,description");
+//$q->addTable('dashboard_grapher');
+//$result = $q->loadList();
+///*echo '<pre>';
+//var_dump($result);
+//echo '</pre>';*/
+//$counter = 0;
+//foreach ($result as $row){
+//    $title = '';
+//    $itype = '';
+//    $idata = '';
+//    $html = '';
+//    $data_item = '';
+//    if($row['type']=='GRAPH') {
+//        $graph_data = gzdecode($row['data_item']);
+//        $graph_data = json_decode(str_replace("\\", "", str_replace("'", "", $graph_data)), true);
+//        $data_item = $row['data_item'];
+//        $title = $graph_data["title"];
+//        $itype = strtolower($row['type']);
+//        $idata = array(
+//            'v' => ucfirst(strtolower($row['type'])),
+//            'n' => $graph_data["title"],
+//            'g' => $graph_data
+//        );
+//
+////        echo '<pre>';
+////        var_dump($idata);
+////        echo '</pre>';
+//    }else if($row['type']=='TABLE'){
+//        $counter++;
+//        $title = "Table #".$counter;
+//        $itype = 'stat';
+//        $graph_data = gzdecode($row['data_item']);
+//        $html .='<span style="background-color: inherit;" id="tthome">';
+//        $tmp_html = mysql_real_escape_string($graph_data);
+////        if(substr($tmp_html,0,1) == "'" AND substr($tmp_html,strlen($tmp_html)-1) == "'"){
+//        $tmp_html = substr($tmp_html,2,strlen($tmp_html)-3);
+//
+////        }
+//        $html .= $tmp_html;
+//        $html .= '</span>';
+////        echo "<br /><br /><br /><br /><br /><br />".$html;exit;
+////        echo "<pre>";
+////        var_dump($html);
+////        echo "</pre>";
+//        $idata = array(
+//            'v' => ucfirst(strtolower("Idata #".$counter)),
+//            'n' => "Table #".$counter,
+//            'g' => "",
+//            'c'=> 'stat'
+//        );
+//        $data_item = mysql_real_escape_string(gzencode(var_export($html,true), 9, FORCE_GZIP));
+//    }
+//
+//    $sql = "INSERT INTO report_items (title,itype,idata,html,data_item,project_id,actif,query_save)
+//              VALUES('".$title."','".$itype."','".mysql_real_escape_string(json_encode($idata))."','".$html."','".$data_item."',".$row['project_id'].",'1','')
+//             ";
+//    //echo $sql.'<br/><br/>';
+//    $res = mysql_query($sql);
+////    echo '<br/><br/><br/><br/><br/>'.$sql;
+////    echo mysql_errno().':'.mysql_error();
+////    exit;
+//    if ($res) {
+//        $new_id = mysql_insert_id();
+//        $sql_link = "INSERT INTO simast.set_report_items(setId,itemId)VALUES('".$row["set_id"]."','".$new_id."')";
+//        $res = mysql_query($sql_link);
+//    }
+//
+//
+//}
+//
+//exit;
+//Migration donnees Dashboard Grapher vers report Items
 
 GLOBAL $AppUI;
 $q = new DBQuery();
@@ -82,8 +92,26 @@ $q = new DBQuery();
 $q->addQuery("id, set_id, project_id, type, query_save, data_item,description");
 $q->addTable('dashboard_grapher');
 
-$hashList = $q->loadList();
+//$hashList = $q->loadList();
+//var_dump($hashList);exit;
+//echo "<br /><br /><br /><br /><br /> Cogito Ergo Sum";
+//echo "<pre>";
 //var_dump($hashList);
+//echo "</pre>";
+$slctQUery = "SELECT C.id,B.setId AS set_id, C.project_id, C.idata,C.html,CASE C.itype WHEN 'graph' THEN 'GRAPH' WHEN 'stat' THEN 'TABLE' END AS type,C.query_save, C.data_item, 'none' AS description FROM sets AS A INNER JOIN set_report_items AS B ON A.id = B.setId INNER JOIN report_items AS C ON B.itemId = C.id;";
+
+//echo "<br /><br /><br /><br /><br />Go";
+$res = mysql_query($slctQUery);
+$hashList = [];
+if($res){
+    while(mysql_fetch_array($res)){
+        $hashList [] = mysql_fetch_array($res);
+    }
+//    echo "<pre>";
+//    var_dump($hashList);
+//    echo "</pre>";
+}
+//exit;
 ?>
 <!--<link rel="stylesheet" type="text/css" href="/modules/outputs/outputs.module.css" />-->
 
@@ -467,32 +495,51 @@ $hashList = $q->loadList();
                                     echo "<div class='descrip' style='display:none;'>".$grapher['description']."</div>";
                                 }
                                 if($grapher['type']=='GRAPH'){
+//                                    echo "<br /><br /><br /><br /><br />Je suis<br />";
 
-                                    $graph_data = gzdecode($grapher['data_item']);
+//                                    $graph_data = gzdecode($grapher['data_item']);
 //                                    var_dump($graph_data);
+//                                    echo "<pre>";
+//                                    var_dump($grapher['data_item']);
+//                                    var_dump($graph_data);
+//                                    echo "</pre>";
 
+                                    $newGraphhandler = json_decode($grapher["idata"],true);
+                                    echo "<pre>";
+                                    var_dump($newGraphhandler["g"]["categories"]);
+                                    echo "</pre>";
+                                    echo "<pre>";
+                                    var_dump($grapher["idata"]);
+//                                    var_dump($grapher['data_item']);
+                                    var_dump($newGraphhandler);
+                                    echo "</pre>";
                                     //echo '<br/>---------';
-                                    $graph_data = json_decode(str_replace("\\","", str_replace("'","", $graph_data)),true);
+//                                    $graph_data = json_decode(str_replace("\\","", str_replace("'","", $graph_data)),true);
                                     //var_dump($grapher);
                                    // echo $graph_data['type'].'<br/>';
                                     echo '<div id="chart-'.$i.'-'.$index.'-1" class="card resizable" style="width: 600px;height:400px;resize: both;"><div id="chart-'.$i.'-'.$index.'-1"></div></div>';
                                     ?>
                                     <script type="text/javascript">
-                                        var graph_type = '<?php echo $graph_data['type']?>';
+                                        var graph_type = '<?php if ($newGraphhandler["g"]['type'] == 'columns'){
+                                            echo "lines";
+                                        }else{
+                                            echo $newGraphhandler["g"]['type'];
+                                        }
+?>';
                                         if(graph_type=='bars'){
-                                            bars('chart-<?php echo $i.'-'.$index?>-1',<?php echo json_encode($graph_data["categories"]); ?>,<?php echo json_encode($graph_data["series"]); ?>,'<?php echo $graph_data["title"]; ?>');
+                                            bars('chart-<?php echo $i.'-'.$index?>-1',<?php echo json_encode($newGraphhandler["g"]["categories"]); ?>,<?php echo json_encode($newGraphhandler["g"]["series"]); ?>,'<?php echo $newGraphhandler["g"]["title"]; ?>');
                                         }
                                         if(graph_type=='sbars'){
-                                            sbars('chart-<?php echo $i.'-'.$index?>-1',<?php echo json_encode($graph_data["categories"]); ?>,<?php echo json_encode($graph_data["series"]); ?>,'<?php echo $graph_data["title"]; ?>');
+                                            sbars('chart-<?php echo $i.'-'.$index?>-1',<?php echo json_encode($newGraphhandler["g"]["categories"]); ?>,<?php echo json_encode($newGraphhandler["g"]["series"]); ?>,'<?php echo $newGraphhandler["g"]["title"]; ?>');
                                         }
                                         if(graph_type=='pbars'){
-                                            pbars('chart-<?php echo $i.'-'.$index?>-1',<?php echo json_encode($graph_data["categories"]); ?>,<?php echo json_encode($graph_data["series"]); ?>,'<?php echo $graph_data["title"]; ?>');
+                                            pbars('chart-<?php echo $i.'-'.$index?>-1',<?php echo json_encode($newGraphhandler["g"]["categories"]); ?>,<?php echo json_encode($newGraphhandler["g"]["series"]); ?>,'<?php echo $newGraphhandler["g"]["title"]; ?>');
                                         }
                                         if(graph_type=='pie'){
-                                            pie('chart-<?php echo $i.'-'.$index?>-1',<?php echo json_encode($graph_data["series"]); ?>,'<?php echo $graph_data["title"]; ?>');
+                                            pie('chart-<?php echo $i.'-'.$index?>-1',<?php echo json_encode($newGraphhandler["g"]["series"]); ?>,'<?php echo $newGraphhandler["g"]["title"]; ?>');
                                         }
                                         if(graph_type=='lines'){
-                                            lines('chart-<?php echo $i.'-'.$index?>-1',<?php echo json_encode($graph_data["categories"]); ?>,<?php echo json_encode($graph_data["series"]); ?>,'<?php echo $graph_data["title"]; ?>');
+                                            lines('chart-<?php echo $i.'-'.$index?>-1',<?php echo json_encode($newGraphhandler["g"]["g"]["categories"]); ?>,<?php echo json_encode($newGraphhandler["g"]["series"]); ?>,'<?php echo $newGraphhandler["g"]["title"]; ?>');
                                         }
 
                                     </script>
@@ -500,6 +547,8 @@ $hashList = $q->loadList();
                                 }
                                 if($grapher['type']=='TABLE'){
                                     $graph_data = gzdecode($grapher['data_item']);
+                                    $graph_data = str_replace("\\n","",$graph_data);
+                                    $graph_data = str_replace('\\',"",$graph_data);
                                     echo '<div id="table-'.$i.'-'.$index.'-1" class="card resizable title" style="width: 600px;height:400px;resize: both;overflow-y: scroll;" title="'.$grapher['describe'].'">';echo $grapher['describe'];
                                     eval("echo $graph_data;");
                                     echo '</div>';

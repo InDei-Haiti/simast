@@ -247,6 +247,11 @@ if ($_POST ['mode'] == 'save' || $_POST ['mode'] == 'update') {
 						$j("#load_res").replaceWith(dh);
 					});
 				}
+
+
+				function loaded4Print(){
+					window.
+				}
 			</script>
 			<?php
 

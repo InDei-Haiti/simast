@@ -84,7 +84,7 @@ if (count($rdata) > 0) {
 		<input type="hidden" name="suppressHeaders" value="1">
 		<input type="hidden" name="2cols" value="#@cols@#">
 		</form>
-		<input type="submit" class="text button ce pi ahr" style="background-color: rgba(255, 255, 255, 0.75);" value="Save as PDF" onclick="document.bwork.mode.value=\'2pdf\'; document.bwork.submit();">
+		<input type="submit" class="text button ce pi ahr " style="background-color: rgba(255, 255, 255, 0.75);" value="Save as PDF" onclick="document.bwork.mode.value=\'2pdf\'; document.bwork.submit();">
 		<!--<input type="submit" class="text button ce pi ahr" style="background-color: rgba(255, 255, 255, 0.75);" value="Save as PDF" id="cmd">-->
 		<!--<a href="javascript:genPDF()" class="text button ce pi ahr" style="background-color: rgba(255, 255, 255, 0.75);">Save as PDF</a>-->
 		<input type="submit" class="text button ce pi ahr" style="background-color: rgba(255, 255, 255, 0.75);" value="Save as HTML" onclick="getRT()">';
