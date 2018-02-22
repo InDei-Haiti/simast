@@ -87,8 +87,9 @@ if($_POST['mode']=='save'){
 		echo $res;
 		return ;
 }elseif ($_POST['mode'] == "setquery"){
-    $stmpl = 'insert into `sets`(setname)
-                    values ("'.$_POST['set'].'")';
+    $projectInfo = explode("-",$_POST['project_name']);
+    $stmpl = 'insert into `sets`(setname,project_id,project_name)
+                    values ("'.$_POST['set'].'","'.$projectInfo[0].'","'.$projectInfo[1].'")';
     $zid = 0;
     $res = db_exec($stmpl);
     if($res)
@@ -97,7 +98,7 @@ if($_POST['mode']=='save'){
     if (!($zid > 0)) {
         $zid = 'fail';
     }else{
-        echo json_encode(array('id'=>$zid,'set'=>$_POST['set']));
+        echo json_encode(array('id'=>$zid,'set'=>$_POST['set'],'project_id'=>$projectInfo[0],'project_name'=>$projectInfo[1]));
     }
 
     return;
@@ -1716,6 +1717,11 @@ echo '<div class="col-md-3">';
     </div>-->
 </form>
 <?php
+$q = new DBQuery();
+$q->addTable('projects');
+$q->addQuery('project_id,project_name');
+$projects = $q->loadHashList();
+
 echo '</div>';
 echo '<div class="col-md-9"><div class="right" id="map" style="display:none"></div></div>';
 echo '</div>';
@@ -1724,14 +1730,22 @@ echo '</div>';
 
 echo '<div id="tabs-7">';
 echo '<span onclick="$j(\'#setbox\').toggle();" class="fhref flink">'.$AppUI->_('Create Set').'</span><span class="offwall msgs" id="msg_place"></span>';
-echo '<div id="setbox" class="myset" style="display: none">
+$formPart_1 = '<div id="setbox" class="myset" style="display: none">
         <form name="setuqp" action="/?m=outputs&suppressHeaders=1" method="POST" onsubmit="return AIM.submit(this, {\'onStart\' : startCallback, \'onComplete\' : qurer.extractRowSet})">
-            <input type="text" name="set">
-            <input type="submit" value="'.$AppUI->_('Create').'" class="button ce pi ahr">
+            <input type="text" name="set"><br />
+            <select name="project_name">';
+$formPart_2 = '</select>
+<input type="submit" value="'.$AppUI->_('Create').'" class="button ce pi ahr">
             <input type="hidden" name="mode" value="setquery">
         </form>
 	  </div>';
-$sql='select id,setname FROM sets';
+$option4Form = '';
+foreach ($projects as $id => $values){
+    $option4Form .="<option value='".$id."-".$values."'>".$values."</option>";
+}
+echo $formPart_1.$option4Form.$formPart_2;
+
+$sql='select id,setname,project_id,project_name FROM sets';
 $res=mysql_query($sql);
 $all = array();
 if($res && mysql_num_rows($res)  > 0) {
@@ -1743,12 +1757,14 @@ echo '<table cellspacing="1" cellpadding="2" border="0" class="tbl tablesorter m
 			<thead>
 			<tr>
 				<th class="phead">'.$AppUI->_('Name').'</th>
+				<th class="phead">'.$AppUI->_('Project').'</th>
 				<th class="phead">&nbsp;</th>
 			</tr></thead>';
 echo '<tbody>';
 foreach ($all as $i=>$set){
     echo '<tr>
             <td>'.$set['setname'].'</td>
+            <td>'.$set['project_name'].'</td>
             <td>
             <span id="set_d_'.$set['id'].'" onclick="qurer.delSetRow('.$set['id'].',\''.$set['setname'].'\')"  class="fhref fa fa-trash-o" style="color: blue;font-size: large"></span>
             <span id="set_e_'.$set['id']. '" onclick="qurer.edit('.$set['id'].',$(this).closest(\'tr\').find(\'td:eq(0)\').text())"  class="fhref fa fa-edit" style="color: blue;font-size: large"></span>

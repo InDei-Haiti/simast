@@ -98,14 +98,14 @@ $q->addTable('dashboard_grapher');
 //echo "<pre>";
 //var_dump($hashList);
 //echo "</pre>";
-$slctQUery = "SELECT C.id,B.setId AS set_id, C.project_id, C.idata,C.html,CASE C.itype WHEN 'graph' THEN 'GRAPH' WHEN 'stat' THEN 'TABLE' END AS type,C.query_save, C.data_item, 'none' AS description FROM sets AS A INNER JOIN set_report_items AS B ON A.id = B.setId INNER JOIN report_items AS C ON B.itemId = C.id;";
+$slctQUery = "SELECT C.id,B.setId AS set_id, C.project_id, C.idata,C.html,CASE C.itype WHEN 'graph' THEN 'GRAPH' WHEN 'stat' THEN 'TABLE' END AS type,C.query_save, C.data_item, 'none' AS description FROM sets AS A INNER JOIN set_report_items AS B ON A.id = B.setId INNER JOIN report_items AS C ON B.itemId = C.id";
 
 //echo "<br /><br /><br /><br /><br />Go";
 $res = mysql_query($slctQUery);
 $hashList = [];
 if($res){
-    while(mysql_fetch_array($res)){
-        $hashList [] = mysql_fetch_array($res);
+    while($row = mysql_fetch_assoc($res)){
+        $hashList [] = $row;
     }
 //    echo "<pre>";
 //    var_dump($hashList);
@@ -391,6 +391,58 @@ if($res){
             series: seriesv
         });
     };
+
+    var columns = function(chartid,categoriesv,seriesv,title,subTitle){
+        /* Highcharts.setOptions({
+         colors: colors
+         });*/
+
+        return Highcharts.chart(chartid,{
+            chart: {
+                type: 'column',
+//                height: 500
+            },
+            title: {
+                text: title
+            },
+            subtitle: {
+                text: subTitle
+            },
+            xAxis: {
+                categories: categoriesv,
+                title: {
+                    text: null
+                }
+            },
+            yAxis: {
+                min: 0,
+                title: {
+                    text: '',
+                    align: 'high'
+                },
+                labels: {
+                    overflow: 'justify'
+                }
+            },
+            legend: {
+                /*layout: 'vertical',
+                 align: 'right',
+                 verticalAlign: 'top',
+                 */
+                /*x: 0,
+                 y: 30,*/
+                floating: false,
+                /*borderWidth: 1,*/
+                backgroundColor: ((Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'),
+                shadow: true
+                /*reversed: true*/
+            },
+            credits: {
+                enabled: false
+            },
+            series: seriesv
+        });
+    };
 </script>
 <?php /*$moduleScripts[]="./modules/outputs/outputs.module.js"; */ /*margin-right: -300px*/ ?>
 <br/>
@@ -473,15 +525,24 @@ if($res){
 
                     <?php
 
+//                    echo "<br /><br /><br /><br /><pre>";
+//                    var_dump($hashList);
+//                    echo "</pre>";
                     if(count($sets) > 0) {
                         $i = 0;
                         foreach ($sets as $sid => $set_name) {
                             $i++;
                             $list = array();
+                                    echo "<script>console.log('".count($hashList)."')</script>";
                             foreach ($hashList as $index => $grapher){
+//                                if($grapher){
+////                                    echo "<script>console.log('".$index."')</script>";
+//
+//                                }
                                 if($grapher['set_id']==$sid){
                                     $list[] = $grapher;
                                 }
+//                                  echo "<script>console.log('".$grapher['set_id']."  <->  ".$sid."')</script>";
                             }
                             echo '<div id="tabs-' . $i . '" class="mtab" style="margin-left: 0px">';
                             echo '<div class="row">';
@@ -505,14 +566,14 @@ if($res){
 //                                    echo "</pre>";
 
                                     $newGraphhandler = json_decode($grapher["idata"],true);
-                                    echo "<pre>";
-                                    var_dump($newGraphhandler["g"]["categories"]);
-                                    echo "</pre>";
-                                    echo "<pre>";
-                                    var_dump($grapher["idata"]);
-//                                    var_dump($grapher['data_item']);
-                                    var_dump($newGraphhandler);
-                                    echo "</pre>";
+//                                    echo "<pre>";
+//                                    var_dump($newGraphhandler["g"]["categories"]);
+//                                    echo "</pre>";
+//                                    echo "<pre>";
+//                                    var_dump($grapher["idata"]);
+////                                    var_dump($grapher['data_item']);
+//                                    var_dump($newGraphhandler);
+//                                    echo "</pre>";
                                     //echo '<br/>---------';
 //                                    $graph_data = json_decode(str_replace("\\","", str_replace("'","", $graph_data)),true);
                                     //var_dump($grapher);
@@ -520,12 +581,7 @@ if($res){
                                     echo '<div id="chart-'.$i.'-'.$index.'-1" class="card resizable" style="width: 600px;height:400px;resize: both;"><div id="chart-'.$i.'-'.$index.'-1"></div></div>';
                                     ?>
                                     <script type="text/javascript">
-                                        var graph_type = '<?php if ($newGraphhandler["g"]['type'] == 'columns'){
-                                            echo "lines";
-                                        }else{
-                                            echo $newGraphhandler["g"]['type'];
-                                        }
-?>';
+                                        var graph_type = '<?php  echo $newGraphhandler["g"]['type'];?>';
                                         if(graph_type=='bars'){
                                             bars('chart-<?php echo $i.'-'.$index?>-1',<?php echo json_encode($newGraphhandler["g"]["categories"]); ?>,<?php echo json_encode($newGraphhandler["g"]["series"]); ?>,'<?php echo $newGraphhandler["g"]["title"]; ?>');
                                         }
@@ -539,7 +595,13 @@ if($res){
                                             pie('chart-<?php echo $i.'-'.$index?>-1',<?php echo json_encode($newGraphhandler["g"]["series"]); ?>,'<?php echo $newGraphhandler["g"]["title"]; ?>');
                                         }
                                         if(graph_type=='lines'){
-                                            lines('chart-<?php echo $i.'-'.$index?>-1',<?php echo json_encode($newGraphhandler["g"]["g"]["categories"]); ?>,<?php echo json_encode($newGraphhandler["g"]["series"]); ?>,'<?php echo $newGraphhandler["g"]["title"]; ?>');
+                                            lines('chart-<?php echo $i.'-'.$index?>-1',<?php echo json_encode($newGraphhandler["g"]["categories"]); ?>,<?php echo json_encode($newGraphhandler["g"]["series"]); ?>,'<?php echo $newGraphhandler["g"]["title"]; ?>');
+                                        }
+                                        if(graph_type=='columns'){
+//                                            console.log('<?php //echo json_encode($newGraphhandler["g"]["categories"]); ?>//');
+//                                            console.log('<?php //echo json_encode($newGraphhandler["g"]["series"]); ?>//');
+//                                            console.log('<?php //echo $newGraphhandler["g"]["title"]; ?>//');
+                                            columns('chart-<?php echo $i.'-'.$index?>-1',<?php echo json_encode($newGraphhandler["g"]["categories"]); ?>,<?php echo json_encode($newGraphhandler["g"]["series"]); ?>,'<?php echo $newGraphhandler["n"];/*($newGraphhandler["g"]["title"] == '') ? $newGraphhandler["g"]["title"] : $newGraphhandler["n"] ;*/?>','subTitle');
                                         }
 
                                     </script>

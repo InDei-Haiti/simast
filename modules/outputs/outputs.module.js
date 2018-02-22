@@ -2734,6 +2734,7 @@ qlHandler.prototype.extractRowSet = function(txt){
         //$j("#settable").
 		var $newRow = $j("<tr/>");
         $newRow.append('<td>'+txt.set+'</td>');
+        $newRow.append('<td>'+txt.project_name+'</td>');
         $newRow.append('<td><span id="set_d_'+txt.id+'" onclick="qurer.delSetRow('+txt.id+',\''+txt.set+'\')"  class="fhref fa fa-trash-o" style="color: blue;font-size: large"></span><span id="set_e_'+txt.id+'"  class="fhref fa fa-edit" style="color: blue;font-size: large"></span>');
         $newRow.append('</td>');
         $newRow.appendTo($j("#settable"));
@@ -2782,6 +2783,7 @@ qlHandler.prototype.edit = function(id_edit,nomSet){
 		type: 'get',
 		url:  '/?m=outputs&a=reports&mode=getSetElements&suppressHeaders=1&set_id='+id_edit,
 		success: function(data){
+			console.log(data);
 			var elms = JSON.parse(data);
 			if(elms.status == 'success' && elms.value.length>0){
 				$("#elmsList").empty();

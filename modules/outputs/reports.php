@@ -479,6 +479,9 @@ if ($_POST ['mode'] == 'save' || $_POST ['mode'] == 'update') {
 				$itemsLst = $q->loadList();
 				$neededInfo = array();
 				foreach ($dataz as $value) {
+					if(empty($value['data_item'])){
+						$value['data_item'];
+					}
 					$val = gzdecode($value['data_item']);
 					$val = json_decode(str_replace("\\","", str_replace("'","", $val)),true);
 					$title = $val['title'];
