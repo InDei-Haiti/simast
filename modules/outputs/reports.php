@@ -481,9 +481,10 @@ if ($_POST ['mode'] == 'save' || $_POST ['mode'] == 'update') {
 					}
 				}
 //Recuperation de la liste des report item
-				$q->addQuery("id, title, project_id");
+				$q->addQuery("id, itype,title, project_id");
 				$q->addTable('report_items');
 				$q->addWhere('data_item IS NOT NULL AND project_id IS NOT NULL'); // Car une nouvelle colonne a ete ajoutee
+				$q->addOrder('itype');
 				$itemsLst = $q->loadList();
 				$neededInfo = array();
 				foreach ($dataz as $value){

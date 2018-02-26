@@ -2783,6 +2783,7 @@ qlHandler.prototype.edit = function(id_edit,nomSet){
 
 	// console.log($("div#setModal_x_y div.modal-content div.modal-header h2").html());
 	$("#setModal_x_y > div.modal-content > div.modal-header").html(str_close);//Modification du Set : '+nomSet
+	$("#setModal_x_y table tbody").empty();
 
 	$j.ajax({
 		type: 'get',
@@ -2794,7 +2795,7 @@ qlHandler.prototype.edit = function(id_edit,nomSet){
 			if(elms.status == 'success' && elms.value.length>0){
 				$("#elmsList").empty();
 				for(var z=0;z < elms.itemlst.length;z++){
-					$("#elmsList").append("<option value='"+elms.itemlst[z].id+"'>"+elms.itemlst[z].title+"</option>");
+					$("#elmsList").append("<option value='"+elms.itemlst[z].id+"'>"+(elms.itemlst[z].itype.toUpperCase()=='STAT' ? 'TABLE' : elms.itemlst[z].itype.toUpperCase())+"    <<-------->>    "+elms.itemlst[z].title+"</option>");
 				}
 
 				$("#setModal_x_y table tbody").empty();
