@@ -468,23 +468,39 @@ if ($_POST ['mode'] == 'save' || $_POST ['mode'] == 'update') {
 		case "getSetElements":
 			if(isset($_GET['set_id'])){
 				$q = new DBQuery();
-				$q->addQuery("id, set_id, project_id, type, query_save, data_item");
-				$q->addTable('dashboard_grapher');
-				$q->addWhere('set_id='.$_GET['set_id']);
-				$dataz = $q->loadList();
+//				$q->addQuery("id, set_id, project_id, type, query_save, data_item");
+//				$q->addTable('dashboard_grapher');
+//				$q->addWhere('set_id='.$_GET['set_id']);
+				$req4Added2Dashboard = "SELECT C.id,B.setId AS set_id, C.project_id, C.idata,C.html,CASE C.itype WHEN 'graph' THEN 'GRAPH' WHEN 'stat' THEN 'TABLE' END AS type,C.query_save, C.data_item, 'none' AS description FROM sets AS A INNER JOIN set_report_items AS B ON A.id = B.setId INNER JOIN report_items AS C ON B.itemId = C.id WHERE  C.idata <> '\"\"' AND B.setId = ".$_GET['set_id'];
+//				$dataz = $q->loadList();
+				$res =  mysql_query($req4Added2Dashboard);
+				$dataz = [];
+				if($res){
+					while($row = mysql_fetch_assoc($res)){
+						$dataz [] = $row;
+					}
+				}
 //Recuperation de la liste des report item
 				$q->addQuery("id, title, project_id");
 				$q->addTable('report_items');
 				$q->addWhere('data_item IS NOT NULL AND project_id IS NOT NULL'); // Car une nouvelle colonne a ete ajoutee
 				$itemsLst = $q->loadList();
 				$neededInfo = array();
-				foreach ($dataz as $value) {
-					if(empty($value['data_item'])){
-						$value['data_item'];
+				foreach ($dataz as $value){
+//					if(empty($value['data_item'])){
+////						$value['data_item'];
+//						continue;
+//					}
+//					$val = gzdecode($value['data_item']);
+//					$val = json_decode(str_replace("\\","", str_replace("'","", $val)),true);
+					$val = json_decode($value['idata'],true);
+					if(is_null($val['n']) AND is_null($val['g']) ){
+//						echo "<pre>";
+//						var_dump($value['idata']);
+//						echo "</pre><hr />";
+						continue;
 					}
-					$val = gzdecode($value['data_item']);
-					$val = json_decode(str_replace("\\","", str_replace("'","", $val)),true);
-					$title = $val['title'];
+					$title = $val['n'];
 					$id_Elements = $value['id'];
 					array_push($neededInfo,array("id" =>$id_Elements,
 						"title"=>$title,
@@ -499,7 +515,8 @@ if ($_POST ['mode'] == 'save' || $_POST ['mode'] == 'update') {
 				));
 			}else{
 				if(isset($_GET['toDel'])){
-					$sql='DELETE FROM dashboard_grapher WHERE id = '.$_GET['toDel'];
+					$sql='DELETE FROM set_report_items WHERE itemId = '.$_GET['toDel'].' AND setId = '.$_GET['setIdDel'];
+//					$sql='DELETE FROM dashboard_grapher WHERE id = '.$_GET['toDel'];
 					$res=mysql_query($sql);
 					if($res){
 						echo "ok";
@@ -513,7 +530,9 @@ if ($_POST ['mode'] == 'save' || $_POST ['mode'] == 'update') {
 						$slctItem = $q->loadList();
 						$ssetId = $_GET['setId'];
 						foreach($slctItem as $mm){
-							$sql = "INSERT INTO dashboard_grapher(set_id,project_id,type,data_item) VALUES('".$ssetId."','".$mm['project_id']."','".strtoupper($mm['itype'])."','".mysql_real_escape_string($mm['data_item'])."')";
+							$sql = 'INSERT INTO set_report_items(setId,itemId) VALUES('.$ssetId.','.$_GET['addElms'].')';
+//							$sql = "INSERT INTO dashboard_grapher(set_id,project_id,type,data_item) VALUES('".$ssetId."','".$mm['project_id']."','".strtoupper($mm['itype'])."','".mysql_real_escape_string($mm['data_item'])."')";
+//							$sql = "INSERT INTO dashboard_grapher(set_id,project_id,type,data_item) VALUES('".$ssetId."','".$mm['project_id']."','".strtoupper($mm['itype'])."','".mysql_real_escape_string($mm['data_item'])."')";
 						}
 						$res=mysql_query($sql);
 						if($res){

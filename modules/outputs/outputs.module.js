@@ -2778,27 +2778,33 @@ var setName = '';
 qlHandler.prototype.edit = function(id_edit,nomSet){
 	setId = id_edit;
 	setName =nomSet;
-	$("#setModal .modal-header h2").text('Modification du Set : '+nomSet);
+	str_close = '<span id="closeSetModal_x_y" class="close">&times;</span>'+
+		'<h2>Modification du Set : '+nomSet+'</h2>';
+
+	// console.log($("div#setModal_x_y div.modal-content div.modal-header h2").html());
+	$("#setModal_x_y > div.modal-content > div.modal-header").html(str_close);//Modification du Set : '+nomSet
+
 	$j.ajax({
 		type: 'get',
 		url:  '/?m=outputs&a=reports&mode=getSetElements&suppressHeaders=1&set_id='+id_edit,
 		success: function(data){
-			console.log(data);
+			// console.log(data);
 			var elms = JSON.parse(data);
+			console.log(elms);
 			if(elms.status == 'success' && elms.value.length>0){
 				$("#elmsList").empty();
 				for(var z=0;z < elms.itemlst.length;z++){
 					$("#elmsList").append("<option value='"+elms.itemlst[z].id+"'>"+elms.itemlst[z].title+"</option>");
 				}
 
-				$("#setModal table tbody").empty();
+				$("#setModal_x_y table tbody").empty();
 				for(var i=0;i <elms.value.length ; i++){
 					var titre = (elms.value[i].title == null) ? '[NaN]' : elms.value[i].title;
-					$("#setModal table tbody").append(
+					$("#setModal_x_y table tbody").append(
 						'<tr>' +
 							'<td id="fromGraph_'+elms.value[i].id+'">'+titre+'</td>' +
 							'<td>'+elms.value[i].type+'</td>' +
-							'<td><a href="#" onclick="qurer.delElms('+elms.value[i].id+')">Delete</a></td>' +
+							'<td><a href="#" onclick="qurer.delElms('+elms.value[i].id+','+id_edit+')">Delete</a></td>' +
 						'</tr>');
 				}
 
@@ -2806,35 +2812,33 @@ qlHandler.prototype.edit = function(id_edit,nomSet){
 				console.log("Pas de donnees");
 			}
 		}});
-	var getModal = $("#getItemAttr");
+	var getModal = $("#setModal_x_y");
 	getModal.css("display","block");
-	$("#getItemAttrModal").click(function(){
+	$("#closeSetModal_x_y").click(function(){
 		getModal.css("display","none");
 	});
 };
 
-qlHandler.prototype.delElms = function(idElms){
+qlHandler.prototype.delElms = function(idElms,setId){
 	$j.ajax({
 		type: 'get',
-		url:  '/?m=outputs&a=reports&mode=getSetElements&suppressHeaders=1&toDel='+idElms,
+		url:  '/?m=outputs&a=reports&mode=getSetElements&suppressHeaders=1&toDel='+idElms+'&setIdDel='+setId,
 		success: function(data){
 			if(data == 'ok'){
 				alert("L'element a ete enleve du SET avec success");
-
 				$("#fromGraph_"+idElms).closest("tr").remove();
 			}
 		}});
 };
 qlHandler.prototype.addElms = function(){
-	alert("Je suis en train dajoute");
+	// alert("Je suis en train dajoute");
 		var itemId = $("#elmsList").val();
-
 		$j.ajax({
 		type: 'get',
 		url:  '/?m=outputs&a=reports&mode=getSetElements&suppressHeaders=1&addElms='+itemId+'&setId='+setId,
 		success: function(data){
 			if(data == 'ok'){
-				alert("OK");
+				// alert("OK");
 				$("#setModal").css("display","none");
 				qurer.edit(setId,setName);
 

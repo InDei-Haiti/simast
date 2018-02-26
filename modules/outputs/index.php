@@ -1959,16 +1959,15 @@ echo '<!--<link rel="stylesheet" type="text/css" href="http://cdn.leafletjs.com/
 
 
 <!-- The Modal For the modification of the sets -->
-<div id="setModal" class="modal">
+<div id="setModal_x_y" class="modal">
 
 	<div class="modal-content">
 		<div class="modal-header">
-			<span id="closeSetModal" class="close">&times;</span>
-			<h2>Modification du Set : <SetName> </h2>
+			
 		</div>
 		<div class="modal-body">
 			<div>
-				<label for="elmsList">Liste des Elements : </label>
+				<label for="myElmts">Liste des Elements : </label>
 				<select id="elmsList">
 					<option>elmsss</option>
 				</select>
