@@ -391,7 +391,7 @@ if ($oldtemplate) {
 			 $i=0;  echo '<LI><A href="#tabs-'.$i.'"><span>'.$AppUI->_('All').'</span></A></LI>';
             foreach ($project_types as $psk => $project_status) {
                 $i++;
-                echo '<LI><A href="#tabs-'.$i.'"><span>'.$project_status.'</span></A></LI>';
+                echo '<LI><A href="#tabs-'.$i.'"><span>'.$AppUI->_($project_status).'</span></A></LI>';
             }
 			?>
 
@@ -416,7 +416,7 @@ if ($oldtemplate) {
             "<th>". $AppUI->_('Partner Agencies') ."</th>".
             "<th>". $AppUI->_('Donor Agencies') ."</th>".
             "<th>". $AppUI->_('Sectors') ."</th>".
-            "<th>". $AppUI->_('Str. Areas') ."</th>".
+            "<th>". $AppUI->_('Structure Areas') ."</th>".
             "<th>". $AppUI->_('Start') ."</th>".
             "<th>". $AppUI->_('End') ."</th>";
         echo '</tr>
@@ -525,7 +525,7 @@ if ($oldtemplate) {
                 "<th>". $AppUI->_('Partner Agencies') ."</th>".
                 "<th>". $AppUI->_('Donor Agencies') ."</th>".
                 "<th>". $AppUI->_('Sectors') ."</th>".
-                "<th>". $AppUI->_('Str. Areas') ."</th>".
+                "<th>". $AppUI->_('Structure Areas') ."</th>".
                 "<th>". $AppUI->_('Start') ."</th>".
                 "<th>". $AppUI->_('End')."</th>";
             echo '</tr>

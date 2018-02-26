@@ -95,6 +95,7 @@
 "Monday",
 "My",
 "My Info",
+"My Page",
 "Name",
 "New Password",
 "New User Password created and emailed to you",
