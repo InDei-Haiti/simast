@@ -205,6 +205,13 @@ if ($_POST ['mode'] == 'save' || $_POST ['mode'] == 'update') {
 				$onceShown = ($_GET['kadze'] == 'kami');
 				?>
 			<style type="text/css">
+                @media print
+                {
+                    .no-print, .no-print *
+                    {
+                        display: none !important;
+                    }
+                }
 				span table thead th {
 					vertical-align: bottom;
 					border-bottom: 2px solid #eceeef;
@@ -247,6 +254,11 @@ if ($_POST ['mode'] == 'save' || $_POST ['mode'] == 'update') {
 						$j("#load_res").replaceWith(dh);
 					});
 				}
+
+				function Printer(){
+//				    $("")
+                    window.print();
+                }
 			</script>
 			<?php
 

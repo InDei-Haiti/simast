@@ -84,10 +84,10 @@ if (count($rdata) > 0) {
 		<input type="hidden" name="suppressHeaders" value="1">
 		<input type="hidden" name="2cols" value="#@cols@#">
 		</form>
-		<input type="submit" class="text button ce pi ahr" style="background-color: rgba(255, 255, 255, 0.75);" value="Save as PDF" onclick="document.bwork.mode.value=\'2pdf\'; document.bwork.submit();">
+		<input type="submit" class="text button ce pi ahr no-print" style="background-color: rgba(255, 255, 255, 0.75);" value="Save as PDF" onclick="Printer();">
 		<!--<input type="submit" class="text button ce pi ahr" style="background-color: rgba(255, 255, 255, 0.75);" value="Save as PDF" id="cmd">-->
 		<!--<a href="javascript:genPDF()" class="text button ce pi ahr" style="background-color: rgba(255, 255, 255, 0.75);">Save as PDF</a>-->
-		<input type="submit" class="text button ce pi ahr" style="background-color: rgba(255, 255, 255, 0.75);" value="Save as HTML" onclick="getRT()">';
+		<input type="submit" class="text button ce pi ahr no-print" style="background-color: rgba(255, 255, 255, 0.75);" value="Save as HTML" onclick="getRT()">';
 	$html = '
 		<div id="content" style="background-color: #ffffff;border: 0px solid black; margin: 5px;padding: 10px;" id="paper" data-start="'.
 			($sdvalid > 0 ? $sdate->format(FMT_DATE_MYSQL)  : 0 ).'" data-stop="'.

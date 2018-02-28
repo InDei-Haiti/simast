@@ -37,7 +37,19 @@ if(isset($_GET['mode']) && $_GET['mode'] !== ''){
 
 		case 'makecenters':
 			require_once('transfer-out.php');			
-			break;			
+			break;
+        case 'bulkedit':
+            $q = new DBQuery();
+            $q->addTable($_POST['table']);
+            $q->addUpdate($_POST['fldU'],$_POST['valU']);
+            $q->addWhere("id in (".$_POST['listIds'].")");
+            $res = db_exec($q->prepare());
+            if($res){
+                echo 'ok';
+            }else{
+                echo 'failed';
+            }
+            break;
 		
 		default:
 			break;

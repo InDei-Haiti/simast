@@ -70,6 +70,7 @@ class genericTable
 	private function composeHTMLRow($rowValues,$color=''){
 		global $df;
 		$row = array('<tr id="row_'.$this->nfei->getCurrentRow() .'">');
+		$position = 0;
 		foreach ($rowValues as $column => &$value) {
 			$cellContent = '&nbsp;';
 			$addTitle = false;
@@ -95,9 +96,14 @@ class genericTable
 				}else {
 					$cellContent = $value;
 				}
-				$row[] ='<td style="'.$color.';width:'.(100/$this->headerCount).'%"  '.($addTitle !== false ? ' class="moreview" data-text="'.$addTitle.'"' : '').'>'.$cellContent .'</td>'."\n\t";
+				/*if($position==0)
+				    $row[] ='<td><input type="checkbox" class="itemcheck"/></td><td style="'.$color.';width:'.(100/$this->headerCount).'%"  '.($addTitle !== false ? ' class="moreview" data-text="'.$addTitle.'"' : '').'>'.$cellContent .'</td>'."\n\t";
+				else */
+
+				    $row[] ='<td style="'.$color.';width:'.(100/$this->headerCount).'%"  '.($addTitle !== false ? ' class="moreview" data-text="'.$addTitle.'"' : '').'>'.$cellContent .'</td>'."\n\t";
 
 			}
+            $position++;
 		}
 		$row[]='</tr>';
 		$this->addTableHtmlRow(join("", $row));

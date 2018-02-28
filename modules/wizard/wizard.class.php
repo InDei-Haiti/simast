@@ -296,6 +296,7 @@ class Wizard {
 						if(count($arr)>10){
 							$code .= '';
 						}else{
+						    if(is_array($arr))
 							$code .= join(" - ", $arr);
 						}
 					} else {
@@ -1330,8 +1331,9 @@ class Wizard {
 		//if(!$this->client_id)
 		//$code .='<th>Beneficiery name</th><th>Identification</th>';
 		$i = 0;
-		$headers['*'] = 'string';
-		$i = 1;
+		$headers['<span id="listCheck" class="context-menu-one"><i class="fa fa-check"/></span>'] = 'string';
+		$headers['<i class="fa fa-eye"/>'] = 'string';
+		$i = 2;
 		/* if($this->isRegisterForm($this->parent)){
 			/* $code .='<th>LastName</th>';
 			 $code .='<th>FirstName</th>'; ///
@@ -1346,10 +1348,9 @@ class Wizard {
 		//$headers[$tname['name']] = 'date';
 		//$i += 1;
 		//$code .='<th>'.$this->findFieldName('entry_date').'</th>';
-		
+		$menuChange = array();
 		$localflds = array();
 		if(count($selected_columns)>0){
-			
 			foreach ($selected_columns as $dfld) {
 				if ($dfld != '') {
 					if (preg_match("/rel_/", $dfld)){
@@ -1366,7 +1367,7 @@ class Wizard {
 						$i += 1;
 					}else{ 
 						$tname = $this->findFieldName($dfld);
-						//$code .= '<th>' . $tname['name'] . '</th>';
+                        //$code .= '<th>' . $tname['name'] . '</th>';
 						
 						if($tname){
 							$localflds[$dfld] = $tname;
@@ -1383,9 +1384,44 @@ class Wizard {
 						}elseif($dfld==='user_last_update'){
 							$headers[$AppUI->_('Last User Update')] = 'date';
 						}
+						if($tname['type']=='select') {
+                            $listGV = $this->getValues($tname['type'], $tname['sysv'], false, false, $tname['other']);
+                            if(isset($listGV[-1])) unset($listGV[-1]);
+                            if($tname['sysv']=='SysCommunes'){
+                                $sysdept = $this->getValues($tname['type'], 'SysDepartment', false, false, $tname['other']);
+                                if(isset($sysdept[-1])) unset($sysdept[-1]);
+                                $nListGV = array();
+                                foreach ($sysdept as $indexDept=>$dVlist){
+                                    $nListGV[$indexDept] = array('name'=>$sysdept[$indexDept],'items'=>array());
+                                    foreach ($listGV as $indexage=>$vlist){
+                                        if($indexDept == substr($indexage,0,2)){
+                                            $nListGV[$indexDept]['items'][$this->tableName.'|_**_|'.$dfld.'|_**_|'.$indexage] = array('name'=>$vlist);
+                                        }
+                                    }
+                                }
+                                /*foreach ($listGV as $indexage=>$vlist){
+                                    $indexDept = substr($indexage,0,2);
+                                    $nListGV[$indexDept] = array('name'=>$sysdept[$indexDept], 'items'=>array($indexage=>array('name'=>$vlist)));
+                                }*/
+                                $listGV = $nListGV;
+                            }else{
+                                foreach ($listGV as $indexage=>$vlist){
+                                    unset($listGV[$indexage]);
+                                    $listGV[$this->tableName.'|_**_|'.$dfld.'|_**_|'.$indexage] = array('name'=>$vlist);
+                                }
+                            }
+
+                            $menuChange[$dfld] = array(
+                                'name' => $tname['name'],
+                                'items'=> $listGV
+                            );
+
+
+                        }
 						$i += 1;
 					}
 				}
+
 			}
 		}else{
 			/* $headers[$AppUI->_('Creation Date')] = 'date';
@@ -1439,6 +1475,40 @@ class Wizard {
 						$point = '...';
 					$headers[substr($AppUI->_($tname['name']), 0,49).$point] = 'string';
 					$i += 1;
+                    if($tname['type']=='select') {
+                        $listGV = $this->getValues($tname['type'], $tname['sysv'], false, false, $tname['other']);
+                        if(isset($listGV[-1])) unset($listGV[-1]);
+                        if($tname['sysv']=='SysCommunes'){
+                            $sysdept = $this->getValues($tname['type'], 'SysDepartment', false, false, $tname['other']);
+                            if(isset($sysdept[-1])) unset($sysdept[-1]);
+                            $nListGV = array();
+                            foreach ($sysdept as $indexDept=>$dVlist){
+                                $nListGV[$indexDept] = array('name'=>$sysdept[$indexDept],'items'=>array());
+                                foreach ($listGV as $indexage=>$vlist){
+                                    if($indexDept == substr($indexage,0,2)){
+                                        $nListGV[$indexDept]['items'][$this->tableName.'|_**_|'.$dfld.'|_**_|'.$indexage] = array('name'=>$vlist);
+                                    }
+                                }
+                            }
+                            /*foreach ($listGV as $indexage=>$vlist){
+                                $indexDept = substr($indexage,0,2);
+                                $nListGV[$indexDept] = array('name'=>$sysdept[$indexDept], 'items'=>array($indexage=>array('name'=>$vlist)));
+                            }*/
+                            $listGV = $nListGV;
+                        }else{
+                            foreach ($listGV as $indexage=>$vlist){
+                                unset($listGV[$indexage]);
+                                $listGV[$this->tableName.'|_**_|'.$dfld.'|_**_|'.$indexage] = array('name'=>$vlist);
+                            }
+                        }
+
+                        $menuChange[$dfld] = array(
+                            'name' => $tname['name'],
+                            'items'=> $listGV
+                        );
+
+
+                    }
 				}
 			}	
 			//echo $ir.' '.$i;
@@ -1878,8 +1948,8 @@ class Wizard {
 		
 		$rhb = '';
 		if($this->forregistration){
-			$rhb .= '<input type="button" class="ce pi ahr" value="'.$AppUI->_('Import').'" onClick="dialogNewClient('.$idfw.');">&emsp;&emsp;';
-			$rhb .= '<input type="button" class="ce pi ahr" value="'.$AppUI->_('Add New').'" onClick="window.location=\'./index.php?m=wizard&a=form_useed&fid=' . $this->tableID . '&todo=addedit\'">';
+			$rhb .= '<input type="button" class="ce pi ahr" style="margin-right: 10px" value="'.$AppUI->_('Import').'" onClick="dialogNewClient('.$idfw.');">';
+			$rhb .= '<input type="button" class="ce pi ahr" style="margin-right: 10px" value="'.$AppUI->_('Add New').'" onClick="window.location=\'./index.php?m=wizard&a=form_useed&fid=' . $this->tableID . '&todo=addedit\'">';
 		}else if($m !='tasks' && $ref){
 			
 			if($this->multiplicity==='One'){
@@ -1890,7 +1960,7 @@ class Wizard {
 				$result = $q->loadResult();
 				$reflink = '&parent_id='.$ref;
 				if($result==0)
-					$rhb .= '<input type="button" class="button ce pi ahr" value="'.$AppUI->_('Add New').'" onClick="window.location=\'./index.php?m=wizard&a=form_useed&fid=' . $this->tableID . '&todo=addedit'.$reflink.'\'">';
+					$rhb .= '<input type="button" class="button ce pi ahr" style="margin-right: 10px" value="'.$AppUI->_('Add New').'" onClick="window.location=\'./index.php?m=wizard&a=form_useed&fid=' . $this->tableID . '&todo=addedit'.$reflink.'\'">';
 			}elseif($this->multiplicity==='Many'){
 				/* $ref = '&ref='.$ref;
 				$rh .= '<input type="button" class="button" value="'.$AppUI->_('Add New').'" onClick="window.location=\'./index.php?m=wizard&a=form_use'.$ref.'&fid=' . $this->tableID . '&todo=addedit'.$parent_id.$idIns.'\'">';
@@ -1939,15 +2009,17 @@ class Wizard {
 		$formdata = 'joinList(arrayUnique(linkToArray(window.location.href).concat(serialize(document.filterform))))';
 		//$formdata = '"?"'.$formdata;
 		$searchscpt = ' window.location.href = '.$formdata.'; ';
+        $rh .= '<button class="ce pi ahr" id="bulkEdit" style="margin-right: 10px;display: none">Edit</button>';
 		if($count > 20){
-			$rh .= '<input id="search" type="hidden" name="search" style="margin-left:10px;" placeholder="'.$AppUI->_('Search').'"/>
+			$rh .= '<input id="search" type="hidden" name="search" placeholder="'.$AppUI->_('Search').'"/>
 	            	<input type="button" class="ce pi ahr" value="'.$AppUI->_('Clear').'" onClick="window.location=\''.$link.'\'"/>
-	                <input type="button" class="ce pi ahr" value="'.$AppUI->_('Apply').'" id="submitButton" onclick="'.$searchscpt.'"/>';
+	                <input type="button" class="ce pi ahr" style="margin-left:10px;" value="'.$AppUI->_('Apply').'" id="submitButton" onclick="'.$searchscpt.'"/>';
 			if($isFilter){
 				$rh .= ' <span style="color:#04B404">Filter on</span>';
 			}
 			$rh .= '</form>';
 		}
+
 		
 		$selected1 = "";
 		$selected2 = "";
@@ -1982,7 +2054,8 @@ class Wizard {
 		if($view_table)
 			echo $rh;
 		$decs = array(//0=>'<a href="/index.php?m=clients&a=view&client_id=##4##">##0##</a>'//,1=>'date',2=>'date'
-				0 => '<a href="?m=wizard&a=form_use&fid='.$idfw.'&idIns=##'.($i+1).'##&todo=view&teaser=1&rtable=1&tab=0">View</a>',
+            0 => '<input type="checkbox" class="itemcheck" value="##'.($i+1).'##"/>',
+            1 => '<a href="?m=wizard&a=form_use&fid='.$idfw.'&idIns=##'.($i+1).'##&todo=view&teaser=1&rtable=1&tab=0">View</a>',
 		);
 		 		
 		if($sender && $sender->multiplicity() === "ManyToMany"){
@@ -2055,9 +2128,10 @@ class Wizard {
 						$countheader = count($this->digest)+2;
 					}	
 				}
-				
+				$sysValues = array();
 				while ($drow = mysql_fetch_assoc($res)) {
 					$row_data = array();
+					$row_data[] = '';
 					$row_data[] = '';
 					if(count($selected_columns)>0){
 						foreach ($selected_columns as $dfld) {
@@ -2079,31 +2153,25 @@ class Wizard {
 									$q->addWhere('id='.$drow['ref']);
 									$valt = $q->loadResult();
 								}else{
-                                    /*if(isset($localflds[$dfld]["sysv"]) && $localflds[$dfld]["sysv"]==="SysDepartment"){
-                                        if(strlen($drow[$dfld])<2){
-                                            $drow[$dfld] = '0'.$drow[$dfld];
-                                            $sqlup = 'UPDATE `'.$this->tableName.'` SET `'.$dfld.'`="'.$drow[$dfld].'" WHERE id='.$drow['id'];
-                                            db_exec($sqlup);
-                                        }
-                                    }else
 
-                                    if(isset($localflds[$dfld]["sysv"]) && $localflds[$dfld]["sysv"]==="SysCommunes"){
-                                        if(strlen($drow[$dfld])<6){
-                                            $drow[$dfld] = '0'.$drow[$dfld];
-                                            $sqlup = 'UPDATE `'.$this->tableName.'` SET `'.$dfld.'`="'.$drow[$dfld].'" WHERE id='.$drow['id'];
-                                            db_exec($sqlup);
+                                    $newbool = true;
+                                    if(isset($sysValues[$dfld][$drow[$dfld]]) && !empty($sysValues[$dfld][$drow[$dfld]])){
+                                        $valt = $sysValues[$dfld][$drow[$dfld]];
+                                        $newbool = false;
+                                    }else {
+                                        $valt = $this->printFieldValue($localflds[$dfld], $drow[$dfld]);
+                                    }
+                                    if($newbool) {
+                                        if (isset($localflds[$dfld]["sysv"]) && !empty($localflds[$dfld]["sysv"])) {
+                                            if (isset($sysValues[$dfld])) {
+                                                $sysValues[$dfld][$drow[$dfld]] = $valt;
+                                            } else {
+                                                $sysValues[$dfld] = array();
+                                                $sysValues[$dfld][$drow[$dfld]] = $valt;
+                                            }
                                         }
                                     }
 
-                                    if(isset($localflds[$dfld]["sysv"]) && $localflds[$dfld]["sysv"]==="SysCommunalSection"){
-                                        if(strlen($drow[$dfld])<8){
-                                            $drow[$dfld] = '0'.$drow[$dfld];
-                                            $sqlup = 'UPDATE `'.$this->tableName.'` SET `'.$dfld.'`="'.$drow[$dfld].'" WHERE id='.$drow['id'];
-                                            db_exec($sqlup);
-                                        }
-                                    }*/
-									$valt = $this->printFieldValue($localflds[$dfld], $drow[$dfld]);
-									
 									
 									if($dfld === 'user_creator'){
 										$q = new DBQuery();
@@ -2183,30 +2251,24 @@ class Wizard {
 						}
 						foreach ($this->digest as $dfld) {
 							if ($dfld != '') {
-								if(isset($localflds[$dfld]["sysv"]) && $localflds[$dfld]["sysv"]==="SysDepartment"){
-									if(strlen($drow[$dfld])<2){
-										$drow[$dfld] = '0'.$drow[$dfld];
-										$sqlup = 'UPDATE `'.$this->tableName.'` SET `'.$dfld.'`="'.$drow[$dfld].'" WHERE id='.$drow['id'];
-										db_exec($sqlup);
-									}
-								}
-									
-								if(isset($localflds[$dfld]["sysv"]) && $localflds[$dfld]["sysv"]==="SysCommunes"){
-									if(strlen($drow[$dfld])<6){
-										$drow[$dfld] = '0'.$drow[$dfld];
-										$sqlup = 'UPDATE `'.$this->tableName.'` SET `'.$dfld.'`="'.$drow[$dfld].'" WHERE id='.$drow['id'];
-										db_exec($sqlup);
-									}
-								}
-						
-								if(isset($localflds[$dfld]["sysv"]) && $localflds[$dfld]["sysv"]==="SysCommunalSection"){
-									if(strlen($drow[$dfld])<8){
-										$drow[$dfld] = '0'.$drow[$dfld];
-										$sqlup = 'UPDATE `'.$this->tableName.'` SET `'.$dfld.'`="'.$drow[$dfld].'" WHERE id='.$drow['id'];
-										db_exec($sqlup);
-									}
-								}
-								$valt = $this->printFieldValue($localflds[$dfld], $drow[$dfld]);
+
+                                $newbool = true;
+                                if(isset($sysValues[$dfld][$drow[$dfld]]) && !empty($sysValues[$dfld][$drow[$dfld]])){
+                                    $valt = $sysValues[$dfld][$drow[$dfld]];
+                                    $newbool = false;
+                                }else {
+                                    $valt = $this->printFieldValue($localflds[$dfld], $drow[$dfld]);
+                                }
+                                if($newbool) {
+                                    if (isset($localflds[$dfld]["sysv"]) && !empty($localflds[$dfld]["sysv"])) {
+                                        if (isset($sysValues[$dfld])) {
+                                            $sysValues[$dfld][$drow[$dfld]] = $valt;
+                                        } else {
+                                            $sysValues[$dfld] = array();
+                                            $sysValues[$dfld][$drow[$dfld]] = $valt;
+                                        }
+                                    }
+                                }
 									
 								$row_data[] = $valt;
 							}
@@ -2227,6 +2289,11 @@ class Wizard {
 							$color = 'background:#D8FAEE';
 						}
 					}
+					/*if($drow['id']<2) {
+                        echo '<pre>';
+                        var_dump($row_data);
+                        echo '</pre>';
+                    }*/
 					$gt->fillBody($row_data,$color);
 				}
 				
@@ -2238,12 +2305,13 @@ class Wizard {
 		}
 		echo "\n";
 		$code .= $gt->compile(true);
-		
+		$code .= '<script type="text/javascript">';
+		$code .= '  var menuChange = '.json_encode($menuChange).';';
+		$code .= '</script>';
 
 		return array($code, $nrows, $first, $rf, $count,$currentNbr,$trRows,$filterJs,$rhp);
 	}
-	
-	
+
 	public function showFieldsImport() {
 		$result = array('otms' => array(), 'notms' => array());
 		/* echo '<pre>';

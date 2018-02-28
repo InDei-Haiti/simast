@@ -1074,6 +1074,8 @@ var v = null;
 		    	  $("#rtable th:first-child div").remove();//.attr('class', '');
     	<?php }?>
 	    });
+
+
 	</script>
 <?php
 if($m=='dashboard'){
@@ -1244,16 +1246,116 @@ setTimeout(function(){
 </script>
 <?php
 }
-if($m="projects" AND $a = "view"){?>
+if(($m=="projects" AND $a == "view") || $m=="manager"){?>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="./style/<?php echo $uistyle;?>/jquery.contextMenu.js" type="text/javascript"></script>
+    <script src="./style/<?php echo $uistyle;?>/jquery.ui.position.min.js" type="text/javascript"></script>
     <script>
+        $(function(){
+            /**************************************************
+             * Context-Menu with Sub-Menu
+             **************************************************/
+            console.log(menuChange);
+            $.contextMenu({
+                selector: '.context-menu-one',
+                callback: function(key, options) {
+                    keyTab = key.split('|_**_|');
+                    var table = keyTab[0];
+                    var fldU = keyTab[1];
+                    var valU = keyTab[2];
+                    var listIds = []
+                    if($j('.itemcheck:checkbox:checked').length>0){
+                        $( "#uConfirmModal" ).remove();
+                        var uConfirmModal = $('<div id="uConfirmModal" class="modal"/>').appendTo('body');
+                        uConfirmModal.append(
+                        '<div class="modal-content">\n'+
+                        '        <div class="modal-header">\n'+
+                        '            <span id="closeConfirmModal" class="close">&times;</span>\n'+
+                        '            <h2><?php echo $AppUI->__('Confirmation');?></h2>\n'+
+                        '        </div>\n'+
+                        '\n'+
+                        '        <div class="modal-body"><br/><br/><h1>'+$j('.itemcheck:checkbox:checked').length+' lines will be affected</h1><br/>\n'+
+                        '\n'+
+                        '<button type="button" id="continueConfirmModal" class="ce pi ahr btn"  data-dismiss="modal" style="color: #354c8c;margin-left: 5px;float: right"><?php echo $AppUI->__("Continue");?></button>\n'+
+                        '\n'+
+                        '<button type="button" class="ce pi ahr btn"  data-dismiss="modal" style="color: #354c8c;float: right" id="cancelConfirmModal"><?php echo $AppUI->__("Cancel");?></button>\n'+
+                        '       <br/><br/></div>\n'+
+                        '        <div class="modal-footer">\n'+
+                        '\n'+
+                        '        </div>\n'+
+                        '    </div>');
+
+
+                        uConfirmModal.css("display","block");
+                        $("#closeConfirmModal").click(function(){
+                            uConfirmModal.css("display","none");
+                        });
+                        $("#cancelConfirmModal").click(function(){
+                            uConfirmModal.css("display","none");
+                        });
+                        $("#continueConfirmModal").click(function(){
+                            $j('.itemcheck:checkbox:checked').each(function () {
+                                listIds.push($j(this).val());
+
+                            });
+
+                            dataTS = 'table='+table+'&fldU='+fldU+'&valU='+valU+'&listIds='+listIds.join();
+                            console.log(dataTS);
+                            uConfirmModal.css("display","none");
+                            $j.ajax({
+                                type: "post",
+                                url: "/?m=manager&mode=bulkedit&suppressHeaders=1",
+                                data: dataTS,
+                                success: function(msg){
+                                    if(msg=='ok'){
+                                        swal("All saved", "", "success");
+                                        window.location.href = window.location.href
+                                    }else{
+                                        swal("Failed to process change, please retry", "", "info");
+                                    }
+                                    console.log(msg);
+                                }
+                            });
+                        });
+                    }
+
+
+                },
+                items: menuChange
+            });
+        });
         $(document).ready(function(){
                 $("#mholder").css("overflow-x","scroll");
 
         });
+
+        $j(document).on("click","#listCheck",function(e){
+             if($j('.itemcheck:checkbox:checked').length>0){
+                $j('.itemcheck:checkbox').each(function () {
+                    $j(this).removeAttr('checked');
+                    //$j('#bulkEdit').hide();
+                });
+             }else{
+                 $j('.itemcheck:checkbox').each(function () {
+                    $j(this).attr('checked', 'checked');
+                   // $j(this).closest('td').css('background-color', '#507AAA !important;');
+                    //$j('#bulkEdit').show();
+                });
+             }
+        });
+
+        $j(".itemcheck").on("change", function(e){
+            if($j('.itemcheck:checkbox:checked').length>0){
+                $j('#bulkEdit').show();
+            }else{
+                $j('#bulkEdit').hide();
+            }
+        });
+
 </script>
 <?php }
 
-if($m = "outputs" AND $a="reports" AND isset($_GET["mode"]) AND $_GET["mode"] == "compile"){
+if($m == "outputs" AND $a=="reports" AND isset($_GET["mode"]) AND $_GET["mode"] == "compile"){
 ?>
 <script type="text/javascript" src="<?php echo DP_BASE_URL;?>/style/default/jspdf.min.js">
 </script><script type="text/javascript" src="<?php echo DP_BASE_URL;?>/style/default/html2canvas.js"></script>
@@ -1331,8 +1433,150 @@ function genPDFFromHtml(){
 //    doc.save('sample-file.pdf');
 //});
 //    });
+
 </script>
 <?php }?>
+
+
+<?php if($m==='system' && $a==='sareas'){?>
+<script type="text/javascript">
+    console.log("Helloooooooo");
+	/*
+	Fill list of level items for VIEW
+	 */
+	function fillLevel(tar,$tgt){
+		for(var rs in tar){
+			if(tar.hasOwnProperty(rs)){
+				$j(["<li id='area_",tar[rs]['id'],"'><div class='afold' data-state='off'>+</div><span class='intext'>",tar[rs]['title'],"</span><ol></ol></li>"].join("")).appendTo($tgt);
+			}
+		}
+	}
+
+	/*
+	Dialog tool for edit levels
+	 */
+    function editAreas(level){
+        var abc = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $j("#sbox").append("<ol id='dear'></ol>").dialog({
+            modal: true,
+            width : "445px",
+            buttons: {
+                Add: function(){
+                    $j("#dear").append(["<li>","<input type='text' class='text' data-pid='0' value=''>&nbsp;&nbsp;<button class='drow'>X</button></li>"].join("")).find("li:last input").focus();
+                },
+                Save: function(){
+                    var tops=[],$tgt = $j("#top"),prefx=[],$preparts;
+                    $j("#dear").find("input.text").each(function(){
+                        tops.push([$j(this).attr("data-pid"),$j(this).val()]);
+                    });
+                    if(level > 0){
+                        $tgt = $j("#area_"+level).find("ol:first").empty();
+                        $preparts = $tgt.parents("li");
+                        $preparts.each(function(){
+                            if($j(this).parent().attr("id") != 'top'){
+                                prefx.push($j(this).index() + 1);
+                            }else{
+                                prefx.push(abc[$j(this).index()]);
+                            }
+                        });
+                    }else{
+                        $tgt.empty();
+                    }
+
+                    if(tops.length > 0){
+                        $.post("/?m=system&a=sareas&suppressHeaders=1&mode=save",{parent: level,items: JSON.stringify(tops),prefx : prefx.reverse().join(".")},function(msg){
+                            if(msg && msg.length > 0 && msg !='fail'){
+                                var apprvd = $.parseJSON(msg);
+                                fillLevel(apprvd,$tgt);
+                                $j("#sbox").dialog("option","title","Strategy areas saved !")
+                                    .dialog("option","buttons",[])
+                                    .effect( 'fade', {}, 1000, function(){
+                                        $j("#sbox").dialog("destroy").empty();
+                                    });
+                            }
+                        });
+                    }
+                },
+                Cancel: function(){
+                    $j("#sbox").dialog("destroy").empty();
+                }
+            }
+        });
+        /*
+        Load data for this level and fill values into text fields for EDIT !!!!
+         */
+        $.when(loadLevelBack(level))
+            .done(function(msg){
+                console.log("LevelBack");
+                if(msg && msg.length > 0){
+                    var pts = $.parseJSON(msg),$tgt = $j("#dear");
+                    if(pts && pts.length > 0){
+                        for(var i=0, l= pts.length; i < l; i++){
+                            $j(["<li>","<input type='text' class='text' data-pid='",pts[i]['id'],"' value='",pts[i]['title'],"'></li>"].join("")).appendTo($tgt);
+                        }
+                    }
+                }
+            });
+    }
+
+	/*
+	Back-end tool for async download of level data
+	 */
+	function loadLevelBack(level){
+		var $gload = $.get("/?m=system&a=sareas&suppressHeaders=1&mode=load",{glevel: level});
+		return $gload.promise();
+	}
+
+	$j(".drow").live("click",function(){
+		$j(this).closest("li").remove();
+	});
+
+	$j(".afold").live("click",function(){
+		var $row = $j(this).parent(),
+			curID = $row.attr("id"),
+			curLevel = curID.replace("area_",""),
+			cstate = $j(this).attr("data-state"),
+
+			nstate,ntext;
+		if(cstate == 'on'){
+			//need to close all child levels
+			nstate = 'off';
+			ntext = '+';
+			$row.find("button").remove().end().find("ol").empty();
+		}else if(cstate == 'off'){
+			//Now we need to download level, append it to OL and provide button for edit
+			nstate = 'on';
+			ntext = '-';
+
+			$row.find(".afold").addClass("back_load").text("").after("<button class='text' onclick='editAreas("+curLevel+")'>Add/Edit</button>");
+			$.when(loadLevelBack(curLevel))
+				.done(function(msg){
+					if(msg && msg.length > 0){
+						var tar = $.parseJSON(msg);
+						fillLevel(tar,$row.find("ol"));
+						$row.find(".afold").removeClass("back_load");
+					}
+				});
+		}
+		$row.find(".afold")
+					.text(ntext)
+					.attr("data-state",nstate);
+	});
+
+	window.onload = up;
+
+	function up (){
+		$.when(loadLevelBack(0))
+			.done(function(msg){
+				if(msg && msg.length > 0){
+					var tar = $.parseJSON(msg);
+					fillLevel(tar,$j("#top"));
+				}
+			});
+	}
+</script>
+<?php }?>
+
 </body>
 
 </html>
