@@ -1475,7 +1475,7 @@ class Wizard {
 						$point = '...';
 					$headers[substr($AppUI->_($tname['name']), 0,49).$point] = 'string';
 					$i += 1;
-                    if($tname['type']=='select') {
+                    if($tname['type']=='select' || $tname['type']=='calculateChoice' || $tname['type']=='radio' || $tname['type']=='checkbox') {
                         $listGV = $this->getValues($tname['type'], $tname['sysv'], false, false, $tname['other']);
                         if(isset($listGV[-1])) unset($listGV[-1]);
                         if($tname['sysv']=='SysCommunes'){

@@ -1246,7 +1246,7 @@ setTimeout(function(){
 </script>
 <?php
 }
-if(($m=="projects" AND $a == "view") || $m=="manager"){?>
+if(($m=="projects" AND $a == "view") || ($m=="manager" AND $_GET['part']==='cleaner') || ($m=="tasks" AND $a==='view')){?>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script src="./style/<?php echo $uistyle;?>/jquery.contextMenu.js" type="text/javascript"></script>
     <script src="./style/<?php echo $uistyle;?>/jquery.ui.position.min.js" type="text/javascript"></script>

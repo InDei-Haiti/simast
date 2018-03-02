@@ -618,8 +618,9 @@ function resultBuilder($qmode) {
 			$addcl = ' forsize';
 
 
-            if($hcodeArray['type']=='select') {
+            if($hcodeArray['type']=='select' || $hcodeArray['type']=='calculateChoice' || $hcodeArray['type']=='radio' || $hcodeArray['type']=='checkbox') {
                 $listGV = $wz->getValues($hcodeArray['type'], $hcodeArray['sysv'], false, false, false);
+                //echo $hcodeArray['type'].' ';
                 if(isset($listGV[-1])) unset($listGV[-1]);
                 if($hcodeArray['sysv']=='SysCommunes'){
                     $sysdept = $wz->getValues($hcodeArray['type'], 'SysDepartment', false, false, false);
