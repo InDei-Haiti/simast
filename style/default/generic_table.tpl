@@ -31,6 +31,7 @@
     </div>-->
 <!--</div>-->
 <div id="mholder" class="toleft" style="width: 100%">
+
     <table class="rtable moretable tbl ck" id="rtable" border="0" style="display:none;" cellpadding="2" cellspacing="1">
         <colgroup>@@colgroup@@</colgroup>
         <thead><tr>@@headers@@</tr></thead>

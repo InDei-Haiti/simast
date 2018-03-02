@@ -42,7 +42,7 @@ function resultBuilder($qmode) {
 	global $AppUI, $m, $l, $f, $h, $u, $s, $r, $m1, $staterd, $final, $nfei, $y, $tab_src, $e, $p, $html, $rhtml, $fielder,
 	$titles, $tkeys, $bigtar, $rqid, $lpost, $bigtar_cnt, $bigtar_keys, $starter, $ender, $show_start, $show_end,
 	$sels, $clients, $uamode, $colsConst, $clients_cnt,$vis_mode,$thisCenter,$statusHistory,$rl,$preFils,$lvder,$lvd_sel,
-	$dPconfig,$jsonmap,$where_query,$join_query,$querysave,$countall,$project_id;
+	$dPconfig,$jsonmap,$where_query,$join_query,$querysave,$countall,$project_id,$menuChange;
 	$lvdForm = false;
 	$project_id = null;
 	//echo json_encode("Rodéo");
@@ -161,6 +161,7 @@ function resultBuilder($qmode) {
                 $wz->loadFormInfo($formId);
                 $fields = $wz->showFieldsImport();
                 $sources['id'] =  $wz->title;
+
                 $headers['id']['title'] = '#';
 
 
@@ -571,6 +572,11 @@ function resultBuilder($qmode) {
 		$ind = 0;
 		$addcl = '';
 		$reportLinks=array();
+		if($m==='manager'){
+            $tab_head .= '<th>';
+            $tab_head .= '<center><span id="listCheck" class="context-menu-one"><i class="fa fa-check"></i></span></center>';
+            $tab_head .= '</th>';
+        }
         foreach ( $headers as $hcode => $hcodeArray ) {
 
 		    $source = $sources[$hcode];
@@ -610,6 +616,43 @@ function resultBuilder($qmode) {
 			$colz .= '<col id=col_' . $ind . '></col>';
 			$ind ++;
 			$addcl = ' forsize';
+
+
+            if($hcodeArray['type']=='select' || $hcodeArray['type']=='calculateChoice' || $hcodeArray['type']=='radio' || $hcodeArray['type']=='checkbox') {
+                $listGV = $wz->getValues($hcodeArray['type'], $hcodeArray['sysv'], false, false, false);
+                //echo $hcodeArray['type'].' ';
+                if(isset($listGV[-1])) unset($listGV[-1]);
+                if($hcodeArray['sysv']=='SysCommunes'){
+                    $sysdept = $wz->getValues($hcodeArray['type'], 'SysDepartment', false, false, false);
+                    if(isset($sysdept[-1])) unset($sysdept[-1]);
+                    $nListGV = array();
+                    foreach ($sysdept as $indexDept=>$dVlist){
+                        $nListGV[$indexDept] = array('name'=>$sysdept[$indexDept],'items'=>array());
+                        foreach ($listGV as $indexage=>$vlist){
+                            if($indexDept == substr($indexage,0,2)){
+                                $nListGV[$indexDept]['items'][$hcodeArray['table'].'|_**_|'.str_replace($hcodeArray['table'].'_', '', $hcode).'|_**_|'.$indexage] = array('name'=>$vlist);
+                            }
+                        }
+                    }
+                    /*foreach ($listGV as $indexage=>$vlist){
+                        $indexDept = substr($indexage,0,2);
+                        $nListGV[$indexDept] = array('name'=>$sysdept[$indexDept], 'items'=>array($indexage=>array('name'=>$vlist)));
+                    }*/
+                    $listGV = $nListGV;
+                }else{
+                    foreach ($listGV as $indexage=>$vlist){
+                        unset($listGV[$indexage]);
+                        $listGV[$hcodeArray['table'].'|_**_|'.str_replace($hcodeArray['table'].'_', '', $hcode).'|_**_|'.$indexage] = array('name'=>$vlist);
+                    }
+                }
+
+                $menuChange[str_replace($hcodeArray['table'].'_', '', $hcode)] = array(
+                    'name' => $hcodeArray['title'],
+                    'items'=> $listGV
+                );
+
+
+            }
 		
 		}
 		if($m==='manager'){
@@ -678,6 +721,11 @@ function resultBuilder($qmode) {
 			}
 			//echo ($i + 1);
 			//$i++;
+            if($m==='manager'){
+                $row .= '<td>';
+                $row .= '<input type="checkbox" class="itemcheck" value="#@QRI@#">';
+                $row .= '</td>';
+            }
 			foreach ( $headers as $hcode => $hcodeArray ) {
 				//$json_data['table'] = $hcodeArray['table'];
 				$rid = $rowdata[$hcodeArray['table'].'_id'];

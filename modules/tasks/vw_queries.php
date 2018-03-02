@@ -25,7 +25,9 @@ $sql = stripslashes($sql);
 $headers = gzdecode($activity_queries[0]['headers']);
 $list = gzdecode($activity_queries[0]['list']);
 eval ('$headers=' . $headers . ';');
-
+$wz = new Wizard('import');
+$wz->loadFormInfo($headers['id']['form']);
+$menuChange = array();
 $tabsql = explode('FROM', $sql);
 $querypart = $tabsql[1];
 $count_request =db_loadResult('Select count(*) FROM '.$querypart);
@@ -148,6 +150,9 @@ $rhtml .= $rf;
 	<thead>
 		<tr>
 			<?php
+                echo '<th>';
+                echo '<center><span id="listCheck" class="context-menu-one"><i class="fa fa-check"></i></span></center>';
+                echo '</th>';
 				foreach ( $headers as $hcode => $hcodeArray ) {
 					if($hcodeArray['type']==='entry_date')
 						$hcodeArray['type'] = 'date';
@@ -155,21 +160,55 @@ $rhtml .= $rf;
 					if(strlen($AppUI->_($hcodeArray['title']))>50)
 						$point = '...';
 					echo '<th id="head_' . $ind . '" data-thid="' . $ind . '" data-form="'.$hcodeArray['form'].'" data-type="'.$hcodeArray['type'].'" data-field="'.$hcodeArray['fld'].'" data-title='.$source.' data-sys="'.$hcodeArray['sysv'].'"  class="head ' . $addcl . '" data-part="'.$data_part.'">' . substr($AppUI->_($hcodeArray['title']), 0,49).$point . '<div class="head_menu"></div></th>' . "\n";
+                    if($hcodeArray['type']=='select' || $hcodeArray['type']=='calculateChoice' || $hcodeArray['type']=='radio' || $hcodeArray['type']=='checkbox') {
+                        $listGV = $wz->getValues($hcodeArray['type'], $hcodeArray['sysv'], false, false, false);
+                        if(isset($listGV[-1])) unset($listGV[-1]);
+                        if($hcodeArray['sysv']=='SysCommunes'){
+                            $sysdept = $wz->getValues($hcodeArray['type'], 'SysDepartment', false, false, false);
+                            if(isset($sysdept[-1])) unset($sysdept[-1]);
+                            $nListGV = array();
+                            foreach ($sysdept as $indexDept=>$dVlist){
+                                $nListGV[$indexDept] = array('name'=>$sysdept[$indexDept],'items'=>array());
+                                foreach ($listGV as $indexage=>$vlist){
+                                    if($indexDept == substr($indexage,0,2)){
+                                        $nListGV[$indexDept]['items'][$hcodeArray['table'].'|_**_|'.str_replace($hcodeArray['table'].'_', '', $hcode).'|_**_|'.$indexage] = array('name'=>$vlist);
+                                    }
+                                }
+                            }
+                            /*foreach ($listGV as $indexage=>$vlist){
+                                $indexDept = substr($indexage,0,2);
+                                $nListGV[$indexDept] = array('name'=>$sysdept[$indexDept], 'items'=>array($indexage=>array('name'=>$vlist)));
+                            }*/
+                            $listGV = $nListGV;
+                        }else{
+                            foreach ($listGV as $indexage=>$vlist){
+                                unset($listGV[$indexage]);
+                                $listGV[$hcodeArray['table'].'|_**_|'.str_replace($hcodeArray['table'].'_', '', $hcode).'|_**_|'.$indexage] = array('name'=>$vlist);
+                            }
+                        }
 
-				 }
+                        $menuChange[str_replace($hcodeArray['table'].'_', '', $hcode)] = array(
+                            'name' => $hcodeArray['title'],
+                            'items'=> $listGV
+                        );
+
+
+                    }
+				}
              ?>
 		</tr>
 	</thead>
     <tbody>
     <?php
     while ( $rowdata = db_fetch_assoc ( $res ) ) {
-        $wz = new Wizard('import');
-        $wz->loadFormInfo($headers['id']['form']);
         echo '<tr>';
         foreach ( $headers as $hcode => $hcodeArray ) {
             $forView = $rowdata[$hcode];
 
             if($hcode=='id'){
+                echo '<td>';
+                echo '<input type="checkbox" class="itemcheck" value="'.$rowdata[$hcodeArray['table'].'_id'].'">';
+                echo '</td>';
                 $forView = $rowdata[$hcodeArray['table'].'_id'];
                 $forView = '<a href="?m=wizard&a=form_use&fid='.$hcodeArray['form'].'&idIns='.$forView.'&todo=view&teaser=1&rtable=1&tab=0">View</a>';
             }
@@ -193,4 +232,10 @@ $rhtml .= $rf;
     </tbody>
 </table>
 </div>
-<?php echo $rhtml;?>
+<?php
+$rhtml .= '<script type="text/javascript">';
+$rhtml .= '  var menuChange = '.json_encode($menuChange).';';
+$rhtml .= '</script>';
+echo $rhtml;
+
+?>

@@ -309,7 +309,6 @@ if (($m == 'projects') && !$oldtemplate) {
 }
 // set the action from the url
 $a = $AppUI->checkFileName(dPgetCleanParam($_GET, 'a', $def_a));
-
 /* This check for $u implies that a file located in a subdirectory of higher depth than 1
  * in relation to the module base can't be executed. So it would'nt be possible to
  * run for example the file module/directory1/directory2/file.php

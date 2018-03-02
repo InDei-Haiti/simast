@@ -43,6 +43,7 @@ else
 	type="image/ico" />
 <link rel="stylesheet" href="./style/jquery-ui.css" type="text/css"media="all" />
 <link rel="stylesheet" href="./style/jquery.multiselect.css" type="text/css"media="all" />
+<link rel="stylesheet" href="./style/<?php echo $uistyle;?>/jquery.contextMenu.css" type="text/css"media="all" />
 <!-- <script type="text/javascript" src="./js/1jquery.best.js"></script>
 	<script type="text/javascript" src="/js/jquery-ui.min.js"></script>
 	<script type="text/javascript" src="./js/jquery.multiselect.min.js"></script>
@@ -234,6 +235,17 @@ select#soflow-color {
 .form-style-2 input[type=submit]:hover, .form-style-2 input[type=button]:hover {
 	background: #EA7B00;
 	color: #fff;
+}
+.modal-header {
+    padding: 2px 16px;
+    background-color: #354c8c;
+    color: white;
+}
+
+.modal-footer {
+    padding: 2px 16px;
+    background-color: #354c8c;
+    color: white;
 }
 
 </style>

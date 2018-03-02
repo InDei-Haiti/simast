@@ -167,3 +167,6 @@ function formPopup(id,parent_id,datepay){
 	window.open('index.php?m=wizard&a=form_useed&fid='+id+'&todo=addedit&parent_id='+parent_id+'&datepay='+datepay+'&dialog=1','calwin','top=250,left=250,width=600,height=300,scollbars=false,resizable');
 }
 
+
+
+

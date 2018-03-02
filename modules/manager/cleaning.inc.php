@@ -50,6 +50,7 @@ $colsConst=array();
 $thisCenter=false;
 $y=0;
 $countall=0;
+$menuChange = array();
 $moduleScripts[]="./modules/outputs/outputs.module.js";
 $moduleScripts[]="./modules/outputs/stats.js";
 //$moduleScripts[]="./modules/outputs/jquery-ui-1.7.2.custom.min.js";
@@ -288,6 +289,13 @@ style="border-top: 1px solid #BFC3D9; position: relative; height: 20px; display:
 chex=<?php
 	echo ($mi - 1);
 	?>;
+
+    <?php if($menuChange){?>
+
+    var menuChange = <?php echo json_encode($menuChange).';';?>
+
+    <?php }?>
+
 	var countall = <?php echo $countall;?>;
 	rrr=<?php echo $y;//$lcrows;?>;
 	today=<?php echo date("Ymd");?>;
