@@ -710,7 +710,7 @@ if($res){
             $($("ul.topnav li:eq("+minIndex+") a").attr("href")).removeClass("ui-tabs-hide");
 
 
-            alert($("ul.topnav li:eq("+minIndex+")").html());
+//            alert($("ul.topnav li:eq("+minIndex+")").html());
         });
     });
 
