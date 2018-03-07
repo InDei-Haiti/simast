@@ -5,9 +5,9 @@
 //$q->addQuery("id, set_id, project_id, type, query_save, data_item,description");
 //$q->addTable('dashboard_grapher');
 //$result = $q->loadList();
-///*echo '<pre>';
+//echo '<pre>';
 //var_dump($result);
-//echo '</pre>';*/
+//echo '</pre>';
 //$counter = 0;
 //foreach ($result as $row){
 //    $title = '';
@@ -27,9 +27,9 @@
 //            'g' => $graph_data
 //        );
 //
-////        echo '<pre>';
-////        var_dump($idata);
-////        echo '</pre>';
+//        echo '<pre>';
+//        var_dump($idata);
+//        echo '</pre>';
 //    }else if($row['type']=='TABLE'){
 //        $counter++;
 //        $title = "Table #".$counter;
@@ -59,14 +59,14 @@
 //    $sql = "INSERT INTO report_items (title,itype,idata,html,data_item,project_id,actif,query_save)
 //              VALUES('".$title."','".$itype."','".mysql_real_escape_string(json_encode($idata))."','".$html."','".$data_item."',".$row['project_id'].",'1','')
 //             ";
-//    //echo $sql.'<br/><br/>';
+//    echo $sql.'<br/><br/>';
 //    $res = mysql_query($sql);
 ////    echo '<br/><br/><br/><br/><br/>'.$sql;
 ////    echo mysql_errno().':'.mysql_error();
 ////    exit;
 //    if ($res) {
 //        $new_id = mysql_insert_id();
-//        $sql_link = "INSERT INTO simast.set_report_items(setId,itemId)VALUES('".$row["set_id"]."','".$new_id."')";
+//        $sql_link = "INSERT INTO set_report_items(setId,itemId)VALUES('".$row["set_id"]."','".$new_id."')";
 //        $res = mysql_query($sql_link);
 //    }
 //
@@ -84,8 +84,16 @@ $projects = $q->loadHashList();
 
 $q = new DBQuery();
 $q->addTable('sets');
-$q->addQuery('id,setname');
+$q->addQuery('id,setname,project_id');
+//$sets = $q->loadList();
 $sets = $q->loadHashList();
+
+
+$q = new DBQuery();
+$q->addTable('sets');
+$q->addQuery('id,setname,project_id,project_name');
+$sets_x = $q->loadList();
+//$sets = $q->loadHashList();
 
 
 $q = new DBQuery();
@@ -102,7 +110,7 @@ $slctQUery = "SELECT C.id,B.setId AS set_id, C.project_id, C.idata,C.html,CASE C
 
 //echo "<br /><br /><br /><br /><br />Go";
 $res = mysql_query($slctQUery);
-$hashList = [];
+$hashList = array();
 if($res){
     while($row = mysql_fetch_assoc($res)){
         $hashList [] = $row;
@@ -137,6 +145,10 @@ if($res){
     .title[title]:hover:after{
         left:5px;
         opacity:1;
+    }
+
+    .cantDisplay{
+        display:none;
     }
 </style>
 <script src="<?php echo DP_BASE_URL?>/style/default/highcharts.js"></script>
@@ -453,7 +465,7 @@ if($res){
     <div class="body">
         <div class="row">
             <div class="col-md-3">
-                <select class="form-control" style="width: 200px;height:30px">
+                <select id="projectSelect" class="form-control" style="width: 200px;height:30px">
                     <?php
 
                     if(count($projects) > 0) {
@@ -512,11 +524,18 @@ if($res){
 
                         <?php
 
-                        if(count($sets) > 0) {
+                        if(count($sets_x) > 0) {
                             $i = 0;
-                            foreach ($sets as $sid => $set_name) {
+                            foreach ($sets_x as $elem) {
+//                            foreach ($sets as $sid => $set_name) {
                                 $i++;
-                                echo '<LI><A href="#tabs-'.$i.'"><b>'.trim($set_name).'</b></A></LI>';
+                                if($elem['project_name'] == 'Kore Lavi'){
+                                    echo '<LI data-rep-id="'.$elem['project_id'].'"><A href="#tabs-'.$i.'"><b>'.trim($elem['setname']).'</b></A></LI>';
+                                }else{
+                                    echo '<LI class="cantDisplay" data-rep-id="'.$elem['project_id'].'"><A href="#tabs-'.$i.'"><b>'.trim($elem['setname']).'</b></A></LI>';
+                                }
+
+
                             }
                         }
                         ?>
@@ -647,7 +666,54 @@ if($res){
 
 </script> -->
 <script>
+//    Handling Switching from Set by Project
 //    var =
+
+    $(document).ready(function(e){
+        $("select#projectSelect").change(function(e){
+            var slctPRoject = $(this).val();
+            $("ul.topnav li").each(function(e){
+               $(this).addClass("cantDisplay");
+            });
+            $("ul.topnav li").each(function(e){
+                if($(this).attr("data-rep-id")== slctPRoject){
+                    $(this).removeClass("cantDisplay");
+                }
+            });
+            var minIndex = 10000000;
+            $('ul.topnav li').each(function(){
+                if (!$(this).hasClass("cantDisplay")) {
+                    // do your stuff
+                    if( $(this).index() < minIndex){
+                        minIndex = $(this).index();
+                    }
+                }
+            });
+            $('ul.topnav li').each(function(){
+                $(this).removeClass("ui-state-focus");
+                $(this).removeClass("ui-tabs-selected");
+                $(this).removeClass("ui-state-active");
+            });
+
+            $("ul.topnav li:eq("+minIndex+")").addClass("ui-state-focus");
+            $("ul.topnav li:eq("+minIndex+")").addClass("ui-tabs-selected");
+            $("ul.topnav li:eq("+minIndex+")").addClass("ui-state-active");
+
+//            alert($("ul.topnav li:eq("+minIndex+") a").attr("href")+"lkjlklkj");
+//            slctTheId = $("ul.topnav li:eq("+minIndex+") a").attr("href").replace("#","");
+
+            $('div.mtab').each(function(){
+                $(this).addClass("ui-tabs-hide");
+            });
+
+
+            $($("ul.topnav li:eq("+minIndex+") a").attr("href")).removeClass("ui-tabs-hide");
+
+
+            alert($("ul.topnav li:eq("+minIndex+")").html());
+        });
+    });
+
     function setCookie(cname, cvalue, exdays) {
         var d = new Date();
         d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));

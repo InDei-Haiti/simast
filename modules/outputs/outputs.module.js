@@ -2735,7 +2735,7 @@ qlHandler.prototype.extractRowSet = function(txt){
 		var $newRow = $j("<tr/>");
         $newRow.append('<td>'+txt.set+'</td>');
         $newRow.append('<td>'+txt.project_name+'</td>');
-        $newRow.append('<td><span id="set_d_'+txt.id+'" onclick="qurer.delSetRow('+txt.id+',\''+txt.set+'\')"  class="fhref fa fa-trash-o" style="color: blue;font-size: large"></span><span id="set_e_'+txt.id+'"  class="fhref fa fa-edit" style="color: blue;font-size: large"></span>');
+        $newRow.append('<td><span id="set_d_'+txt.id+'" onclick="qurer.delSetRow('+txt.id+',\''+txt.set+'\')"  class="fhref fa fa-trash-o" style="color: blue;font-size: large"></span><span id="set_e_'+txt.id+'" onclick="qurer.edit('+txt.id+',\''+txt.set+'\')"  class="fhref fa fa-edit" style="color: blue;font-size: large"></span>');
         $newRow.append('</td>');
         $newRow.appendTo($j("#settable"));
         /*<span id="set_e_'.$set['id'].'"  class="fhref fa fa-edit" style="color: blue;font-size: large"></span>
@@ -2759,8 +2759,9 @@ qlHandler.prototype.extractRowSet = function(txt){
 };
 
 qlHandler.prototype.delSetRow = function(id,setname){
-    fname=prompt("Please enter the set name");
-    if(trim(setname)==trim(fname)) {
+    // fname=prompt("Please enter the set name");
+    if(confirm('Do you really want to delete the set?')) {
+    // if(trim(setname)==trim(fname)) {
         var $ritem = $j("#set_d_"+id).closest("tr");
         $j.get("/?m=outputs&mode=delSet&suppressHeaders=1&id=" + id, function (res) {
             if (res && res != 'fail') {
@@ -2770,7 +2771,7 @@ qlHandler.prototype.delSetRow = function(id,setname){
             }
         });
     }else {
-    	alert("can't delete");
+    	// alert("can't delete");
 	}
 };
 var setId = -1;
@@ -2811,6 +2812,10 @@ qlHandler.prototype.edit = function(id_edit,nomSet){
 
 			}else{
 				console.log("Pas de donnees");
+				$("#elmsList").empty();
+				for(var z=0;z < elms.itemlst.length;z++){
+					$("#elmsList").append("<option value='"+elms.itemlst[z].id+"'>"+(elms.itemlst[z].itype.toUpperCase()=='STAT' ? 'TABLE' : elms.itemlst[z].itype.toUpperCase())+"    <<-------->>    "+elms.itemlst[z].title+"</option>");
+				}
 			}
 		}});
 	var getModal = $("#setModal_x_y");
